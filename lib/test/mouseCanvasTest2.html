@@ -1,0 +1,313 @@
+<!DOCTYPE HTML>
+<html>
+<!--
+// written by Thomas "mathheadinclouds" Kloecker
+// THIS CODE IS PUBLIC DOMAIN. YOU DO NOT "OWN" IT IN ANY WAY, YOU MAY USE IT IN ANY AND EVERY WAY.
+// PLEASE REFRAIN FROM REMOVING THIS NOTICE
+-->
+    <head>
+    	<meta http-equiv="content-type" content="text/html" />
+    	<meta name="author" content="Thomas Kloecker" />
+    	<title></title>
+        
+        <script type="text/javascript" src="../jquery-1.10.2.min.js"></script>
+        <script type="text/javascript" src="../jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+        <script type="text/javascript" src="../googleStringTools.js"></script>
+        <script type="text/javascript" src="../util.js"></script>
+        <script type="text/javascript" src="../htmlGeneratorTools.js"></script>
+        
+        <link href="../jquery-ui-1.10.3.custom/css/start/jquery-ui-1.10.3.custom.min.css" rel="stylesheet" type="text/css"/>
+        
+<style>
+.standardFrame {
+    border: 1px solid black;
+}
+</style>
+
+        <script type="text/javascript">
+var gUniverseElt = null;
+var gDemoPickerParentElt = null;
+var gDemoPickerElt = null;
+var gDemos = [];
+var gNormalDistribuionCalculator = null;
+
+function loadDemo(index){
+    var demo = gDemos[index];
+    document.title = demo.title;
+    demo.obj.run();
+}
+function demoSelected(){
+    loadDemo(this.selectedIndex);
+}
+
+function initPage(){
+    $("#noJavaScript").html("");
+    gUniverseElt = $("#universe");
+    gDemoPickerParentElt = $("#demoPicker");
+    gDemoPickerParentElt.html(HtmlGen.select([], {id: "demoPickerSelect"}));
+    gDemoPickerElt = $("#demoPickerSelect");
+    (new Demo("drag drop canvas test 3", ddCanvasTest3)).addToDemos();
+    (new Demo("drag drop canvas test", ddCanvasTest)).addToDemos();
+    (new Demo("drag drop canvas test 2", ddCanvasTest2)).addToDemos();
+    (new Demo("mouse canvas test", MouseCanvasTest)).addToDemos();
+    gDemoPickerElt.change(demoSelected);
+    loadDemo(0);
+}
+function Demo(name, obj, title){
+    if (arguments.length < 3){
+        title = name;
+    }
+    this.name = name;
+    this.obj = obj;
+    this.title = title;
+}
+Demo.prototype.addToDemos = function(){
+    gDemoPickerElt.append(HtmlGen.option(this.name));
+    gDemos.push(this);
+}
+ddCanvasTest = {
+    canvasId: "ddCanvas",
+    canvasWidth: 600,
+    canvasHeight: 200,
+    numSamp: 15,
+    xMin: 10,
+    xWidth: 20,
+    yMin: 30,
+    yWidth: 40,
+    run: function(){
+        fig = this;
+        var xMin = this.xMin;
+        var xWidth = this.xWidth;
+        var yMin = this.yMin;
+        var yWidth = this.yWidth;
+        var data0 = UTIL.table(this.numSamp, function(){ return [xMin + xWidth*Math.random(), yMin + yWidth*Math.random()]; });
+        this.data0 = data0;
+        data = this.data0.map(function(item){
+            var x = item[0];
+            var y = item[1];
+            return {
+                x: x,
+                y: y,
+                update: function(){
+                    $("#debug2").html(this.index);
+                }
+            }
+        });
+        var canvasId = this.canvasId;
+        var canvasWidth = this.canvasWidth;
+        var canvasHeight = this.canvasHeight;
+        var canvHtml = HtmlGen.canvas({id: canvasId, width: canvasWidth, height: canvasHeight, style: "border: 1px solid black"});
+        gUniverseElt.html(canvHtml);
+        var THIS = this;
+        this.ddc = new DragDropCanvas({
+            id: canvasId,
+            xMin: xMin,
+            xMax: xMin + xWidth,
+            yMin: yMin,
+            yMax: yMin + yWidth,
+            points: data,
+            repaintCallback: function(ctx){
+                THIS.repaint.call(THIS, ctx);
+            }
+        });
+        this.repaint(this.ddc.mc.ctx);
+    },
+    repaint: function(ctx){
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        ctx.font = "11pt Arial";
+        ctx.fillStyle = "black";
+        ctx.textAlign = "center";
+        ctx.fillText("lorem ipsum dolor sit amet", 100, 30);
+        this.ddc.repaint();
+        var html = HtmlGen.table(
+            this.ddc.pointColl.points.map(function(item, index){
+                return HtmlGen.tr(
+                    HtmlGen.td(index, {id: "row" + index}) +
+                    HtmlGen.td("%5.1f".sprintf(item.x)) +
+                    HtmlGen.td("%5.1f".sprintf(item.y))
+                );
+            }).join("")
+        );
+        $("#debug1").html(html);
+    }
+};
+ddCanvasTest2 = {
+    canvasId: "ddCanvas",
+    canvasWidth: 600,
+    canvasHeight: 200,
+    numSamp: 15,
+    xMin: 10,
+    xWidth: 20,
+    yMin: 30,
+    yWidth: 40,
+    run: function(){
+        fig = this;
+        var xMin = this.xMin;
+        var xWidth = this.xWidth;
+        var yMin = this.yMin;
+        var yWidth = this.yWidth;
+        var data0 = UTIL.table(this.numSamp, function(){ return [xMin + xWidth*Math.random(), yMin + yWidth*Math.random()]; });
+        this.data0 = data0;
+        data = this.data0.map(function(item){
+            var x = item[0];
+            var y = item[1];
+            return {
+                x: x,
+                y: y,
+                update: function(){
+                    $("#debug2").html(this.index);
+                }
+            }
+        });
+        var canvasId = this.canvasId;
+        var canvasWidth = this.canvasWidth;
+        var canvasHeight = this.canvasHeight;
+        var canvHtml = HtmlGen.canvas({id: canvasId, width: canvasWidth, height: canvasHeight, style: "border: 1px solid black"});
+        gUniverseElt.html(canvHtml);
+        this.ddc = new DragDropCanvas({
+            id: canvasId,
+            xMin: xMin,
+            xMax: xMin + xWidth,
+            yMin: yMin,
+            yMax: yMin + yWidth,
+            points: data,
+            paintPoint: function(ctx, i, x, y, xCanv, yCanv){
+                //console.log("i: " + i + " x: " + x + " y: " + y);
+                var boxWidth = 20;
+                var color = "blue";
+                ctx.strokeStyle = color;
+                ctx.strokeRect(xCanv - boxWidth/2, yCanv - boxWidth/2, boxWidth, boxWidth);
+                ctx.fillStyle = "black";
+                ctx.font = "12pt Arial";
+                var widthOf4 = ctx.measureText("4").width;
+                ctx.textAlign = "center";
+                ctx.fillText("" + i, xCanv, yCanv + widthOf4 * 0.55);
+            }
+        });
+        this.ddc.repaint();
+    }
+};
+ddCanvasTest3 = {
+    canvasId: "ddCanvas",
+    canvasWidth: 600,
+    canvasHeight: 400,
+    numSamp: 10,
+    xMin: 10,
+    xWidth: 20,
+    yMin: 30,
+    yWidth: 40,
+    run: function(){
+        fig = this;
+        var xMin = this.xMin;
+        var xWidth = this.xWidth;
+        var yMin = this.yMin;
+        var yWidth = this.yWidth;
+        var data0 = UTIL.table(this.numSamp, function(){ return [xMin + xWidth*Math.random(), yMin + yWidth*Math.random()]; });
+        this.data0 = data0;
+        data = this.data0.map(function(item){
+            var x = item[0];
+            var y = item[1];
+            return {
+                x: x,
+                y: y,
+                update: function(){
+                    $("#debug2").html(this.index);
+                }
+            }
+        });
+        var canvasId = this.canvasId;
+        var canvasWidth = this.canvasWidth;
+        var canvasHeight = this.canvasHeight;
+        var canvHtml = HtmlGen.canvas({id: canvasId, width: canvasWidth, height: canvasHeight, style: "border: 1px solid black"});
+        gUniverseElt.html(canvHtml);
+        var THIS = this;
+        this.ddc = new DragDropCanvas({
+            id: canvasId,
+            xMin: xMin,
+            xMax: xMin + xWidth,
+            yMin: yMin,
+            yMax: yMin + yWidth,
+            points: data,
+            paintPoint: function(ctx, i, x, y, xCanv, yCanv){
+                //console.log("i: " + i + " x: " + x + " y: " + y);
+                CANVAS.mathematicaCrossHairs(ctx, xCanv, yCanv);
+            },
+            repaintCallback: function(ctx){
+                THIS.repaint.call(THIS, ctx);
+            },
+            immutableX: true
+        });
+        this.repaint(this.ddc.mc.ctx);
+    },
+    repaint: function(ctx){
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        ctx.font = "11pt Arial";
+        ctx.fillStyle = "black";
+        ctx.textAlign = "center";
+        ctx.fillText("lorem ipsum dolor sit amet", 100, 30);
+        this.ddc.repaint();
+        var html = HtmlGen.table(
+            this.ddc.pointColl.points.map(function(item, index){
+                return HtmlGen.tr(
+                    HtmlGen.td(index, {id: "row" + index}) +
+                    HtmlGen.td("%5.1f".sprintf(item.x)) +
+                    HtmlGen.td("%5.1f".sprintf(item.y))
+                );
+            }).join("")
+        );
+        $("#debug1").html(html);
+    }
+};
+MouseCanvasTest = {
+    canvasId: "mouseCanvas",
+    canvasWidth: 600,
+    canvasHeight: 200,
+    mouseDown: function(x, y, evt){
+        $("#debug1").html("down x: " + x + " y: " + y);
+        $("#debug2").html("down");
+    },
+    mouseMove: function(x, y, evt){
+        $("#debug1").html("move x: " + x + " y: " + y);
+    },
+    mouseUp: function(x, y, evt){
+        $("#debug1").html("up x: " + x + " y: " + y);
+        $("#debug2").html("up");
+    },
+    run: function(){
+        var canvasId = this.canvasId;
+        var canvasWidth = this.canvasWidth;
+        var canvasHeight = this.canvasHeight;
+        var canvHtml = HtmlGen.canvas({id: canvasId, width: canvasWidth, height: canvasHeight, style: "border: 1px solid black"});
+        gUniverseElt.html(canvHtml);
+        this.mc = new MouseCanvas({
+            id: canvasId,
+            xMin: 69,
+            xMax: 88,
+            yMin: 68,
+            yMax: 82,
+            mousedown: function(x, y, evt){
+                MouseCanvasTest.mouseDown.call(MouseCanvasTest, x, y, evt);
+            },
+            mousemove: function(x, y, evt){
+                MouseCanvasTest.mouseMove.call(MouseCanvasTest, x, y, evt);
+            },
+            mouseup: function(x, y, evt){
+                MouseCanvasTest.mouseUp.call(MouseCanvasTest, x, y, evt);
+            },
+        });
+    }
+};
+        </script>        
+        
+        
+    
+    </head>
+
+    <body onload="initPage();">
+        <div id="noJavaScript">you need JavaScript to view this page.</div>
+        <div id="demoPicker"></div>
+        <div id="universe"></div>
+        <div id="debug1"></div>
+        <div id="debug2"></div>
+    </body>
+</html>

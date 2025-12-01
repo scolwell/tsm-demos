@@ -1,0 +1,1138 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+    	<meta http-equiv="content-type" content="text/html" />
+    	<meta name="viewport" content="width=device-width, initial-scale=1">
+    	<meta name="author" content="Thomas mathheadinclouds Kloecker" />
+    	<title>Galton Board - An English nobleman's guide to the binomial distribution</title>
+
+    	<!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+        
+        <script type="text/javascript" src="lib/jquery-2.0.3.js"></script>
+
+        <script type="text/javascript" src="lib/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+        <script type="text/javascript" src="lib/googleStringTools.js"></script>
+        <script type="text/javascript" src="lib/htmlGeneratorTools.js"></script><!-- written by mathheadinclouds -->
+        <script type="text/javascript" src="lib/util.js"></script><!-- written by mathheadinclouds -->
+        
+        <link href="lib/jquery-ui-1.10.3.custom/css/start/jquery-ui-1.10.3.custom.min.css" rel="stylesheet" type="text/css"/>
+        
+        <style id="bucketTableStyle"></style>
+        
+<style>
+    .relative {	position: relative; }
+    .absolute {	position: absolute; }
+    .absolute00 {
+    	position: absolute;
+    	left: 0;
+    	top: 0;
+        margin: 0;
+        padding: 0;
+    }
+    .zIndex0 { z-index: 0; }
+    .zIndex1 { z-index: 1; }
+    .zIndex2 { z-index: 2; }
+    body {
+        font-family: Arial
+    }
+</style>        
+        <script type="text/javascript">
+
+var DEBUG = false;
+var gBrowserIsRetarded = false;
+var gDemoElt = null;
+var gMouseInfoElt = null;
+// gNumRows is the number of rows currently visible in the galton board.
+// it need not be equal to TOP.numRows, which is the number of rows displayed in the top left interface,
+// since the user might have pressed the +/- buttons, but not have pressed the reset button yet.
+var gNumRows = -1;
+// width of top controls, galton board, and slider; buckets and bar chart might have different width (happens for small number of rows, when top controls need more space than galton)
+// calculated in TOP.makeHtml()
+var gWidth = -1;
+
+degrees = Math.PI / 180;
+
+var config = {
+    numRows : 15,
+    maxRows: 30,
+    birthRate: 19,
+    frameDelayMillisecs : 22,
+    borderColor: "rgb(230, 230, 230)",
+    pathToImageFolder: "img/",
+    topControls : {
+        leftImageFileName : "numRowsInterface.png",
+        rightImageFileName : "playResetInterface.png",
+        birthGiverWidth : 94,
+        backgroundColor : "rgb(230, 230, 230)",
+        textFieldBackgroundColor: "rgb(127, 127, 127)",
+        birthGiverColor: "rgb(112, 146, 190)",
+        ballCounterTopMargin: 10,
+        ballCounterHeight: 25,
+        birthGiverBottomWidth: 38,
+        numRowsLeft: 32,
+        numRowsTop: 36,
+        numRowsWidth: 44,
+        numRowsHeight: 43,
+        incRowsX: 107,
+        incRowsY: 46,
+        incRowsRadius: 12,
+        decRowsX: 107,
+        decRowsY: 75,
+        decRowsRadius: 12,
+        playX: 378,
+        playY: 57,
+        playRadius: 21,
+        stopX: 349,
+        stopY: 57,
+        stopRadius: 12,
+        fastX: 425,
+        fastY: 57,
+        fastRadius: 12,
+        resetX: 471,
+        resetY: 57,
+        resetRadius: 14,
+        mouseOverHiliteColor: "rgba(0, 255, 0, 0.25)",
+        ballCounterTextFont: "16pt Arial"
+    },
+    galton : {
+        birthGiverExcessHeight: 6,
+        angle: 26 * degrees,
+        rowHeight: 32,
+        backgroundColor: "#ffffff",
+        margins: {
+            top: 40,
+            bottom: 10,
+            horiz: 27
+        },
+        pin : {
+            radius: 3.5,
+            color: "#000000"
+        },
+        ball : {
+            radius: 8,
+            color: "#0000ff",
+            animSteps: 16
+        },
+        cleanupRadiusIncrease: 1.5
+    },
+    buckets: {
+        bucketTableCSS: {
+        	color: "#ffffff",
+        	align: "center"
+        },
+        over1000FontSize: "83%",
+        over10000FontSize: "75%"
+    },
+    barChart: {
+        height: 80,
+        color: "#ff0000",
+        gap: 4
+    }
+}
+config.buckets.bucketTableCSS["background-color"] = config.topControls.textFieldBackgroundColor;
+
+function ImageHelper(image, sourceX, sourceY, sourceWidth, sourceHeight, targetX, targetY, targetWidth, targetHeight){
+    this.image = image;
+    this.sourceX = sourceX;
+    this.sourceY = sourceY;
+    this.sourceWidth = sourceWidth;
+    this.sourceHeight = sourceHeight;
+    this.targetX = targetX;
+    this.targetY = targetY;
+    this.targetWidth = targetWidth;
+    this.targetHeight = targetHeight;
+}
+ImageHelper.prototype.drawTo = function(context){
+    context.drawImage(this.image, this.sourceX, this.sourceY, this.sourceWidth, this.sourceHeight, this.targetX, this.targetY, this.targetWidth, this.targetHeight);
+}
+
+// the top row of controls and the birth giver
+var TOP = {
+    numRows: -1,
+    whichControlHilited: -1, // namely, none (cNone)
+    cNone : -1,
+    cIncRows : 0,
+    cDecRows : 1,
+    cStop : 2,
+    cPlay : 3,
+    cFast : 4,
+    cReset : 5,
+    controlInfo : ["inc rows", "dec rows", "stop", "play", "fast", "reset"],
+    leftImageHelper: null,
+    rightImageHelper: null,
+    numLoadedImages: 0,
+    leftImage: null,
+    rightImage: null,
+    leftImageWidth: -1, leftImageHeight: -1,   // those are all
+    rightImageWidth: -1, rightImageHeight: -1, // computed later on
+    totalHeight: -1,
+    minimumRequiredWidth: -1, lrMax: -1,
+    leftExtraWidth: -1, rightExtraWidth: -1,
+    lrAddedWidth: -1, widthExcess: -1,
+    rightControlsHorizontalCorrection: -1,
+    birthGiverLeft: -1,
+    canvasId: "topCanvas",
+    canvas: null,
+    ctx: null,
+    birthGiverVertices: null,
+    widthExcessWhen15Rows: 54,
+    html: "",
+    init: function(){
+        this.leftImage = new Image();
+        var leftImgFileName = config.pathToImageFolder + config.topControls.leftImageFileName;
+        this.leftImage.src = leftImgFileName;
+        this.leftImage.onload = this.imageLoaded;
+        this.rightImage = new Image();
+        var rightImgFileName = config.pathToImageFolder + config.topControls.rightImageFileName;
+        this.rightImage.src = rightImgFileName;
+        this.rightImage.onload = this.imageLoaded;
+        this.hilite = [this.hiliteIncRows, this.hiliteDecRows, this.hiliteStop, this.hilitePlay, this.hiliteFast, this.hiliteReset];
+        this.clickHandles = [this.incRowsClick, this.decRowsClick, this.stopClick, this.playClick, this.fastClick, this.resetClick];
+    },
+    imageLoaded: function(){
+        TOP.numLoadedImages++;
+        if (TOP.numLoadedImages >= 2){
+            TOP.bothImagesLoaded();
+        }
+    },
+    bothImagesLoaded: function(){
+        this.leftImageWidth = this.leftImage.width;
+        this.leftImageHeight = this.leftImage.height;
+        this.rightImageWidth = this.rightImage.width;
+        this.rightImageHeight = this.rightImage.height;
+        if (this.leftImageHeight != this.rightImageHeight){
+            console.log("error: left and right images must have same height");
+        }
+        this.totalHeight = this.leftImageHeight + 2;  // 2 extra for border
+        this.lrMax = Math.max(this.leftImageWidth, this.rightImageWidth);
+        this.minimumRequiredWidth = 2*this.lrMax + config.topControls.birthGiverWidth + 2;
+        if (this.leftImageWidth >= this.rightImageWidth){
+            this.leftExtraWidth = 0;
+            this.rightExtraWidth = this.leftImageWidth - this.rightImageWidth;
+        } else {
+            this.rightExtraWidth = 0;
+            this.leftExtraWidth = this.rightImageWidth - this.leftImageWidth;
+        }
+        MAIN.init2(gNumRows);
+    },
+    makeHtml: function(targetWidth){
+        // stores the html (just a canvas tag) in this.html, and returns the final global width (enough for top and galton)
+        var neededWidth = Math.round(Math.max(this.minimumRequiredWidth, targetWidth));
+        var widthExcess = neededWidth - this.minimumRequiredWidth;
+        this.lrAddedWidth = 0.5 * widthExcess;
+        this.widthExcess = widthExcess;
+        this.rightControlsHorizontalCorrection = widthExcess - this.widthExcessWhen15Rows;
+        var topCanvasHtml = HtmlGen.canvas({width: neededWidth, height: this.totalHeight, id: this.canvasId});
+        this.html = topCanvasHtml;
+        return neededWidth;
+    },
+    drawLeftImage: function(){
+        this.leftImageHelper.drawTo(this.ctx);
+        this.refreshNumRowsDisplay();
+    },
+    drawRightImage: function(){
+        this.rightImageHelper.drawTo(this.ctx);
+    },
+    draw: function(){
+        // finish setup
+        this.canvas = $("#" + this.canvasId);
+        var ctx = this.canvas[0].getContext('2d');
+        if (!ctx){
+            alert('you have to use a newer browser to view this page');
+            gBrowserIsRetarded = true;
+            return;
+        }
+        this.ctx = ctx;
+        // draw border
+        ctx.strokeStyle = config.borderColor;
+        ctx.strokeRect(0, 0, ctx.canvas.width, this.totalHeight);
+        // draw left image
+        var sourceX = 0;
+        var sourceY = 0;
+        var sourceWidth = this.leftImageWidth;
+        var sourceHeight = this.leftImageHeight;
+        var targetX = 1;
+        var targetY = 1;
+        var targetWidth = sourceWidth;
+        var targetHeight = sourceHeight;
+        this.leftImageHelper = new ImageHelper(this.leftImage, sourceX, sourceY, sourceWidth, sourceHeight, targetX, targetY, targetWidth, targetHeight);
+        this.drawLeftImage();
+        // draw extra left background
+        var width = this.leftExtraWidth + Math.floor(this.lrAddedWidth);
+        var height = this.totalHeight - 2;
+        var left = 1 + this.leftImageWidth;
+        var top = 1;
+        ctx.fillStyle = config.topControls.backgroundColor;
+        ctx.fillRect(left, top, width, height);
+        // draw birthGiver and ballCounter
+            left += width;
+            this.birthGiverLeft = left;
+            // draw background above ball counter
+                var bgWidth = config.topControls.birthGiverWidth;
+                ctx.fillRect(left, top, bgWidth, config.topControls.ballCounterTopMargin - 1);
+            // draw ball counter background
+                this.drawBallCounterTextFieldBackground();
+            // draw birth giver
+                // background
+                var bgTop = config.topControls.ballCounterTopMargin + config.topControls.ballCounterHeight;
+                var bgHeight = this.totalHeight - bgTop;
+                ctx.fillStyle = config.topControls.backgroundColor;
+                ctx.fillRect(left, bgTop, bgWidth, bgHeight);
+                // birth giver herself
+                ctx.fillStyle = config.topControls.birthGiverColor;
+                var dx = Math.round(0.5 * (bgWidth - config.topControls.birthGiverBottomWidth));
+                var bgBottomLeft = left + dx;
+                var bgBottomRight = bgBottomLeft + config.topControls.birthGiverBottomWidth;
+                var x1 = left, y1 = bgTop;
+                var x2 = left + bgWidth, y2 = y1;
+                var x3 = bgBottomRight, y3 = this.totalHeight;
+                var x4 = bgBottomLeft, y4 = y3;
+                y1 += 1;
+                y2 += 1;
+                this.birthGiverVertices = {x1: x1, y1: y1, x2: x2, y2: y2, x3: x3, y3: y3, x4: x4, y4: y4};
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.lineTo(x3, y3);
+                ctx.lineTo(x4, y4);
+                ctx.lineTo(x1, y1);
+                ctx.closePath();
+                ctx.fill();
+                
+            //ctx.fillRect(left, top, bgWidth, height + 1);
+        // draw extra right background
+        left += bgWidth;
+        width = this.rightExtraWidth + Math.ceil(this.lrAddedWidth);
+        ctx.fillStyle = config.topControls.backgroundColor;
+        ctx.fillRect(left, top, width, height);
+        // draw right image
+        left += width;
+        sourceWidth = this.rightImageWidth;
+        targetX = left;
+        targetWidth = sourceWidth;
+        targetHeight = sourceHeight;
+        this.rightImageHelper = new ImageHelper(this.rightImage, sourceX, sourceY, sourceWidth, sourceHeight, targetX, targetY, targetWidth, targetHeight);
+        this.drawRightImage();
+        // attach mouse handlers
+        var thisCanvas = this.canvas;
+        thisCanvas.mousemove(function(evt){
+            var off = thisCanvas.offset();
+            var oTop = off.top;
+            var oLeft = off.left; 
+            var x = evt.pageX - oLeft;
+            var y = evt.pageY - oTop;
+            //var info = "x: %10.f y: %10.1f".sprintf(x, y);
+            var which = TOP.mouseOverWhich(x, y);
+            if (false && DEBUG){
+                var info = which == TOP.cNone ? "none" : TOP.controlInfo[which];
+                gMouseInfoElt.html(info);
+            }
+            var previouslyHilited = TOP.whichControlHilited;
+            if (which == previouslyHilited){
+                // no change, nothing to do
+                return;
+            }
+            if (which == TOP.cNone){
+                // mouse not over any control any more, must remove hilite
+                TOP.unhilite(previouslyHilited);
+                TOP.whichControlHilited = which;
+                return;
+            }
+            // mouse is entered a control, from nothing or from other control
+            // first, remove old hilite, if necessary
+            if (previouslyHilited != TOP.cNone){
+                TOP.unhilite(previouslyHilited);
+            }
+            // hilite the current control
+           TOP.hilite[which].call(TOP);
+           TOP.whichControlHilited = which;
+        });
+        thisCanvas.click(function(evt){
+            var off = thisCanvas.offset();
+            var oTop = off.top;
+            var oLeft = off.left; 
+            var x = evt.pageX - oLeft;
+            var y = evt.pageY - oTop;
+            var which = TOP.mouseOverWhich(x, y);
+            if (which == TOP.whichControlHilited && which != TOP.cNone){
+                TOP.clickHandles[which].call(TOP);
+            }
+        });
+    },
+    unhilite: function(which){
+        if (TOP.isLeftControl(which)){
+            TOP.drawLeftImage();
+        } else {
+            TOP.drawRightImage();
+        }
+    },
+    drawBallCounterTextFieldBackground: function(){
+        this.ctx.fillStyle = config.topControls.textFieldBackgroundColor;
+        this.ctx.fillRect(this.birthGiverLeft, config.topControls.ballCounterTopMargin, config.topControls.birthGiverWidth, config.topControls.ballCounterHeight);
+    },
+    setBallCounterText: function(txt){
+        this.drawBallCounterTextFieldBackground();
+        var o = config.topControls;
+        var ctx = this.ctx;
+        ctx.font = o.ballCounterTextFont;
+        ctx.textAlign = "center";
+        ctx.strokeStyle = "#ffffff";
+        ctx.fillStyle = "#ffffff";
+        var y = o.ballCounterTopMargin + o.ballCounterHeight - 5;
+        var x = Math.round(gWidth * 0.5);
+        ctx.fillText("" + txt, x, y);
+        /*
+        if (window.navigator.userAgent.indexOf("Firefox") >= 0){
+            ctx.strokeText("" + txt, x, y);
+        }
+        */
+    },
+    drawNumRowsTextFieldBackground: function(){
+        var o = config.topControls;
+        this.ctx.fillStyle = o.textFieldBackgroundColor;
+        this.ctx.fillRect(o.numRowsLeft, o.numRowsTop, o.numRowsWidth, o.numRowsHeight);
+    },
+    setNumRowsText: function(txt){
+        this.drawNumRowsTextFieldBackground();
+        var o = config.topControls;
+        var ctx = this.ctx;
+        ctx.font = o.ballCounterTextFont;
+        ctx.textAlign = "center";
+        ctx.strokeStyle = "#ffffff";
+        ctx.fillStyle = "#ffffff";
+        var y = o.numRowsTop + o.numRowsHeight - 14;
+        var x = o.numRowsLeft + Math.round(0.5 * o.numRowsWidth);
+        ctx.fillText("" + txt, x, y);
+        /*
+        if (window.navigator.userAgent.indexOf("Firefox") >= 0){
+            ctx.strokeText("" + txt, x, y);
+        }
+        */
+    },
+    refreshNumRowsDisplay: function(){
+        if (this.numRows == -1){
+            return;
+        }
+        this.setNumRowsText(this.numRows);
+    },
+    hiliteAux: function(centerX, centerY, radius){
+        var ctx = this.ctx;
+        ctx.fillStyle = config.topControls.mouseOverHiliteColor;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+        ctx.fill();
+    },
+    hiliteIncRows: function(){
+        var o = config.topControls;
+        var centerX = o.incRowsX;
+        var centerY = o.incRowsY;
+        var radius = o.incRowsRadius;
+        this.hiliteAux(centerX, centerY, radius);
+    },
+    hiliteDecRows: function(){
+        var o = config.topControls;
+        var centerX = o.decRowsX;
+        var centerY = o.decRowsY;
+        var radius = o.decRowsRadius;
+        this.hiliteAux(centerX, centerY, radius);
+    },
+    hiliteStop: function(){
+        var o = config.topControls;
+        var centerX = o.stopX + this.rightControlsHorizontalCorrection;
+        var centerY = o.stopY;
+        var radius = o.stopRadius;
+        this.hiliteAux(centerX, centerY, radius);
+    },
+    hilitePlay: function(){
+        var o = config.topControls;
+        var centerX = o.playX + this.rightControlsHorizontalCorrection;
+        var centerY = o.playY;
+        var radius = o.playRadius;
+        this.hiliteAux(centerX, centerY, radius);
+    },
+    hiliteFast: function(){
+        var o = config.topControls;
+        var centerX = o.fastX + this.rightControlsHorizontalCorrection;
+        var centerY = o.fastY;
+        var radius = o.fastRadius;
+        this.hiliteAux(centerX, centerY, radius);
+    },
+    hiliteReset: function(){
+        var o = config.topControls;
+        var centerX = o.resetX + this.rightControlsHorizontalCorrection;
+        var centerY = o.resetY;
+        var radius = o.resetRadius;
+        this.hiliteAux(centerX, centerY, radius);
+    },
+    mouseOverWhich: function(x, y){
+        var o = config.topControls;
+        if (pointInCircle(o.incRowsX, o.incRowsY, o.incRowsRadius, x, y)) return this.cIncRows;
+        if (pointInCircle(o.decRowsX, o.decRowsY, o.decRowsRadius, x, y)) return this.cDecRows;
+        if (pointInCircle(o.stopX + this.rightControlsHorizontalCorrection, o.stopY, o.stopRadius, x, y)) return this.cStop;
+        if (pointInCircle(o.playX + this.rightControlsHorizontalCorrection, o.playY, o.playRadius, x, y)) return this.cPlay;
+        if (pointInCircle(o.fastX + this.rightControlsHorizontalCorrection, o.fastY, o.fastRadius, x, y)) return this.cFast;
+        if (pointInCircle(o.resetX + this.rightControlsHorizontalCorrection, o.resetY, o.resetRadius, x, y)) return this.cReset;
+        return this.cNone;
+    },
+    isLeftControl: function(which){
+        return (which == this.cIncRows || which == this.cDecRows);
+    },
+    incRowsClick: function(){
+        MAIN.incRows();
+    },
+    decRowsClick: function(){
+        MAIN.decRows();
+    },
+    stopClick: function(){
+        MAIN.stop();
+    },
+    playClick: function(){
+        MAIN.play();
+    },
+    fastClick: function(){
+        MAIN.faster();
+    },
+    resetClick: function(){
+        //window.location.href = window.location.pathname + "?numRows=" + this.numRows;
+        MAIN.reset();
+    }
+};
+// the galton board itself
+GALTON = {
+    backgroundColor: config.galton.backgroundColor,
+    pinRadius: config.galton.pin.radius,
+    pinColor: config.galton.pin.color,
+    angle: config.galton.angle,
+    marginTop: config.galton.margins.top,
+    marginBottom: config.galton.margins.bottom,
+    marginHoriz: config.galton.margins.horiz,
+    rowHeight: config.galton.rowHeight,
+    leftProbability: 0.5,
+    targetWidth: -1,
+    height: -1,
+    pinsCanvasId: "galtonPinsCanvas",
+    ballsCanvasId: "galtonBallsCanvas",
+    foregroundCanvasId: "galtonForegroundCanvas",
+    canvasContainerId: "galtonCanvasContainer",
+    pinsCanvas: null,
+    pinsCtx: null,
+    ballsCanvas: null,
+    ballsCtx: null,
+    foregroundCanvas: null,
+    foregroundCtx: null,
+    canvasContainer: null,
+    pins: null,
+    preNatalAnimSteps: Math.max(1, Math.ceil(0.4*config.galton.ball.animSteps)),
+    fertile: true,
+    birthRate: config.birthRate,
+    delay: config.frameDelayMillisecs,
+    animCallback: null,
+    NORMAL_TEMPO: 0,
+    FAST_TEMPO: 1,
+    VERY_FAST_TEMPO: 2,
+    tempo: 0,  // start with normal tempo
+    calcDimensions: function(numRows){
+        // calculates the dimensions (minimum required width and exact height) for the number of rows in the argument
+        var targetHeight = this.rowHeight * (numRows-1) + 2*this.pinRadius + this.marginTop + this.marginBottom;
+        this.sin = Math.sin(this.angle);
+        this.cos = Math.cos(this.angle);
+        this.tan = Math.tan(this.angle);
+        var targetWidth = 2 * ( this.rowHeight*(numRows-1)*this.tan + this.pinRadius + this.marginHoriz );
+        return {width: targetWidth, height: targetHeight};
+    },
+    makeHtml: function(width, height){
+        // before calling this, make sure width and height are calculated appropriately. Especially, width must accommodate
+        // enough space for both the galton board and the top controls.
+        // min width for TOP is calculated in TOP.bothImagesLoaded.
+        var containerId = this.canvasContainerId;
+        var foregroundCanvasId = this.foregroundCanvasId;
+        var middleCanvasId = this.ballsCanvasId;
+        var backgroundCanvasId = this.pinsCanvasId;
+        return HtmlGen.threeCanvases(containerId, foregroundCanvasId, middleCanvasId, backgroundCanvasId, width, height);
+    },
+    init: function(numRows){
+        this.canvasContainer = $("#" + this.canvasContainerId);
+        this.pinsCanvas = $("#" + this.pinsCanvasId);
+        this.ballsCanvas = $("#" + this.ballsCanvasId);
+        this.foregroundCanvas = $("#" + this.foregroundCanvasId);
+        this.pinsCtx = this.pinsCanvas[0].getContext('2d');
+        this.ballsCtx = this.ballsCanvas[0].getContext('2d');
+        this.foregroundCtx = this.foregroundCanvas[0].getContext('2d');
+        this.drawForeground();
+        this.drawAndInitPins(numRows);
+    },
+    drawForeground: function(){
+        // foreground consist solely of a little piece of excess birthgiver
+        var h = config.galton.birthGiverExcessHeight;
+        var v = TOP.birthGiverVertices;
+        var tDx = v.x4 - v.x1;
+        var tDy = v.y4 - v.y1;
+        var cotangens = tDx/tDy;
+        var w = h * cotangens;
+        var x1 = v.x4, y1 = 0;
+        var x2 = v.x3, y2 = 0;
+        var x3 = x2 - w, y3 = h;
+        var x4 = x1 + w, y4 = h;
+        x3 = Math.round(x3);
+        x4 = Math.round(x4);
+        blah = {x1: x1, y1: y1, x2: x2, y2: y2, x3: x3, y3: y3, x4: x4, y4: y4};
+        var ctx = this.foregroundCtx;
+    	ctx.fillStyle = config.topControls.birthGiverColor;
+    	ctx.beginPath();
+    	ctx.moveTo(x1, y1);
+    	ctx.lineTo(x2, y2);
+    	ctx.lineTo(x3, y3);
+    	ctx.lineTo(x4, y4);
+    	ctx.lineTo(x1, y1);
+    	ctx.closePath();
+    	ctx.fill();
+    },
+    drawAndInitPins: function(numRows){
+        var ctx = this.pinsCtx;
+        var w = ctx.canvas.width;
+        var h = ctx.canvas.height;
+        // first, draw border left and right
+        ctx.strokeStyle = config.borderColor;
+        // left
+        ctx.beginPath()
+        ctx.moveTo(0, 0);
+        ctx.lineTo(0, h);
+        ctx.closePath();
+        ctx.stroke();
+        // right
+        ctx.beginPath()
+        ctx.moveTo(w, 0);
+        ctx.lineTo(w, h);
+        ctx.closePath();
+        ctx.stroke();
+        // background (nothing to do, it's white)
+        ctx.fillStyle = this.backgroundColor;
+        if (this.backgroundColor != "#ffffff"){
+            ctx.fillRect(0, 0, w, h);
+        }
+        // finally, the pins
+        this.pins = [];
+        var marto = this.marginTop + this.pinRadius;
+        var dx = this.rowHeight*this.tan*2;
+        for (var row=0; row<numRows; row++){
+            this.pins.push([]);
+            var centerY = marto + row * this.rowHeight;
+            var left = 0.5*w - this.tan*this.rowHeight*row;
+            for (var col=0; col<=row; col++){
+                var centerX = left + col*dx;
+                this.pins[this.pins.length-1].push({x: centerX, y: centerY});
+                this.drawPinAt(ctx, this.pins.length-1, this.pins[this.pins.length-1].length-1);
+            }
+        }
+        // add invisible pseudo pins (pure data) for the after-last row
+        this.pins.push([]);
+        var centerY = marto + numRows * this.rowHeight;
+        var left = 0.5*w - this.tan*this.rowHeight*numRows;
+        for (var col=0; col<=row; col++){
+            var centerX = left + col*dx;
+            this.pins[this.pins.length-1].push({x: centerX, y: centerY});
+        }
+    },
+    drawPinAt: function(ctx, row, col){
+        var xy = this.pins[row][col];
+        var centerX = xy.x;
+        var centerY = xy.y;
+        ctx.fillStyle = this.pinColor;
+        ctx.beginPath();                
+        ctx.arc(centerX, centerY, this.pinRadius, 0, 2 * Math.PI, false);
+        ctx.fill();
+    },
+    oracle: function(){
+        var fortuna = Math.random();
+        return ( fortuna <= this.leftProbability ? true : false );
+    },
+    doAnimationStep: function(){
+        this.microState++;
+        if (this.microState >= this.birthRate){
+            this.microState = 0;
+            if (this.fertile){
+                this.balls.push(new Ball());
+                this.ballCount++;
+                //console.log("ballCount: " + this.ballCount);
+                TOP.setBallCounterText(this.ballCount);
+                
+            }
+        }
+        for (var livingBallIndex = 0; livingBallIndex < this.balls.length; livingBallIndex++){
+            var livingBall = this.balls[livingBallIndex];
+            livingBall.eraseFromCanvas();
+        }
+        for (var livingBallIndex = 0; livingBallIndex < this.balls.length; livingBallIndex++){
+            var livingBall = this.balls[livingBallIndex];
+            livingBall.draw();
+            livingBall.advance();
+        }
+        var theNextGeneration = [];
+        for (var ballIndex = 0; ballIndex < this.balls.length; ballIndex++){
+            var ball = this.balls[ballIndex];
+            if (ball.alive){
+                theNextGeneration.push(ball);
+            } else {
+                // record finalized ball
+                var bucketIndex = ball.nextCol;
+                var numHits = ++this.bucketContents[bucketIndex];
+                this.fullestBucket = Math.max(this.fullestBucket, numHits);
+                //console.log("bucket " + bucketIndex + " has now " + numHits + " hits"); 
+                // update specific ball counters
+                var bucketElt = $("#bucket" + bucketIndex);
+                bucketElt.text(numHits);
+                if (numHits == 1000){
+                    bucketElt.css("font-size", config.buckets.over1000FontSize);
+                }
+                if (numHits == 10000){
+                    bucketElt.css("font-size", config.buckets.over10000FontSize);
+                }
+                BUCKETS.makeChart(true, gNumRows);
+                
+                ball.eraseFromCanvas();
+            }
+        }
+        this.balls = theNextGeneration;
+        this.animCallback = window.setTimeout(function(){GALTON.doAnimationStep();}, this.delay);
+        //console.log(this.animCallback);
+    },
+    startAnimation: function(){
+        this.bucketContents = new Array(gNumRows + 1);
+        for (var bucketIndex=0; bucketIndex<this.bucketContents.length; bucketIndex++){
+            this.bucketContents[bucketIndex] = 0;
+        }
+        this.balls = [];
+        this.fullestBucket = 0;
+        this.microState = this.birthRate - 1;
+        this.ballCount = 0;
+        this.doAnimationStep();
+        //this.animCallback = window.setInterval(function(){GALTON.doAnimationStep();}, this.delay);
+    },
+    stopAnimation: function(){
+        window.clearTimeout(this.animCallback);
+        //window.clearInterval(this.animCallback);
+    },
+    stopBirths: function(){
+        this.fertile = false;
+    },
+    setTempoNormal: function(){
+        this.birthRate = config.birthRate;
+        Ball.prototype.animSteps = config.galton.ball.animSteps;
+        this.delay = config.frameDelayMillisecs;
+        this.tempo = this.NORMAL_TEMPO;
+    },
+    resumeBirths: function(){
+        this.fertile = true;
+    },
+    faster: function(){
+        if (this.tempo >= this.VERY_FAST_TEMPO){
+            return;
+        }
+        this.tempo++;
+        if (this.tempo == this.FAST_TEMPO){
+            this.birthRate = 7;
+            Ball.prototype.animSteps = 5;
+            this.delay = 18;
+        }
+        if (this.tempo == this.VERY_FAST_TEMPO){
+            this.birthRate = 3;
+            Ball.prototype.animSteps = 2;
+            this.delay = 10;
+        }
+    }
+};
+function Ball(){
+    this.alive = true;
+    this.oldCenter = null;   // where the ball was drawn previously
+    /* negative values of microstate for the inital "prenatal" stage when the ball is above the topmost pin of the board.
+    They are from -GALTON.preNatalAnimSteps to -1.
+    "Normal" operation starting at microstate 0, looping cyclically to this.animSteps-1
+    */
+    this.microState = -GALTON.preNatalAnimSteps;
+                                                 
+}
+Ball.prototype.radius = config.galton.ball.radius;
+Ball.prototype.color = config.galton.ball.color;
+Ball.prototype.animSteps = config.galton.ball.animSteps;
+
+Ball.prototype.initStage = function(){
+    // ball hits pin: handle the initializations neccessitated by the onset of the new epoch.
+    this.microState = 0;
+    this.willGoLeft = GALTON.oracle();
+    this.nextRow = this.row + 1;
+    var dCol = this.willGoLeft ? 0 : 1;
+    this.nextCol = this.col + dCol;
+    var myPin = GALTON.pins[this.row][this.col];
+    var nextPin = GALTON.pins[this.nextRow][this.nextCol];
+    var x0 = myPin.x;
+    var y0 = myPin.y - GALTON.pinRadius - this.radius;
+    var x1 = nextPin.x;
+    var y1 = nextPin.y - GALTON.pinRadius - this.radius;
+    var xMix = 2/3;
+    var xMid = xMix * x1 + (1-xMix) * x0;
+    var yMix = -4/5;
+    var yMid = yMix * y1 + (1-yMix) * y0;
+    // the curve along with the ball will travel during the course of the animation, see util.js
+    this.curve = new QuadraticBezierCurve(x0, y0, xMid, yMid, x1, y1);
+}
+Ball.prototype.advance = function(){
+    this.microState++;
+    if (this.microState == 0){
+        // prenatal stage finished
+        this.row = 0;
+        this.col = 0;
+        this.initStage();
+    }
+    if (this.microState >= this.animSteps){
+        // next cycle begin (ball hits next pin or dies)
+        if (this.nextRow == gNumRows){
+            this.alive = false;
+        } else {
+            this.row = this.nextRow;
+            this.col = this.nextCol;
+            this.initStage();
+        }
+    }
+}
+Ball.prototype.drawAux = function(centerX, centerY, ctx){
+    // draw ball at position indicated
+    ctx.fillStyle = this.color;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, this.radius, 0, 2 * Math.PI, false);
+    ctx.fill();
+    var angle = 30 * degrees;
+    var sin = Math.sin(angle);
+    var cos = Math.cos(angle);
+    var rho = 0.33;
+    var lightCenterX = centerX + rho * this.radius * cos;
+    var lightCenterY = centerY - rho * this.radius * sin;
+    var fullColor = RGB.fromHexString(this.color);
+    var white = new RGB(255, 255, 255);
+    var numSteps = 5;
+    var r0 = this.radius * (1-rho);
+    for (var step = numSteps-1; step >= 0; step--){
+        var portion = (step+0.5)/numSteps;
+        var colorMix = fullColor.mixWith(white, 1 - portion*portion);
+        colorMix.setAsFill(ctx);
+        ctx.beginPath();
+        var r1 = r0 * portion;
+        ctx.arc(lightCenterX, lightCenterY, r1, 0, 2 * Math.PI, false);
+        ctx.fill();
+    }
+}
+Ball.prototype.draw = function(){
+    // find out where to draw ball and do that
+    if (this.microState < 0){
+        // prenatal case (ball hasn't hit first pin yet)
+        var topPin = GALTON.pins[0][0];
+        var xPin = topPin.x;
+        var yPin = topPin.y - GALTON.pinRadius - this.radius;
+        var veryTopY = 0;
+        var animPortion = -this.microState/GALTON.preNatalAnimSteps;
+        var centerY = animPortion * veryTopY + (1-animPortion) * yPin;
+        this.oldCenter = {x: xPin, y: centerY};
+        this.drawAux(xPin, centerY, GALTON.ballsCtx);
+    } else {
+        // postnatal ("normal") case
+        var animPortion = this.microState / this.animSteps;
+        var xy = this.curve.get(animPortion);
+        this.oldCenter = xy;
+        this.drawAux(xy.x, xy.y, GALTON.ballsCtx);
+    }
+}
+Ball.prototype.eraseFromCanvas = function(){
+    // delete ball drawing at old position
+    if (this.oldCenter == null){
+        // happens when the very first ball is drawn
+        return;
+    }
+    var ctx = GALTON.ballsCtx;
+    var delta = this.radius + config.galton.cleanupRadiusIncrease;
+    ctx.clearRect(this.oldCenter.x - delta, this.oldCenter.y - delta, 2*delta, 2*delta);
+}
+BUCKETS = {
+    tableElt: null,
+    barChartElt: null,
+    init: function(numRows){
+        this.tableElt = $("#bucketsTable");
+        var border = 1;
+        var delta = 1;
+        var cellOuterWidth = GALTON.rowHeight * GALTON.tan * 2;   // seems to work better without Math.round(...)
+        var totalWidth = (numRows + 1) * cellOuterWidth;
+        var left = 0.5 * GALTON.canvasContainer.width() - 0.5 * (numRows + 1) * cellOuterWidth + delta;
+        var cellWidth = cellOuterWidth - border;
+        var row = new HtmlGen.TR();
+        for (var numLefts = 0; numLefts <= numRows; numLefts++){
+            row.pushTd("0", {id: "bucket" + numLefts, align: "center"});
+        }
+        row.appendTo(this.tableElt);
+        this.tableElt.css("margin-left", left);
+        var bucketTableStyle = $("#bucketTableStyle");
+        var style = "table.fixed {table-layout:fixed; width:" +totalWidth+ "px;}";
+        style += "\ntable.fixed td {overflow:hidden; width:" +cellWidth+ "px;}";
+        bucketTableStyle.text(style);
+        this.tableElt.addClass("fixed");
+        this.tableElt.css(config.buckets.bucketTableCSS);
+        this.tableElt.find("td").css({
+            "border-right": "1px solid white",
+            "padding-top": "3px",
+            "padding-bottom": "3px"
+        });
+        this.marginLeft = left;
+        this.totalWidth = totalWidth;
+        this.cellOuterWidth = cellOuterWidth;
+        // and now, the bar chart
+        this.barChartElt = $("#barChartTable");
+        row = new HtmlGen.TR();
+        for (var numLefts = 0; numLefts <= numRows; numLefts++){
+            row.pushTd(HtmlGen.div("", {id: "bar" + numLefts}), {valign: "bottom"});
+        }
+        row.appendTo(this.barChartElt);
+        this.barChartElt.css("margin-left", left - delta);
+        this.barChartElt.css("margin-top", 0);
+        this.barChartElt.css("margin-bottom", 2);
+        this.barChartElt.css("border-left", "1px solid " + config.borderColor);
+        this.barChartElt.css("border-right", "1px solid " + config.borderColor);
+        this.barChartElt.height(config.barChart.height);
+    },
+    makeChart: function(bucketsExist, numRows){
+        var width = this.cellOuterWidth - config.barChart.gap;
+        for (var numLefts = 0; numLefts <= numRows; numLefts++){
+            var hits = bucketsExist ? GALTON.bucketContents[numLefts] : 0;
+            var height = bucketsExist ? config.barChart.height * hits / GALTON.fullestBucket : 0;
+            var bar = $("#bar" + numLefts);
+            bar.css({
+                width: width,
+                height: height,
+                "background-color": config.barChart.color,
+                margin: 0.5 * config.barChart.gap
+            });
+        }
+        if (BUCKETS.barChartElt.width() - GALTON.pinsCanvas.width() >= 1.5){
+            $("#barChartTable div").each(function(index){ $(this).width($(this).width()-1); });
+            BUCKETS.barChartElt.width(GALTON.pinsCanvas.width());
+        }
+        
+    }
+};
+SLIDER = {
+    tableElt: null,
+    sliderElt: null,
+    leftPercentElt: null,
+    rightPercentElt: null,
+    makeHtml: function(){
+        var tdLeftPercent  = HtmlGen.td("%", {id: "tdLeftPercent",  align: "left"});
+        var tdRightPercent = HtmlGen.td("%", {id: "tdRightPercent", align: "right"});
+        var tdLeftProbLabel  = HtmlGen.td("P[left]", {id: "tdLeftProbLabel",  align: "left"});
+        var tdRightProbLabel = HtmlGen.td("P[right]", {id: "tdRightProbLabel", align: "right"});
+        var sliderTd = HtmlGen.td(HtmlGen.div("", {id: "probSliderDiv"}), {id: "probSliderTd", colspan: 2});
+        var row1 = HtmlGen.tr(tdLeftPercent + tdRightPercent);
+        var row2 = HtmlGen.tr(sliderTd);
+        var row3 = HtmlGen.tr(tdLeftProbLabel + tdRightProbLabel);
+        return HtmlGen.table(row1 + row2 + row3, {id: "sliderTable", cellpadding: 0, cellspacing: 0});
+    },
+    setup: function(){
+        this.tableElt = $("#sliderTable");
+        this.sliderElt = this.tableElt.find("#probSliderDiv");
+        this.leftPercentElt = this.tableElt.find("#tdLeftPercent");
+        this.rightPercentElt = this.tableElt.find("#tdRightPercent");
+        this.leftPercentElt.width("50.08%");
+        this.rightPercentElt.width("49.92%");
+        this.leftPercentElt.css("border-right", "1px solid black");
+        //this.rightPercentElt.css("border-left", "1px solid black");
+        this.tableElt.width(gWidth);
+        SLIDER.sliderElt.slider({
+            min: 0,
+            max: 1,
+            step: 0.01,
+            slide: function(event, ui){
+                var w = ui.value;
+                SLIDER.setLabelValuesToProb(1 - w);
+                GALTON.leftProbability = 1 - w;
+            }
+        });
+        var bgColor = config.topControls.backgroundColor;
+        var hBorder = "1px solid " + bgColor;
+        this.tableElt.css({
+            "background-color": bgColor,
+            "border-left": hBorder,
+            "border-right": hBorder
+        });
+        var sliderHandleWidth = 33;
+        var sliderHandleHeight = 22;
+        var sliderBackgroundHeight = 13;
+        sliderHandleElt = this.sliderElt.find("a");
+        sliderHandleElt.css({
+            background: "url(img/sliderHandle.png)",
+            border: "none",
+            "margin-left": -sliderHandleWidth*0.5,
+            "margin-top": 1
+        });
+        sliderHandleElt.height(sliderHandleHeight);
+        sliderHandleElt.width(sliderHandleWidth);
+        this.sliderElt.height(sliderBackgroundHeight);
+        this.sliderElt.css({
+            "background-image": "url(img/sliderBackground.png)",
+            "background-repeat": "reapeat-y",
+            "border": "none"
+        });
+    },
+    setLabelValuesToProb: function(leftProbability){
+        var rightProbability = 1 - leftProbability;
+        var leftStr = "%d\%".sprintf(Math.round(100 * leftProbability));
+        var rightStr = "%d\%".sprintf(Math.round(100 * rightProbability));
+        this.leftPercentElt.text(leftStr);
+        this.rightPercentElt.text(rightStr);
+    },
+    setSliderToProb: function(leftProbability){
+        var rightProbability = 1 - leftProbability;
+        this.sliderElt.slider({value: rightProbability});
+    },
+    setSliderAndLabels: function(leftProbability){
+        this.setLabelValuesToProb(leftProbability);
+        this.setSliderToProb(leftProbability);
+    }
+}
+MAIN = {
+    animationIsRunning: false,
+    init: function(){
+        $("#javaScriptDisabled").html("");
+        qp = queryStringGetParametersObject();
+        var defaultNumRows = config.numRows;
+        var numRowsFromQueryString = -1;
+        if (qp != null && typeof qp == "object" && "numRows" in qp){
+            var temp = parseInt(qp.numRows);
+            if (!isNaN(temp) && temp == Math.round(temp) && temp >= 1 && temp <= config.maxRows){
+                numRowsFromQueryString = temp;
+            }
+        }
+        gNumRows = ( numRowsFromQueryString == -1 ? defaultNumRows : numRowsFromQueryString );
+        TOP.numRows = gNumRows;
+        TOP.init();
+    },
+    init2: function(numRows){
+        // called from TOP.init (or rather, the onload handler of the images loaded there)
+        gDemoElt = $("#demo");
+        gDemoElt.html("");
+        gMouseInfoElt = $("#mouseInfo");
+        var galtonWH = GALTON.calcDimensions(numRows);
+        var globalNeededWidth = TOP.makeHtml(galtonWH.width);     // also calculates makes the html
+        var topHtml = TOP.html;
+        var galtonHtml = GALTON.makeHtml(globalNeededWidth, Math.round(galtonWH.height));
+        var bucketsTableHtml = HtmlGen.table("", {id: "bucketsTable", cellSpacing: 0, cellPadding: 0});
+        var barChartTableHtml = HtmlGen.table("", {id: "barChartTable", cellSpacing: 0, cellPadding: 0});
+        var html = HtmlGen.table(
+            HtmlGen.trtd(topHtml) +
+            HtmlGen.trtd(galtonHtml) +
+            HtmlGen.trtd(bucketsTableHtml) +
+            HtmlGen.tr(HtmlGen.td("", {id: "spaceAboveBarChart"})) +
+            HtmlGen.trtd(barChartTableHtml) +
+            HtmlGen.trtd(SLIDER.makeHtml())
+        , {id: "outermostTable", cellspacing: 0, cellpadding: 0}
+        );
+        gDemoElt.html(html);
+        gWidth = globalNeededWidth;
+        GALTON.height = Math.round(galtonWH.height);
+        TOP.draw();
+        // must set display of all canvasses to block, as get rid of all spacings completely! (cellspacing = cellpadding = 0 unfortunately not sufficient for that!)
+        TOP.canvas.css("display", "block");
+        TOP.refreshNumRowsDisplay();
+        GALTON.init(numRows);
+        GALTON.pinsCanvas.css("display", "block");
+        GALTON.ballsCanvas.css("display", "block");
+        GALTON.foregroundCanvas.css("display", "block");
+        BUCKETS.init(numRows);
+        GALTON.canvasContainer.height(GALTON.pinsCanvas.height());
+        var spacerTd = $("#spaceAboveBarChart");
+        spacerTd.height(4);
+        spacerTd.css("border-left", "1px solid " + config.borderColor);
+        spacerTd.css("border-right", "1px solid " + config.borderColor);
+        BUCKETS.makeChart(false, numRows);
+        gNumRows = numRows;
+        SLIDER.setup();
+        SLIDER.setSliderAndLabels(GALTON.leftProbability);
+        //GALTON.startAnimation();
+    },
+    play: function(){
+        GALTON.fertile = true;
+        if (this.animationIsRunning){
+            GALTON.setTempoNormal();
+        } else {
+            GALTON.startAnimation();
+            this.animationIsRunning = true;
+        }
+    },
+    reset: function(){
+        GALTON.stopAnimation();
+        this.init2(config.numRows);
+        GALTON.setTempoNormal();
+        GALTON.fertile = true;
+        this.animationIsRunning = false;
+        TOP.numRows = config.numRows;
+        TOP.refreshNumRowsDisplay();
+    },
+    faster: function(){
+        GALTON.faster();
+    },
+    stop: function(){
+        GALTON.fertile = false;
+    },
+    incRows: function(){
+        if (GALTON.fertile && this.animationIsRunning){
+            shakeOlli();
+            return;
+        }
+    	if (TOP.numRows >= config.maxRows){
+    		return;
+    	}
+    	TOP.numRows++;
+    	TOP.refreshNumRowsDisplay();
+        GALTON.stopAnimation();
+        GALTON.fertile = true;
+        this.animationIsRunning = false;
+        this.init2(TOP.numRows);
+    },
+    decRows: function(){
+        if (GALTON.fertile && this.animationIsRunning){
+            shakeOlli();
+            return;
+        }
+    	if (TOP.numRows <= 1){
+    		return;
+    	}
+    	TOP.numRows--;
+    	TOP.refreshNumRowsDisplay();
+        GALTON.stopAnimation();
+        GALTON.fertile = true;
+        this.animationIsRunning = false;
+        this.init2(TOP.numRows);
+    }    
+};
+
+        </script>        
+        
+        
+    
+    </head>
+
+    <body onload="MAIN.init();">
+        <div id="javaScriptDisabled">you need JavaScript (and a modern browser) to view this page!</div>
+        <div id="demo"></div>
+        <div id="mouseInfo"></div>
+        
+        <ol>
+            <li>Press the Play icon to start the animation, the Pause icon to stop it</li>
+            <li id="olliRows">To see the animation with a different number of rows, first stop the animation, then use the +/- buttons to change the number of rows, then restart the animation</li>
+            <li>To increase the speed, press the FastForward icon. Pressing it a second time will make it even faster. Pressing Play again while the animation is running will decrease the speed again.</li>
+            <li>Press Reset to return to defaults (15 rows and slow speed)</li>
+        </ol>
+    </body>
+</html>
+<script type="text/javascript">
+olli = $("#olliRows");
+function shakeOlli(){
+    olli.effect("shake");
+}
+</script>

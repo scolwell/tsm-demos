@@ -1,0 +1,99 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+    	<meta http-equiv="content-type" content="text/html" />
+    	<meta name="author" content="Thomas Kloecker" />
+    	<meta name="viewport" content="width=device-width, initial-scale=1">
+    	<title>Demonstrations</title>
+    	
+    	<!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+        
+        <script type="text/javascript" src="lib/jquery-2.0.3.js"></script>
+        <script type="text/javascript" src="lib/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+        
+        <script type="text/javascript" src="lib/googleStringTools.js"></script>
+        <script type="text/javascript" src="lib/util.js"></script>
+        <script type="text/javascript" src="lib/htmlGeneratorTools.js"></script>
+        <script type="text/javascript" src="lib/css.js"></script>
+        <link href="the.css" rel="stylesheet" type="text/css"/>
+        <link href="lib/jquery-ui-1.10.3.custom/css/start/jquery-ui-1.10.3.custom.min.css" rel="stylesheet" type="text/css"/>
+        
+        <script type="text/javascript">
+
+H = HtmlGen;
+
+function Demo(title, url){
+    this.title = title;
+    this.url = url;
+}
+Demo.prototype.makeLink = function(){
+    return '<div class="mb-2"><a href="' + this.url + '" class="btn btn-outline-primary btn-sm">' + this.title + '</a></div>';
+}
+function initPage(){
+    $("#noJavaScript").html("");
+    var linksElt = $("#links");
+    var demos = [
+        new Demo("Figure 2.9 (Birthday Problem)", "Figure2.9.html"),
+        new Demo("Figure 2.22 (Interactive Boxplot)", "Figure2.22.html"),
+        new Demo("Figure 3.4 (Skewed and non-skewed distributions)", "Figure3.4.html"),
+        new Demo("Figure 4.11 (Proportion of Heads)", "Figure4.11.html"),
+        new Demo("Figure 5.11 (Area Under the Normal Curve)", "Figure5.11.html"),
+        new Demo("Figure 6.3 (Example of a Sampling Distribution of Means)", "Figure6.3.html"),
+        new Demo("Figure 6.8 (Sample Size and Standard Error)", "Figure6.8.html"),
+        new Demo("Figure 6.9 (Distribution of Sample Means)", "Figure6.9.html"),
+        new Demo("Figure 7.9 (Example of Two-Tailed Hypothesis Test)", "Figure7.9.html"),
+        new Demo("Figure 8.4 (Confidence Internval for the Mean of LSAT Scores)", "Figure8.4.html"),
+        new Demo("Figure 8.7 (Comparison of Two-Tailed Critical Values z and t)", "Figure8.7.html"),
+        new Demo("Figure 10.2 (2 independent samples comparison of means t-test)", "Figure10.2.html"),
+        new Demo("Figure 10.3 (paired t test)", "Figure10.3.html"),
+        new Demo("Figure 11.1 (towards F test)", "Figure11.1.html"),
+        new Demo("Figure 12.1", "Figure12.1.html"),
+        new Demo("Figure 4.8 (Union and Intersection)", "Figure48.html"),
+        new Demo("Figure 11.2 (F test)", "Figure112.html"),
+        new Demo("Lottery Simulation", "LotterySimulation.html"),
+        new Demo("Power And Effect Size", "PowerEffect.html"),
+        new Demo("Regression Example", "RegressionExample.html"),
+        new Demo("Single Sample z and t", "SingleSampleZandT.html"),
+        new Demo("Table 13.3 (chi squared test)", "Table133.html"),
+        new Demo("Galton Board", "galton.html")
+    ];
+    var html = "";
+    for (var i=0; i<demos.length; i++){
+        html += demos[i].makeLink();
+    }
+    linksElt.html(html);
+}
+
+        </script>        
+
+<style>
+/* horizontal pixel distance between two links */
+div.spacer {
+    height: 8px;
+}
+</style>
+    
+    </head>
+
+    <body onload="initPage();">
+        <div class="container-fluid py-4">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 col-md-10">
+                    <div id="noJavaScript" style="display: none; height: 0; margin: 0; padding: 0; border: none;">You need JavaScript to view this page.</div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title mb-0">Statistical Demonstrations</h2>
+                        </div>
+                        <div class="card-body">
+                            <div id="links" class="d-grid gap-2"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    </body>
+</html>

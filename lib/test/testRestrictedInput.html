@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html>
+<!--
+// written by Thomas "mathheadinclouds" Kloecker
+// THIS CODE IS PUBLIC DOMAIN. YOU DO NOT "OWN" IT IN ANY WAY, YOU MAY USE IT IN ANY AND EVERY WAY.
+// PLEASE REFRAIN FROM REMOVING THIS NOTICE
+-->
+    <head>
+    	<meta http-equiv="content-type" content="text/html" />
+    	<meta name="author" content="Thomas Kloecker" />
+    	<title></title>
+        
+        <script type="text/javascript" src="../jquery-1.10.2.min.js"></script>
+        <script type="text/javascript" src="../jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+        <script type="text/javascript" src="../googleStringTools.js"></script>
+        <script type="text/javascript" src="../util.js"></script>
+        <script type="text/javascript" src="../htmlGeneratorTools.js"></script>
+        <script type="text/javascript" src="../css.js"></script>
+        <script type="text/javascript" src="../../slider.js"></script>
+        <script type="text/javascript" src="../../verticalSlider2.js"></script>
+        
+        <link href="../jquery-ui-1.10.3.custom/css/start/jquery-ui-1.10.3.custom.min.css" rel="stylesheet" type="text/css"/>
+        
+       
+        <script type="text/javascript">
+// testRestrictedInput.html        
+        
+TEST = {
+    run: function(){
+        this.nat = new naturalNumberTextInput({
+            parentId: "naturalParent",
+            id: "posNums",
+            atts: {size: 12},
+            callback: function(value, evt){
+                TEST.callbackNat(value, evt);
+            },
+            value: 7654321
+        });
+        this.posFloat1 = new nonNegativeNonTinyTextInput({
+            parentId: "floatPosNonTinyParent",
+            id: "floatPosNonTiny",
+            atts: {size: 12},
+            callback: function(value, evt){
+                TEST.callbackFloatPosNonTiny(value, evt);
+            },
+            value: 3.254
+        });
+        this.float1 = new nonTinyTextInput({
+            parentId: "floatNonTinyParent",
+            id: "floatNonTiny",
+            atts: {size: 12},
+            callback: function(value, evt){
+                TEST.callbackFloatNonTiny(value, evt);
+            },
+            value: -3.45
+        });
+    },
+    callbackNat: function(value, evt){
+        console.log("nat: " + value);
+    },
+    callbackFloatPosNonTiny: function(value, evt){
+        console.log("pos non tiny float: " + value);
+    },
+    callbackFloatNonTiny: function(value, evt){
+        console.log("non tiny float: " + value);
+    }
+};
+
+function initPage(){
+    TEST.run();
+}
+        </script>        
+        
+        
+    
+    </head>
+
+    <body onload="initPage();">
+        natural number: <div id="naturalParent"></div>
+        non-negative real number without exponent notation: <div id="floatPosNonTinyParent"></div>
+        real number without exponent notation: <div id="floatNonTinyParent"></div>
+    </body>
+</html>

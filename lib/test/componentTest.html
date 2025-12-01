@@ -1,0 +1,344 @@
+<!DOCTYPE HTML>
+<html>
+<!--
+// written by Thomas "mathheadinclouds" Kloecker
+// THIS CODE IS PUBLIC DOMAIN. YOU DO NOT "OWN" IT IN ANY WAY, YOU MAY USE IT IN ANY AND EVERY WAY.
+// PLEASE REFRAIN FROM REMOVING THIS NOTICE
+-->
+    <head>
+    	<meta http-equiv="content-type" content="text/html" />
+    	<meta name="author" content="Thomas Kloecker" />
+    	<title></title>
+
+<!--        
+        <script type="text/javascript" src="lib/jquery-1.10.2.min.js"></script>
+-->        
+        <script type="text/javascript" src="../jquery-2.0.3.js"></script>
+        <script type="text/javascript" src="../jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+        <script type="text/javascript" src="../googleStringTools.js"></script>
+        <script type="text/javascript" src="../util.js"></script>
+        <script type="text/javascript" src="../htmlGeneratorTools.js"></script>
+        <script type="text/javascript" src="../css.js"></script>
+        <script type="text/javascript" src="../components.js"></script>
+        <link href="../../the.css" rel="stylesheet" type="text/css"/>
+        <link href="../jquery-ui-1.10.3.custom/css/start/jquery-ui-1.10.3.custom.min.css" rel="stylesheet" type="text/css"/>
+        
+
+        <script type="text/javascript">
+var H = HtmlGen;
+
+var APP = {
+    blahblah: 77,
+    callbacks: {
+        theButton: function(evt, component, app, domElt){
+            $("#log").html(app.blahblah);
+            eee = evt;
+            ccc = component;
+            ddd = domElt;
+        }
+    },
+    run: function(){
+        new Button({
+            label: "lorem ipsum",
+            id: "testButton",
+            name: "theButton",
+            app: this,
+            style: {"font-weight": "bold"}
+        });
+        $("#universe").html(this.components.theButton.html);
+        this.components.theButton.init();
+    }
+};
+var Stest = {
+    callbacks: {
+        slider1: function(value, mode, component, app, event, ui){
+            $("#log").append("name: " + component.name + " value: " + value + " mode: " + mode + "<br />");
+            ccc = component;
+            aaa = app;
+            eee = event;
+            uuu = ui;
+        },
+        slider2: function(value, mode, component, app, event, ui){
+            $("#log").append("name: " + component.name + " value: " + value + " mode: " + mode + "<br />");
+        },
+        slider3: function(value, mode, component, app, event, ui){
+            $("#log").append("name: " + component.name + " value: " + value + " mode: " + mode + "<br />");
+        },
+    },
+    run: function(){
+        new Slidr({
+            name: "slider1",
+            app: this
+        });
+        new Slidr({
+            name: "slider2",
+            app: this,
+            style: "jQuery"
+        });
+        new Slidr({
+            name: "slider3",
+            style: "bigStyle",
+            app: this
+        });
+        $("#universe").html(
+            H.table(
+                H.trtd(this.components.slider1.html, {"class": "fullWidth"}) +
+                H.trtd(this.components.slider2.html, {"class": "fullWidth"}) +
+                H.trtd(this.components.slider3.html, {"class": "fullWidth"})
+                ,{width: 800}
+            )
+        );
+        this.components.slider1.init();
+        this.components.slider2.init();
+        this.components.slider3.init();
+    }
+};
+var A3 = {
+    width: 100,
+    height: 100,
+    callbacks: {
+        widthSlider:  function(value, mode, component, app, event, ui){
+            app.width = value;
+            app.action();
+        },
+        heightSlider:  function(value, mode, component, app, event, ui){
+            app.height = value;
+            app.action();
+        },
+        dummySlider:   function(value, mode, component, app, event, ui){
+            
+        }
+    },
+    action: function(){
+        this.testElt.css({
+            width: this.width,
+            height: this.height
+        });
+    },
+    run: function(){
+        var ws = new SliderPlus({
+            name: "widthSlider", id: "widthSlider",
+            app: this,
+            min: 10, max: 500, step: 1, value: this.width
+        });
+        var hs = new SliderPlus({
+            name: "heightSlider", id: "heightSlider",
+            app: this,
+            min: 10, max: 500, step: 1, value: this.height
+        });
+        var ds = new SliderPlus({
+            name: "dummySlider", id: "dummySlider",
+            app: this,
+            min: 0, max: 1, step: 0.001, value: 0.321,
+            xtra: {
+                //formatStr: "%4.2f",
+                formatFun: function(value){
+                    return "%5.1f".sprintf(100 * value) + "%"
+                },
+                valWidth: "55px"
+            }
+        });
+        var sliderTable = H.table(
+            H.tr(H.thLeft("width") + ws.sliderHtml + ws.valueHtml) +
+            H.tr(H.thLeft("height") + hs.sliderHtml + hs.valueHtml) +
+            H.tr(H.thLeft("dummy") + ds.sliderHtml + ds.valueHtml)
+            ,{"class": "fullWidth"}
+        );
+        var testDiv = H.div("", {id: "test"});
+        $("#universe").html(
+            H.table(
+                H.trtd(sliderTable, {"class": "fullWidth"}) +
+                H.trtd(testDiv)
+                , {width: 530}
+            )
+        );
+        this.testElt = $("#test");
+        this.testElt.css({"background-color": "yellow"});
+        this.initComponents();
+        this.action();
+    },
+    initComponents: function(){
+        for (var c in this.components){
+            var component = this.components[c];
+            if (component.parentComponent == null){
+                component.init();
+            }
+        }
+    }
+};
+var A4 = {
+    width: 100,
+    height: 100,
+    callbacks: {
+        widthSlider:  function(value, mode, component, app, event, ui){
+            app.width = value;
+            app.action();
+        },
+        heightSlider:  function(value, mode, component, app, event, ui){
+            app.height = value;
+            app.action();
+        },
+        dummySlider:   function(value, mode, component, app, event, ui){
+            
+        }
+    },
+    action: function(){
+        this.testElt.css({
+            width: this.width,
+            height: this.height
+        });
+    },
+    run: function(){
+        var wOpts = {
+            label: "width", name: "widthSlider", id: "widthSlider",
+            min: 10, max: 500, step: 1, value: this.width
+        };
+        var hOpts = {
+            label: "height", name: "heightSlider", id: "heightSlider",
+            min: 10, max: 500, step: 1, value: this.height
+        };
+        var dummyOpts = {
+            name: "dummySlider", id: "dummySlider", label: "lorem ipsum",
+            min: 0, max: 1, step: 0.001, value: 0.321,
+            xtra: {
+                formatFun: function(value){
+                    return "%5.1f".sprintf(100 * value) + "%"
+                },
+                valWidth: "55px"
+            }
+        };
+        var st = new SliderTable(this, "sliderTable", [wOpts, hOpts, dummyOpts]);
+        var testDiv = H.div("", {id: "test"});
+        $("#universe").html(
+            H.table(
+                H.trtd(st.html, {"class": "fullWidth"}) +
+                H.trtd(testDiv)
+                , {width: 530}
+            )
+        );
+        this.testElt = $("#test");
+        this.testElt.css({"background-color": "yellow"});
+        this.initComponents();
+        this.action();
+    },
+    initComponents: function(){
+        for (var c in this.components){
+            var component = this.components[c];
+            if (component.parentComponent == null){
+                component.init();
+            }
+        }
+    }
+};
+var A5 = {
+    values: [10,20,30,40,50],
+    callbacks: {
+        sliderTable: function(index, value, mode, component, app, event, ui){
+            app.values[index] = value;
+            app.action();
+        }
+    },
+    action: function(){
+        this.testElt.html(this.values.join(", "));
+    },
+    run: function(){
+        var THIS = this;
+        var opts = {
+            min: 0,
+            max: 100,
+            value: function(i){
+                return THIS.values[i];
+            },
+            step: 0.5,
+            label: function(i){
+                return "blah " + i + ": ";
+            }
+        };
+        var st = new SliderTable2(5, this, "sliderTable", opts);
+        var testDiv = H.div("", {id: "test"});
+        $("#universe").html(
+            H.table(
+                H.trtd(st.html, {"class": "fullWidth"}) +
+                H.trtd(testDiv)
+                , {width: 530}
+            )
+        );
+        this.testElt = $("#test");
+        this.initComponents();
+        this.action();
+    },
+    initComponents: function(){
+        for (var c in this.components){
+            var component = this.components[c];
+            if (component.parentComponent == null){
+                component.init();
+            }
+        }
+    }
+};
+var A6 = {
+    values: [99,99,99],
+    callbacks: {
+        sliderTable: function(index, value, mode, component, app, event, ui){
+            app.values[index] = value;
+            app.action();
+        }
+    },
+    action: function(){
+        this.testElt.html(this.values.join(", "));
+        this.testElt.css("background-color", "rgb(" + this.values.join(",") + ")");
+    },
+    run: function(){
+        var THIS = this;
+        var opts = {
+            min: 0,
+            max: 255,
+            value: function(i){
+                return THIS.values[i];
+            },
+            step: 1,
+            //label: function(i){return "blah " + i + ": ";}
+            label: ["red", "green", "blue"]
+        };
+        var st = new SliderTable2(3, this, "sliderTable", opts);
+        var testDiv = H.div("", {id: "test", style: "border: 1px solid black; width: 400px; height: 300px;"});
+        $("#universe").html(
+            H.table(
+                H.trtd(st.html, {"class": "fullWidth"}) +
+                H.trtd(testDiv)
+                , {width: 530}
+            )
+        );
+        this.testElt = $("#test");
+        this.initComponents();
+        this.action();
+    },
+    initComponents: function(){
+        for (var c in this.components){
+            var component = this.components[c];
+            if (component.parentComponent == null){
+                component.init();
+            }
+        }
+    }
+};
+function initPage(){
+    APP.run();
+    //Stest.run();
+    //A6.run();
+}
+        </script>        
+
+<style>
+
+
+</style>        
+    
+    </head>
+
+    <body onload="initPage();">
+        <div id="universe"></div>
+        <div id="log"></div>
+        <div id="dummy"></div>
+    </body>
+</html>

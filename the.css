@@ -1,0 +1,1484 @@
+/* the.css - Bootstrap Enhanced */
+
+/* Import TSM fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700;800&display=swap');
+
+/* CRITICAL: Remove ALL yellow backgrounds */
+* {
+    box-sizing: border-box;
+}
+
+body, html {
+    background-color: #ffffff !important;
+    background: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Force remove any yellow/warning colors */
+.alert-warning,
+.overCanvasInfo, 
+table#Figure222 .overCanvasInfo,
+table#Figure222 .overCanvasInfo table,
+table#Figure222 .overCanvasInfo table th,
+table#T133 table#resultTable,
+table#fig121 td#resultTd,
+*[style*="background-color: #FFC"],
+*[style*="background-color: #ffffda"],
+*[style*="background-color: #fff3cd"] {
+    background-color: white !important;
+    background: white !important;
+}
+
+/* Remove yellow borders and outlines */
+* {
+    border-color: #dee2e6 !important;
+}
+
+.container-fluid,
+#universe,
+.card,
+fieldset,
+canvas,
+table {
+    border: 1px solid #dee2e6 !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+    outline: none !important;
+}
+
+/* Force white background on all major containers */
+.container-fluid,
+#universe,
+.card,
+.card-body,
+.card-header {
+    background: white !important;
+    background-color: white !important;
+}
+
+/* Bootstrap compatibility and enhancements */
+
+/* Make sure demonstrations fit well within Bootstrap containers */
+.container-fluid {
+    max-width: 1400px;
+    margin: 0 auto !important;
+    padding: 20px !important;
+    margin-top: 0 !important;
+    padding-top: 20px !important;
+    background: white !important;
+}
+
+/* Enhanced button styling to work with Bootstrap */
+span.customSelect, button {
+    transition: all 0.2s ease-in-out;
+}
+
+span.customSelect:hover, button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Card-like styling for demonstration content */
+#universe {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border: 1px solid #dee2e6;
+}
+
+/* Improved fieldset styling */
+fieldset {
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 15px;
+    margin: 10px 0;
+    background: #ffffff;
+}
+
+fieldset legend {
+    font-weight: 600;
+    color: #495057;
+    font-size: 1.1em;
+    padding: 0 10px;
+    border: none;
+    margin-bottom: 0;
+    width: auto;
+}
+
+/* Responsive table styling */
+table {
+    max-width: 100%;
+}
+
+/* Enhanced spacing for better readability */
+.MathJax_Display {
+    margin: 1rem 0 !important;
+}
+
+/* Navigation enhancement */
+.demo-navigation {
+    margin-bottom: 20px;
+}
+
+.demo-navigation .btn {
+    margin-right: 10px;
+}
+
+/* Enhanced button styling that works with existing button system */
+span.outerEisButton {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    border: 1px solid #0056b3;
+    color: white;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0,123,255,0.3);
+}
+
+span.outerEisButton:hover {
+    background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,123,255,0.4);
+}
+
+span.outerEisButton.chosen {
+    background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+    border-color: #1e7e34;
+}
+
+/* Enhanced table styling */
+table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+table td, table th {
+    padding: 8px 12px;
+}
+
+/* Style for result tables */
+table.resultsTable td, 
+table.resultsTable th {
+    border: 1px solid #dee2e6;
+    background: white;
+}
+
+table.resultsTable th {
+    background: #f8f9fa;
+    font-weight: 600;
+}
+
+/* Enhanced input styling */
+input[type="text"], input[type="number"] {
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 6px 12px;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+input[type="text"]:focus, input[type="number"]:focus {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+}
+
+/* Slider enhancements */
+.ui-slider {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+}
+
+.ui-slider .ui-slider-handle {
+    background: #007bff;
+    border: 2px solid #007bff;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.ui-slider .ui-slider-handle:hover {
+    background: #0056b3;
+    border-color: #0056b3;
+    transform: scale(1.1);
+}
+
+/* TSM-styled sliders (applied by JS via .tsm-slider class) */
+.tsm-slider {
+    position: relative;
+    height: 8px;
+    background: #e9ecef !important;
+    border: 1px solid #ced4da !important;
+    border-radius: 999px !important;
+}
+
+.tsm-slider .ui-slider-range {
+    background: #b6d4fe !important; /* subtle filled track */
+    border: none !important;
+}
+
+.tsm-slider .ui-slider-handle,
+.tsm-slider-handle {
+    top: -6px; /* center 18px handle on 8px track */
+    width: 18px !important;
+    height: 18px !important;
+    background: #0d6efd !important; /* primary */
+    border: 2px solid #ffffff !important;
+    border-radius: 50% !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.tsm-slider .ui-slider-handle:hover,
+.tsm-slider-handle:hover {
+    background: #0b5ed7 !important;
+}
+
+/* Canvas containers */
+canvas {
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    background: white;
+}
+
+table#F68 td.sliderValueElt, table#SSZT td.sliderValueTd {
+    background-color: #fff3cd;
+    height: 16px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+}
+
+
+body, table, tr, td, th, fieldset, legend, a, input, button, div, span {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+}
+span.customSelect, button {
+    /* Styles For Your Select Box */
+    /*background-color: #f5f0de;*/
+    /*position: relative;*/
+    font-size:13px;
+    background: -moz-linear-gradient(top,  #f5f5f5 0%, #c2c2c2 100%); /* FF3.6+ */
+    background: -webkit-linear-gradient(top,  #9f5f5f 0%,#c2c2c2 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #f5f5f5 0%,#c2c2c2 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #f5f5f5 0%,#c2c2c2 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #f5f5f5 0%,#c2c2c2 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f5f5f5', endColorstr='#c2c2c2',GradientType=0 ); /* IE6-9 */
+    color:#222;
+    padding:4px 6px;
+    border:1px solid #555;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px 4px;
+}
+table#SSZT span.customSelect {
+    font-weight: bold;
+    font-size: 18px;
+    white-space: nowrap;
+}
+.customSelectInner {
+    background:url(lib/selectArrow.png) no-repeat center right;
+}
+span.customSelect.changed {
+/* You can use this if you want a different style after user has made a selection */
+}
+.customSelectFocus {
+/* You can use this if you want a different style after user has made a selection */
+}
+.customSelectOpen {
+/* You can use this if you want a different style after user has made a selection */
+}
+
+button:hover {
+    cursor: pointer;
+    background: -moz-linear-gradient(top,  #fff 0%, #abf 100%); /* FF3.6+ */
+    background: -webkit-linear-gradient(top,  #9f5f5f 0%,#abf 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #fff 0%,#abf 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #fff 0%,#abf 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #fff 0%,#abf 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fff', endColorstr='#abf',GradientType=0 ); /* IE6-9 */
+}
+button:active {
+    background: -moz-linear-gradient(top,  #fff 0%, #fba 100%); /* FF3.6+ */
+    background: -webkit-linear-gradient(top,  #9f5f5f 0%,#fba 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #fff 0%,#fba 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #fff 0%,#fba 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #fff 0%,#fba 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fff', endColorstr='#fba',GradientType=0 ); /* IE6-9 */
+}
+button:disabled {
+    cursor: default;
+    font-size:12px;
+    background: -moz-linear-gradient(top,  #f5f5f5 0%, #c2c2c2 100%); /* FF3.6+ */
+    background: -webkit-linear-gradient(top,  #9f5f5f 0%,#c2c2c2 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #f5f5f5 0%,#c2c2c2 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #f5f5f5 0%,#c2c2c2 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #f5f5f5 0%,#c2c2c2 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f5f5f5', endColorstr='#c2c2c2',GradientType=0 ); /* IE6-9 */
+    color:#999;
+    padding:4px 6px;
+    border:1px solid #555;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px 4px;
+}
+button.chosen:hover {
+    cursor: default;
+}
+.fullWidth {
+    width: 100%;
+}
+.overCanvasInfo {
+    position: absolute;
+    z-index: 100;
+}
+table#F102 .spacer {
+    min-width: 9px;
+}
+.spacerTest {
+    
+}
+.spacer {
+    min-width: 13px;
+}
+.spacer2 {
+    min-width: 19px;
+}
+.lineBreakDisabled {
+    white-space:  nowrap;
+}
+.info {
+    text-align: center;
+}
+.positionRelative {
+    position: relative;
+}
+.positionAbsolute {
+    position: absolute;
+}
+.errorBorder {
+    border: 1px solid red;
+}
+.standardBorder {
+    border: 1px solid black;
+}
+.transpaBorder {
+    border: 1px solid transparent;
+}
+.bold {
+    font-weight: bold;
+}
+.italic {
+    font-style: italic;
+}
+.blue {
+    color: #009;
+}
+span.outerEisButton {
+  -moz-user-select: none;
+  background-color: #ccc;
+  background-image: none;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  border: 1px solid #aaa;
+  color: #000000;
+  cursor: pointer;
+  outline: medium none;
+  overflow: hidden;
+  text-align: center;
+  z-index: 2;
+  padding:1px 5px;
+  line-height:14px;
+}
+span.outerEisButton.small {
+    /*display: table-cell;*/
+    display: inline-block;
+}
+span.outerEisButton.big {
+    display: inline-block;
+}
+span.innerEisButton {
+	border: 0px none;
+	overflow: hidden;
+	font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+	font-weight: normal;
+	font-style: normal;
+	
+}
+span.big > span.innerEisButton {
+  color: #222222;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: normal;
+  text-align: left;
+}
+span.small>span.innerEisButton {
+	font-size: 12px;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+span.outerEisButton:hover {
+	border-color:#333;
+    
+}
+span.outerEisButton.chosen, span.outerEisButton.chosen:hover {
+  background:#a3a3a3;
+}
+span.outerEisButton.chosen>span.innerEisButton {
+    font-weight: 800;
+}
+/*******************************************************************************************************
+ Single Sample z and t test
+*******************************************************************************************************/
+
+table#SSZT .sliderValueTd {
+    min-width: 35px;
+}
+table#SSZT .leftSliderTableSpacer {
+    min-width: 9px;
+}
+table#SSZT .MathJax_Display {
+    text-align: left !important;
+}
+table#SSZT table#results td>span.reject {
+    font-size: 110%;
+    font-weight: bold;
+    color: green;
+}
+table#SSZT table#results td>span.failReject {
+    font-size: 110%;
+    font-weight: bold;
+    color: red;
+}
+table#SSZT table#results {
+    min-width: 310px;
+}
+table#SSZT td#math {
+    padding-left: 45px;
+}
+table#SSZT td#tdResults {
+    padding-right: 45px;
+}
+table#SSZT button.chosen, table#PowerEffect button.chosen, table#T133 button.chosen {
+    background: -moz-linear-gradient(bottom,  #69b3db 0%, #e3f2fa 100%); /* FF3.6+ */
+    background: -webkit-linear-gradient(bottom,  #69b3db 0%,#e3f2fa 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(bottom,  #69b3db 0%,#e3f2fa 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(bottom,  #69b3db 0%,#e3f2fa 100%); /* IE10+ */
+    background: linear-gradient(to top,  #69b3db 0%,#e3f2fa 100%); /* W3C */
+    color:#000;
+    -webkit-box-shadow: inset 2px 2px 3px 0 black, inset -1px -1px 3px 0 white;
+    -moz-box-shadow: inset 2px 2px 3px 0 black, inset -1px -1px 3px 0 white;
+    box-shadow: inset 2px 2px 3px 0 black, inset -1px -1px 3px 0 white;
+}
+table#SSZT table#sliderTable {
+    padding-left: 7px;
+    padding-right: 7px;
+}
+table#SSZT table#testSelectorTable {
+    padding-left: 7px;
+}
+table#SSZT button.alphaButton, table#PowerEffect button.alphaButton {
+    min-width: 45px;
+}
+table#SSZT td#testSelectorTd {
+    padding-left: 18px;
+}
+table#SSZT td.sliderValueTd {
+    min-width: 50px;
+}
+/*******************************************************************************************************
+Figure121 (Regression Test)
+*******************************************************************************************************/
+table#fig121 .failToRejectNull, table#T133 .failToRejectNull {
+    font-weight: bold;
+    text-align: center;
+    font-size: 18px;
+    color: rgb(160, 0, 0);
+}
+table#fig121 .rejectNull {
+    font-weight: bold;
+    text-align: center;
+    font-size: 18px;
+    color: rgb(0, 160, 0);
+    padding-bottom: 13px;
+    padding-top: 14px;
+}
+table#fig121 td#resultTd {
+    background-color: #ffffda;
+    min-width: 173px;
+}
+table#fig121 table#resultTable.reject {
+    padding-left: 0px;
+}
+table#fig121 table#resultTable.failToReject {
+    padding-left: 10px;
+}
+table#fig121 .total {
+    font-weight: bold;
+}
+table#fig121 {
+    background-color: white
+}
+table#fig121 canvas {
+    background-color: white;
+}
+
+table#fig121 .total {
+    border-top: 1px solid black;
+}
+table#fig121 td.xy.total, table#fig121 td.xx.total, table#fig121 td.yy.total {
+    min-width: 70px;
+}
+table#fig121 table#regressionTable {
+    border-bottom: 1px solid black;
+}
+table#fig121 table#regressionTable td.trash, table#fig121 table#regressionTable th.trash  {
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+table#fig121 table#regressionTable th.upperHeading {
+    background-color: #e6e6e6;
+}
+table#fig121 table#regressionTable td {
+    padding-left: 9px;
+    padding-right: 9px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+}
+table#fig121 table#regressionTable img.trashImg {
+    cursor: pointer;
+}
+table#fig121 fieldset#summaryFieldset {
+    min-width: 455px;
+}
+table#fig121 button#resetBtn {
+    min-width: 100px;
+}
+/*******************************************************************************************************
+ Final Regresison Example
+*******************************************************************************************************/
+table#RegressEx .failToRejectNull {
+    font-weight: bold;
+    text-align: center;
+    font-size: 18px;
+    color: rgb(160, 0, 0);
+}
+table#RegressEx .rejectNull {
+    font-weight: bold;
+    text-align: center;
+    font-size: 18px;
+    color: rgb(0, 160, 0);
+    padding-bottom: 13px;
+    padding-top: 14px;
+}
+table#RegressEx td#resultTd {
+    background-color: #ffffda;
+    min-width: 173px;
+    height: 55px;
+    min-height: 55px;
+    -webkit-box-shadow: inset 2px 2px 3px 0 black, inset -1px -1px 3px 0 white;
+    -moz-box-shadow: inset 2px 2px 3px 0 black, inset -1px -1px 3px 0 white;
+    box-shadow: inset 2px 2px 3px 0 black, inset -1px -1px 3px 0 white;
+}
+table#RegressEx table#upper1>tbody>tr>td, table#RegressEx table#upper1>tbody>tr>th {
+    border-right: 1px solid black;
+    border-top: 1px solid black;
+    padding: 8px;
+}
+table#RegressEx table#upper1 {
+    border-left: 1px solid black;
+    border-bottom: 1px solid black;
+}
+table#RegressEx table#obsTable td, table#RegressEx table#obsTable th {
+    border-right: 1px solid black;
+    border-top: 1px solid black;
+}
+table#RegressEx table#obsTable {
+    border-left: 1px solid black;
+    border-bottom: 1px solid black;
+}
+table#RegressEx table#upper td#resetButtonTd {
+    padding: 5px;
+    border-right: 1px solid black;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+}
+table#RegressEx canvas {
+    border: 0;
+    background-color: white;
+}
+table#RegressEx {
+    background-color: white;
+    border: 2px solid #e6e6e6;
+}
+table#RegressEx table#observationsTable th#actualHeader {
+    min-width: 155px;
+}
+table#RegressEx table#observationsTable tr.lowestHeaderRow>th, table#RegressEx table#observationsTable tr.lowestHeaderRow>td {
+    border-bottom: 1px solid black;
+}
+table#RegressEx table#observationsTable tr.lowestHeaderRow>td#xHeader, table#RegressEx table#observationsTable tr>td.obsX {
+    border-left: 1px solid black;
+}
+table#RegressEx table#observationsTable tr.lowestHeaderRow>td#yHeader, table#RegressEx table#observationsTable tr>td.obsY {
+    border-right: 1px solid black;
+}
+table#RegressEx table#observationsTable tr>th#actualHeader, table#RegressEx table#observationsTable tr>th#emptyAboveActual  {
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+}
+table#RegressEx table#observationsTable  {
+    border: 1px solid black;
+}
+table#RegressEx th.hyothesisTest {
+    font-size: 110%;
+    font-weight: bold;
+    color: rgb(160, 0, 0);
+}
+table#RegressEx span.h0 {
+    padding-right: 8px;
+}
+table#RegressEx table#observationsTable th#leastSquaresRegressionHeading {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+table#RegressEx table#observationsTable th#observationHeader {
+    padding-left: 4px;
+    padding-right: 4px;
+}
+table#RegressEx table#observationsTable img.trashImg {
+    cursor: pointer;
+}
+table#RegressEx table#upper1 td.showHideWhatTd {
+    padding-left: 10px;
+    padding-right: 6px;
+}
+table#RegressEx table#upper1 th#showTh {
+    padding-bottom: 4px;
+}
+table#RegressEx table#upper1 table#regressionOptionsTable table#showHideChecksTable td {
+    white-space: nowrap;
+}
+table#RegressEx table#upper td#resetButtonTd {
+    min-width: 83px;
+}
+table#RegressEx td.upperLowerSpacing1 {
+    height: 6px;
+}
+table#RegressEx td.upperLowerSpacing2 {
+    height: 4px;
+    background-color: #e6e6e6;
+}
+table#RegressEx th#leastSquaresRegressionHeading {
+    padding-top: 4px;
+}
+table#RegressEx th#leastSquaresRegressionHeading, th#lsEquation {
+    padding-bottom: 12px;
+}
+table#RegressEx table#observationsTable th, table#RegressEx table#observationsTable td.header,
+table#RegressEx table#calculationsTable th.resultsHeader, table#RegressEx table#calculationsTable td.resultsHeader {
+    background-color: #e6e6e6
+}
+table#RegressEx table#calculationsTable th.resultsHeader.lowestHeader, table#RegressEx table#calculationsTable td.resultsHeader.lowestHeader {
+    border-bottom: 1px solid black;
+}
+table#RegressEx table#calculationsTable th.resultsHeader.left, table#RegressEx table#calculationsTable td.resultsHeader.left {
+    padding-left: 6px;
+    padding-right: 15px;
+}
+table#RegressEx table#calculationsTable th.resultsHeader.right, table#RegressEx table#calculationsTable td.resultsHeader.right {
+    padding-left: 15px;
+    padding-right: 6px;
+}
+table#RegressEx table#calculationsTable td.body {
+    padding-bottom: 2px;
+    padding-top: 2px;
+}
+table#RegressEx td.betweenCanvassesSpacer {
+    width: 10px;
+    min-width: 10px;
+}
+table#RegressEx td#sliderLegend {
+    padding-left: 20px;
+    font-weight: bold;
+    width: 133px;
+    min-width: 133px;
+}
+table#RegressEx table#sliderTable {
+    padding-left: 10px;
+}
+table#RegressEx button#resetButon {
+    height: 42px;
+    min-height: 42px;
+}
+table#RegressEx table#calculationsTable {
+    border: 1px solid black;
+}
+/*******************************************************************************************************
+ Table 133 (chi squared test)
+*******************************************************************************************************/
+table#T133 {
+    background-color: white;
+    width: 1180px;
+    min-width: 1180px;
+}
+table#T133 td.sliderOuterTd {
+    border-left: 1px solid black;
+}
+table#T133 table#sliTop {
+    border: 1px solid black;
+}
+table#T133 td.sliderInnerTd {
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+table#T133 table#sliTop th.sliderTableLowestHeader {
+    border-bottom: 1px solid black;
+    border-left: 1px solid black;
+}
+table#T133 table#sliTop th.sliderTableLowestHeaderLeft {
+    border-bottom: 1px solid black;
+    padding-left: 3px;
+    padding-right: 3px;
+}
+table#T133 table#sliTop th.sliderTableTopLeft {
+    padding-left: 4px;
+    padding-right: 4px;
+}
+table#T133 table#sliTop th.sliderTableAllColsHead {
+    border-left: 1px solid black;
+}
+table#T133 td#resetTd {
+    min-width: 38px;
+}
+table#T133 .borderLeft {
+    border-left: 1px solid black;
+    padding-left: 9px;
+}
+table#T133 .borderRight {
+    border-right: 1px solid black;
+    padding-right: 9px;
+}
+table#T133 .borderTop {
+    border-top: 1px solid black;
+    padding-top: 3px;
+    background-color: #e6e6e6;
+}
+table#T133 .borderBottom {
+    border-bottom: 1px solid black;
+    padding-bottom: 3px;
+}
+table#T133 .borderBottom0 {
+    border-bottom: 1px solid black;
+    padding-bottom: 0px;
+}
+table#T133 td.contingencyOuterTd {
+    padding-left: 11px;
+    padding-right: 11px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    min-width: 74px;
+}
+table#T133 th#contingencyTableRowPercentHeader{
+    padding-left: 13px;
+}
+table#T133 .paddingTop {
+    padding-top: 4px;
+}
+table#T133 table#calcsTable {
+    padding-top: 18px;
+}
+table#T133 table#expectedCalcTable td{
+    white-space: nowrap;
+}
+table#T133 th.hyothesisTest {
+    font-size: 110%;
+    color: rgb(160, 0, 0);
+}
+table#T133 table#rightCalcsTable {
+    padding-left: 18px;
+}
+
+table#T133 td#chi2SquaredResult {
+    white-space: nowrap;
+}
+table#T133 th.contingencyTableTitle {
+    color: #aa0000;
+    padding-bottom: 13px;
+}
+table#T133 .rejectNull {
+    font-weight: bold;
+    text-align: center;
+    font-size: 18px;
+    color: rgb(0, 160, 0);
+    padding-bottom: 13px;
+    padding-top: 14px;
+}
+table#T133 button#resetBtn {
+    width: 95px;
+    min-width: 95px;
+    height: 40px;
+    margin-left: 10px;
+}
+table#T133 tr.spaceBelowSliders {
+    height: 35px;
+}
+table#T133 tr.spaceBelowContingencyTable {
+    height: 35px;
+}
+table#T133 table#contingencyTableWithHeading {
+    padding-left: 6px;
+    padding-right: 6px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-left: 22px;
+    background-color: #e8e8e8;
+}
+table#T133 td#expectedCalcTableParentTd {
+    padding-left: 22px;
+    
+}
+table#T133 td#rightCalcsTableParentTd {
+    padding-left: 10px;
+}
+table#T133 table#alphaBtnTable th {
+    padding-bottom: 7px;
+}
+table#T133 table#alphaBtnTable button {
+    width: 45px;
+    min-width: 45px;
+}
+table#T133 table#alphaBtnTable td {
+    padding-left: 3px;
+    padding-right: 3px;
+}
+table#T133 table#summaryTable {
+    border: 1px solid black;
+}
+table#T133 table#summaryTable tr.topRow>td {
+    background-color: #e6e6e6;
+    border-bottom: 1px solid black;
+}
+table#T133 table#summaryTable tr.topRow td#alphaButtonTableParentTd {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+table#T133 table#summaryTable tr.topRow td#hypoButtonTableParentTd {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+table#T133 table#summaryTable tr.body td {
+    padding-top: 2px;
+    padding-bottom: 3px;
+}
+table#T133 table#summaryTable td.paramName {
+    padding-right: 12px;
+}
+table#T133 td#resultTd {
+    min-width: 173px;
+    height: 55px;
+    min-height: 55px;
+    text-align: center;
+    padding-bottom: 3px;
+    padding-right: 6px;
+
+}
+table#T133 table#resultTable {
+    background-color: #ffffda;
+    border-radius: 3px;
+    box-shadow: inset 0 0 2px 2px #555;
+}
+table#T133 table#resultTable.reject {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+table#T133 table#resultTable.failToReject {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+/*******************************************************************************************************
+ Figure 102 (2 independent samples comparison of means t-test)
+*******************************************************************************************************/
+table#F102 .reject {
+    color: green;
+    font-weight: bold;
+}
+table#F102 .failReject {
+    color: red;
+    font-weight: bold;
+}
+table#F102 #mathLeft .MathJax_Display {
+    text-align: right !important;
+}
+table#F102 #mathRight .MathJax_Display {
+    text-align: left !important;
+}
+/*******************************************************************************************************
+ Figure222 (Interactive Boxplot)
+*******************************************************************************************************/
+table#Figure222 table#Figure222Main {
+	margin-top: 0px;
+	margin-left: 5px;
+}
+table#Figure222 canvas#canvas222 {
+	background-color: white;
+	margin-top: 9px;
+}
+table#Figure222 div.bottom  {
+	margin-top: 7px;
+}
+table#Figure222 table.dataTable {
+	border-right: 1px solid black;
+	border-bottom: 1px solid black;
+}
+table#Figure222 table.dataTable td.dataCell {
+	cursor: pointer
+}
+table#Figure222 div.heading {
+	font-size: 24px;
+	font-weight: bold;
+}
+table#Figure222 table.dataTable td.dataCell:hover {
+	cursor: pointer;
+	background-color: #f75;
+}
+table#Figure222 table.dataTable td {
+	border-left: 1px solid black;
+	border-top: 1px solid black;
+	padding: 0;
+	text-align: center;
+	white-space: nowrap;
+	min-width: 24px;
+	font-size: 16px;
+}
+table#Figure222 .red {
+	color: red;
+	font-weight: bold;
+}
+table#Figure222 span.quartileInfo {
+	white-space: nowrap;
+}
+table#Figure222 canvas.smallCanvas {
+	background-color: white;
+}
+table#Figure222 .overCanvasInfo {
+    background-color: #FFC;
+    border: 1px solid black;
+}
+table#Figure222 .overCanvasInfo table{
+    background-color: #FFC;
+    border-top: 1px solid black;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    padding: 1px;
+    margin: 2px;
+}
+table#Figure222 .overCanvasInfo table th{
+    background-color: #FFC;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+    padding: 2px;
+}
+table#Figure222 .overCanvasInfo table td{
+    background-color: #FFC;
+    border-bottom: 1px solid black;
+    padding: 2px;
+}
+/*******************************************************************************************************
+ Figure511 (Area under the normal curve)
+*******************************************************************************************************/
+table#Figure511 .warning {
+    color: #900;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+}
+table#Figure511 button.plusMinusBtn {
+    font-size: 100%;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+table#Figure511 input#leftZInput, table#Figure511 input#rightZInput {
+    background-color: #ffc;
+    height: 25px;
+    padding-left: 5px;
+}
+
+table#Figure511 input#leftZInput {
+    margin-left: 40px;
+}
+
+table#Figure511 button#rightMinus {
+    margin-right: 40px;
+}
+/*******************************************************************************************************
+ F69 (Central Limit Theorem)
+*******************************************************************************************************/
+table#F69 .leftSliderTableSpacer {
+    min-width: 9px;
+}
+table#F69 .rightSliderTableSpacer {
+    min-width: 9px;
+}
+table#F69 .rightSliderTableSpacer2 {
+    min-width: 9px;
+}
+table#F69 .sliderValueTd {
+    min-width: 39px;
+}
+table#F69 #goButton {
+    min-width: 230px;
+    margin-left: 50px;
+}
+table#F69 table#goButtonTable {
+    margin-bottom: 3px;
+}
+table#F69 table#sliderTable {
+    margin-bottom: 6px;
+}
+/*******************************************************************************************************
+ F63 (Example of a Sampling Distribution of Means)
+*******************************************************************************************************/
+table#F63 button>span.addRemove {
+    font-weight: bold;
+    color: #00d;
+    
+}
+table#F63 table#mainTable th {
+    border-top: 1px solid #999;
+    padding-top: 7px;
+    margin-top: 6px;
+}
+table#F63 .title {
+    font-weight: bold;
+    color: #00b;
+}
+table#F63 table#mainTable tr#meanOfMeansRow th {
+    padding-top: 19px;
+    padding-bottom: 19px;
+    border-bottom: 1px solid #999;
+}
+table#F63 table#mainTable td {
+    padding-bottom: 2px;
+}
+/*******************************************************************************************************
+F87 Comparison of Two-Tailed Critical Values
+*******************************************************************************************************/
+table#F87 .sliderValue {
+    min-width: 42px;
+}
+table#F87 td.leftSliderTableSpacer {
+    min-width: 15px;
+}
+table#F87 table#topCanvasCaptionTable td {
+    color: #a00;
+    font-weight: bold;
+    padding-bottom: 0;
+}
+table#F87 table#topCanvasCaptionTable {
+    padding-bottom: 12px; 
+    padding-top: 12px; 
+}
+/*******************************************************************************************************
+F103 (paired t test)
+*******************************************************************************************************/
+table#F103 table#lower th  {
+    padding-left: 20px;
+    padding-right: 20px;
+    background-color: #cbd8e9;
+}
+table#F103 table#lower th.colHead  {
+    padding-bottom: 4px;
+    padding-top: 6px;
+    border-bottom: 1px solid black;
+}
+table#F103 table#lower td.tbody  {
+    padding-top: 1px;
+    padding-bottom: 4px;
+}
+table#F103 table#lower {
+    border: 1px solid black;
+    min-width: 920px;
+}
+table#F103 table#lower tr.summary1>td{
+    border-top: 1px solid black;
+    padding-left: 13px;
+    padding-right: 5px;
+}
+table#F103 .reject {
+    color: green;
+    font-weight: bold;
+}
+table#F103 .failReject {
+    color: red;
+    font-weight: bold;
+}
+table#F103 span#leftOverCanvasInfo td.hypothesis {
+    font-weight: bold;
+    color: #228;
+}
+table#F103 span#leftOverCanvasInfo td.colon {
+    font-weight: bold;
+    padding-left: 1px;
+    padding-right: 4px;
+}
+table#F103 span#rightOverCanvasInfo td.colon {
+    font-weight: bold;
+    padding-left: 0px;
+    padding-right: 4px;
+}
+table#F103 table#lower td#ddsFoot1{
+    min-width: 156px;
+}
+table#F103 table#calculationsTable td.eq {
+    min-width: 30px;
+    height: 95px;
+}
+/*******************************************************************************************************
+ F111 (towards F test)
+*******************************************************************************************************/
+table#F111 table#mainTable td.summaryBody {
+    font-weight: bold;
+    padding-bottom: 1px;
+    padding-top: 5px;
+}
+table#F111 table#mainTable tr#rowGrand>td.summaryBody {
+    padding-bottom: 4px;
+}
+table#F111 table#mainTable {
+    border-bottom: 1px solid black;
+}
+table#F111 table#mainTable tr#rowMean>th, table#F111 table#mainTable tr#rowMean>td {
+    border-top: 1px solid black;
+}
+table#F111 table#mainTable tr>th.rowHead {
+    border-right: 1px solid black;
+    border-left: 1px solid black;
+    padding-left: 3px;
+    padding-right: 17px;
+    padding-bottom: 2px;
+    padding-top: 2px;
+}
+table#F111 table#mainTable option {
+}
+
+table#F111 table#mainTable select {
+    height: 22px;
+}
+table#F111 table#mainTable td.tbody {
+    padding-bottom: 2px;
+    padding-top: 2px;
+}
+table#F111 table#mainTable td.tbody.notFirstColumn {
+    border-left: 5px solid #ccc;
+}
+table#F111 table#mainTable td.tbody.notLastColumn {
+    border-right: 5px solid #ccc;
+}
+table#F111 table#mainTable td.buttonTd {
+    padding-left: 7px;
+    padding-right: 7px;
+    padding-bottom: 3px;
+    border-bottom: 1px solid black;
+}
+table#F111 table#mainTable td.lastColumn {
+    border-right: 1px solid black;
+}
+table#F111 table#mainTable td>button.crimeFamilyButton {
+    width: 150px;
+    font-weight: bold;
+}
+table#F111 table#mainTable th#emptyTopLeftCorner {
+    border-bottom: 1px solid black;
+}
+table#F111 td#grandMeanCanvasLabel {
+    padding-left: 2px;
+}
+/*******************************************************************************************************
+ Figure79 (Two Tailed Hypothesis Test)
+*******************************************************************************************************/
+table#Figure79 td#alphaSelectorTd {
+    padding-top: 6px;
+    padding-bottom: 12px;
+}
+table#Figure79 table#sliderTable {
+    margin-top: 4px;
+}
+table#Figure79 div#canvasParent>span#midOverCanvasInfo {
+    font-weight: bold;
+    color: rgb(153, 0, 0);
+    font-size: 20px;
+}
+/*******************************************************************************************************
+ F112 (F-test)
+*******************************************************************************************************/
+table#F112 table#mainTable td.summaryBody {
+    font-weight: bold;
+    padding-bottom: 1px;
+    padding-top: 5px;
+}
+table#F112 table#mainTable tr#rowGrand>td.summaryBody {
+    padding-bottom: 4px;
+}
+table#F112 table#mainTable {
+    border-bottom: 1px solid black;
+}
+table#F112 table#mainTable tr#rowMean>th, table#F112 table#mainTable tr#rowMean>td {
+    border-top: 1px solid black;
+}
+table#F112 table#mainTable tr>th.rowHead {
+    border-right: 1px solid black;
+    border-left: 1px solid black;
+    padding-left: 3px;
+    padding-right: 17px;
+    padding-bottom: 2px;
+    padding-top: 2px;
+}
+table#F112 table#mainTable option {
+}
+
+table#F112 table#mainTable select {
+    height: 22px;
+}
+table#F112 table#mainTable td.tbody {
+    padding-bottom: 4px;
+    padding-top: 4px;
+}
+table#F112 table#mainTable td.tbody.notFirstColumn {
+    border-left: 5px solid #ccc;
+}
+table#F112 table#mainTable td.tbody.notLastColumn {
+    border-right: 5px solid #ccc;
+}
+table#F112 table#mainTable td.buttonTd {
+    padding-left: 7px;
+    padding-right: 7px;
+    padding-bottom: 3px;
+    border-bottom: 1px solid black;
+}
+table#F112 table#mainTable td.lastColumn {
+    border-right: 1px solid black;
+}
+table#F112 table#mainTable td.firstColumn {
+    border-left: 1px solid black;
+}
+table#F112 table#mainTable td>button.ageGroupButton {
+    width: 150px;
+    font-weight: bold;
+}
+table#F112 table#mainTable {
+    margin-top: 20px;
+}
+table#F112 td#grandMeanCanvasLabel {
+    padding-left: 4px;
+}
+table#F112 table#summaryTable th {
+    background-color: #eee;
+}
+table#F112 table#summaryTable th.row2 {
+    padding-left: 11px;
+    padding-right: 11px;
+    border-bottom: 1px solid black;
+}
+table#F112 table#summaryTable th.row1 {
+    border-top: 1px solid black;
+}
+table#F112 table#summaryTable  {
+    border-bottom: 1px solid black;
+    margin-top: 20px;
+}
+table#F112 table#summaryTable td.body {
+    padding-top: 1px;
+    padding-bottom: 1px;
+}
+table#F112 table#lowerLeftTable {
+    padding-right:  7px;
+    margin-left: 15px;
+    margin-right: 15px;
+}
+table#F112 table#lowerRightTable td.equals {
+   min-width: 27px; 
+}
+
+table#F112 table#upperRight {
+    padding-left: 18px;
+}
+table#F112 table#lowerRightTable {
+    padding-left: 20px;
+    margin-left: 10px;
+    border-left: 1px solid black;
+    margin-top: 10px;
+}
+table#F112 table#lowerRightTable>tbody>tr>td {
+    border-bottom: 1px dotted #aaa;
+}
+table#F112 table#lowerRightTable>tbody>tr>td {
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+table#F112 button.alphaButton {
+    width: 70px;
+}
+table#F112 button#alphaButton0 {
+    margin-left: 15px;
+}
+ table#results td>span.reject {
+    font-size: 110%;
+    font-weight: bold;
+    color: green;
+}
+table#F112 span#overCanvasInfo>table th#finalResult.failReject {
+    color: rgb(160,0,0);
+}
+table#F112 span#overCanvasInfo>table th#finalResult.reject {
+    color: rgb(0,160,0);
+}
+table#F112 tr.spacerRow {
+    height: 20px;
+}
+/*******************************************************************************************************
+ F68 (Effect of Sample Size on Standard Error) 
+*******************************************************************************************************/
+table#F68 td.sliderValueElt {
+    min-width: 28px;
+}
+table#F68 table#sliderTable tr#StdDevRow td, table#F68 table#sliderTable tr#StdDevRow th  {
+    padding-top: 3px;
+}
+table#F68 .info {
+    font-weight: bold;
+    padding-left: 18px;
+    padding-right: 18px;
+}
+/*******************************************************************************************************
+ Figure 34 (Skewed and non-skewed distributions)
+*******************************************************************************************************/
+table#F34 td#title>table th.titleFirstRow{
+    color: rgb(160, 0, 0);
+}
+table#F34 td#title>table td.titleColoredSecondRow, table#F34 td#title>table td.titleColeredThirdRow {
+    font-weight: bold;
+}
+table#F34 table#lower th.header{
+    color: rgb(0,0,160);
+}
+table#F34 table#lower td.buttonTd{
+    width: 120px;
+    padding-left: 20px;
+    padding-right: 10px;
+}
+table#F34 table#lower td.buttonTd>button{
+    width: 100%;
+}
+table#F34 table#lower button.chosen{
+    font-weight: bold;
+}
+table#F34 button.chosen, table#F84 button.chosen {
+    background: -moz-linear-gradient(bottom,  #f5f5f5 0%, #c2c2c2 100%); /* FF3.6+ */
+    background: -webkit-linear-gradient(bottom,  #9f5f5f 0%,#c2c2c2 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(bottom,  #f5f5f5 0%,#c2c2c2 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(bottom,  #f5f5f5 0%,#c2c2c2 100%); /* IE10+ */
+    background: linear-gradient(to top,  #f5f5f5 0%,#c2c2c2 100%); /* W3C */
+    color:#000;
+    -webkit-box-shadow: inset 2px 2px 3px 0 black, inset -1px -1px 3px 0 white;
+    -moz-box-shadow: inset 2px 2px 3px 0 black, inset -1px -1px 3px 0 white;
+    box-shadow: inset 2px 2px 3px 0 black, inset -1px -1px 3px 0 white;
+}
+
+
+/*******************************************************************************************************
+ F84 (Confidence Internval for the Mean of LSAT Scores)
+*******************************************************************************************************/
+table#F84 button.alphaButton{
+    min-width: 50px;
+    margin-right: 4px;
+    margin-left: 4px;
+}
+table#F84 button#goBtn {
+    font-weight: bold;
+    min-width: 300px;
+}
+table#F84 table#lower>tbody>tr>td {
+    padding-top: 4px;
+}
+table#F84 .title {
+    color: rgb(0,0,160);
+}
+table#F84 span.overCanvasInfo>table>tbody>tr>td {
+    padding-left: 6px;
+    font-weight: bold;
+}
+/*******************************************************************************************************
+ PowerEffect
+*******************************************************************************************************/
+table#PowerEffect button.effectButton {
+    min-width: 123px;
+    font-size: 12px;
+}
+table#PowerEffect button.alphaButton {
+    min-width: 69px;
+    font-size: 16px;
+}
+table#PowerEffect button.resetButton {
+    min-width: 69px;
+    font-size: 18px;
+}
+/*
+table#PowerEffect button#resetButton1 {
+    font-size: 16px;
+}*/
+table#PowerEffect td.resetBtnTd {
+    padding-left: 11px;
+    padding-right: 11px;
+}
+table#PowerEffect td.alphaBtnTd {
+    padding-left: 11px;
+    padding-right: 11px;
+}
+table#PowerEffect td.sliderValueElt {
+    min-width: 45px;
+    background-color: #ffa;
+    height: 16px;
+    border: 1px solid #999;
+}
+table#PowerEffect th.sliderTh {
+    padding-right: 17px;
+}
+table#PowerEffect td.tickBoxToMoveSimultaneously {
+    font-size: 10px;
+}
+table#PowerEffect td.noncentralityNote {
+    font-size: 12px;
+}
+table#PowerEffect td.result {
+    min-width: 65px;
+    text-align: right;
+    background-color: #ffa;
+    border: 1px solid #999;
+}
+table#PowerEffect td.resultLabel {
+    padding-right: 13px;
+}
+table#PowerEffect table.halfAlphaTable td {
+    color: red;
+}
+table#PowerEffect td.instructions {
+    padding-bottom: 14px;
+}
+table#PowerEffect tr.spaceBetweenButtonsAndSliders {
+    height: 10px;
+    min-height: 10px;
+}
+table#PowerEffect tr.spaceBetweenSlidersAndResults {
+    height: 10px;
+    min-height: 10px;
+}
+/*table#PowerEffect sup.sExponent {
+    font-size: 10px;
+    font-weight: bold;
+}*/

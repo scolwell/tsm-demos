@@ -1,0 +1,69 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+    	<meta http-equiv="content-type" content="text/html" />
+    	<meta name="author" content="Thomas Kloecker" />
+    	<title></title>
+
+<!--        
+        <script type="text/javascript" src="lib/jquery-1.10.2.min.js"></script>
+-->        
+        <script type="text/javascript" src="../jquery-2.0.3.js"></script>
+        <script type="text/javascript" src="../jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+        <script type="text/javascript" src="../googleStringTools.js"></script>
+        <script type="text/javascript" src="../util.js"></script>
+        <script type="text/javascript" src="../htmlGeneratorTools.js"></script>
+        <script type="text/javascript" src="../css.js"></script>
+        <script type="text/javascript" src="../buttonBar.js"></script>
+        <link href="../../the.css" rel="stylesheet" type="text/css"/>
+        <link href="../jquery-ui-1.10.3.custom/css/start/jquery-ui-1.10.3.custom.min.css" rel="stylesheet" type="text/css"/>
+        
+
+        <script type="text/javascript">
+// written by Thomas "mathheadinclouds" Kloecker
+// THIS CODE IS PUBLIC DOMAIN. YOU DO NOT "OWN" IT IN ANY WAY, YOU MAY USE IT IN ANY AND EVERY WAY.
+// PLEASE REFRAIN FROM REMOVING THIS NOTICE
+var H = HtmlGen;
+
+var APP = {
+    blahblah: 77,
+    controls: {},
+    btnClick: function(index, evt, domElt){
+        $("#log").append("click on " + index + " " + this.app.blahblah + "<br/>");
+        eee = evt;
+        ddd = domElt;
+    },
+    run: function(){
+        new ButtonBar({
+            buttonLabels: ["foo", "bar", "egale"],
+            headerLabel: "label",
+            selectedIndex: 1,
+            idPrefix: "bbar",
+            name: "testBB",
+            app: this,
+            tableStyle: {"background-color": "rgb(255, 99, 240)"},
+            callback: this.btnClick
+            
+        });
+        $("#universe").html(this.controls.testBB.html);
+        this.controls.testBB.init();
+    }
+};
+
+function initPage(){
+    APP.run();
+}
+        </script>        
+
+<style>
+
+
+</style>        
+    
+    </head>
+
+    <body onload="initPage();">
+        <div id="universe"></div>
+        <div id="log"></div>
+    </body>
+</html>

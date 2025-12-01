@@ -1,0 +1,21 @@
+# 1. Install packages if needed
+install.packages(c("dplyr", "ggplot2", "lme4", "performance"))
+
+# 2. Load basic packages
+library(dplyr)
+library(ggplot2)
+library(lme4)
+
+# 3. Test if everything works
+test_data <- data.frame(
+  id = rep(1:5, each = 10),
+  time = rep(1:10, 5),
+  mood = rnorm(50, 50, 10)
+)
+
+ggplot(test_data, aes(x = time, y = mood, group = id)) +
+  geom_line() +
+  theme_minimal()
+
+# 4. If that works, run your full script
+source("/Users/scott/Dropbox/The Statistical Mind/Demonstrations/enhanced_ema_analysis.R")

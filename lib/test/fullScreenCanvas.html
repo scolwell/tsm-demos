@@ -1,0 +1,207 @@
+<!DOCTYPE HTML>
+<html>
+<!--
+// written by Thomas "mathheadinclouds" Kloecker
+// THIS CODE IS PUBLIC DOMAIN. YOU DO NOT "OWN" IT IN ANY WAY, YOU MAY USE IT IN ANY AND EVERY WAY.
+// PLEASE REFRAIN FROM REMOVING THIS NOTICE
+-->
+    <head>
+    	<meta http-equiv="content-type" content="text/html" />
+    	<meta name="author" content="Thomas Kloecker" />
+    	<title>Full Screen Auto Resize Canvas</title>
+        
+        <script type="text/javascript" src="../jquery-1.10.2.min.js"></script>
+        <script type="text/javascript" src="../jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+        
+        <link href="../jquery-ui-1.10.3.custom/css/start/jquery-ui-1.10.3.custom.min.css" rel="stylesheet" type="text/css"/>
+        
+<style>
+body { overflow: hidden; width:100%; height:100%; }
+* { margin:0; padding:0; }
+canvas { display:block; }
+</style>        
+        
+        <script type="text/javascript">
+
+var vGap = 0;
+var hGap = 0;
+
+function writeSizeInfoToConsole(){
+    var cw = ctx.canvas.width;
+    var ch = ctx.canvas.height;
+    var cssW = $(ctx.canvas).css("width");
+    var cssH = $(ctx.canvas).css("height");
+    var txt1 = "canvas: (w, h) = (" + cw + ", " + ch + ")";
+    var txt2 = "css: (w, h) = (" + cssW + ", " + cssH + ")";
+    var txt = txt1 + "     " + txt2;
+    console.log(txt);
+    $(ctx.canvas).attr("title", txt);
+}
+
+var modes = {
+    resizeByWidth: {
+        description: "resize by width",
+        afterInitCallback: function(){
+            $(ctx.canvas).css("width", "100%");
+        },
+        windowResizeCallback: function(){
+            // if you want to resize keeping aspect ratio the same and width 100%, you do not need to
+            // do anything on window resize. This handler is attached for the sole purpose of writing 
+            // some info to the console, so you can see what is going on.
+            writeSizeInfoToConsole();
+        }
+    },
+    messWithAspectRatio: {
+        // keep both width and height to 100%, without using the canvas context to redraw
+        // this necessarily messes up the aspect ratio
+        description: "mess with aspect ratio",
+        afterInitCallback: function(){
+            $(ctx.canvas).css("width", "100%");
+        },
+        windowResizeCallback: function(){
+            $(ctx.canvas).css("height", window.innerHeight - vGap);
+            writeSizeInfoToConsole();
+        }
+    },
+    fixed: {
+        // the default is to keep width and height constant (no change on window resize)
+        description: "default behaviour"
+    },
+    redraw: {
+        // redraw the picture.
+        // if you want to have 100% width and height, no matter what the aspect ratio is,
+        // and a slightly different picture, depending on that aspect ratio
+        // you have no other choice than to redraw the canvas.
+        // If you rather want the aspect ratio to be constant, and do the thing outlined in "resizeByWidth" instead,
+        // you will probably want to avoid doing it this way, because it is expensive computationally.
+        description: "redraw",
+        windowResizeCallback: function(){
+            ctx.canvas.width = window.innerWidth - hGap;
+            ctx.canvas.height = window.innerHeight - vGap;
+            drawTestStuff();
+            writeSizeInfoToConsole();
+        }
+    }
+}
+modes.mess = modes.messWithAspectRatio;
+modes.resize = modes.resizeByWidth;
+
+
+var mode = modes.resizeByWidth;
+
+H = {
+    nodeWithAtts : function(tagName, content, atts){
+        if ( arguments.length < 3 ) atts = {};
+        var openTag =  "<" +tagName;
+        for ( var attName in atts ){
+            openTag += " ";
+            openTag += attName;
+            openTag += '="';
+            openTag += atts[attName];
+            openTag += '"';
+        }
+        openTag += ">";
+        var closeTag =  "</" +tagName+ ">";
+        return openTag + content + closeTag;
+    },
+    canvas : function(atts){
+        var notSupportedInfo = "If you see this text, this means that your browser does not support the canvas element of HTML5. Try loading this page in a recent version of Chrome, Safari, Firefox, or IE9+.";
+        notSupportedInfo = "";
+        return this.nodeWithAtts("canvas", notSupportedInfo, atts);
+    }
+}
+function queryStringGetParametersObject(doc){
+    // retrieve get parameters from document search string,
+    // result is an object (associative array) with the parameters as entries
+    // or null, if the querystring is absent.
+    if ( arguments.length < 1 ){
+        doc = document;
+    }
+    // full search string
+    var s = doc.location.search;
+    // omit question mark
+    var str = s.substr(1, s.length);
+    if ( !str ) return null;
+    var result = {};
+    // split into name value pairs
+    var arr = str.split('&');
+    var numParams = arr.length;
+    for ( var i=0; i<numParams; i++ ){
+        // split into name and value
+        var subArr = arr[i].split('=');
+        var paramName = unescape(subArr[0]);
+        var value = '';
+        if ( subArr.length > 1 ){
+            value = unescape(subArr[1]);
+        }
+        // store what we have retrieved
+        result[paramName] = value;
+    }
+    return result;
+}
+function drawTestStuff(){
+    var cos = Math.cos;
+    var sin = Math.sin;
+    var pi = Math.PI;
+    var c = ctx.canvas;
+    var w = c.width;
+    var h = c.height;
+    ctx.fillStyle = "#ffa";
+    ctx.fillRect(0, 0, w, h);
+    var colors = [
+        "rgba(255,0,0,0.5)",
+        "rgba(0,255,0,0.5)",
+        "rgba(0,0,255,0.5)"
+    ];
+    var s = Math.min(w,h);
+    var R = s * 0.125;
+    var r = s * 0.25;
+    var centerX = w/2;
+    var centerY = h/2;
+    for (var i=0; i<3; i++){
+        ctx.fillStyle = colors[i];
+        ctx.beginPath();
+        var angle = 2 * pi * i / 3;
+        var cx = centerX + R * cos(angle);
+        var cy = centerY + R * sin(angle);
+        ctx.arc(cx, cy, r, 0, 2*pi);
+        ctx.fill();
+    }
+    ctx.textAlign = "center";
+    ctx.fillStyle = "black";
+    ctx.font = Math.round(0.04 * w) + "pt Arial";
+    var txt = "description" in mode ? mode.description : "lorem ipsum dolor sit amet";
+    ctx.fillText(txt, centerX, centerY);
+}
+function retrieveModeFromGetParas(){
+    o = queryStringGetParametersObject();
+    if (o && "mode" in o && o.mode in modes){
+        mode = modes[o.mode];
+    }
+}
+function initPage(){
+    retrieveModeFromGetParas();
+    var body = $(document.body);
+    var w = window.innerWidth - hGap;
+    var h = window.innerHeight - vGap;
+    var canvHtml = H.canvas({width: w, height: h, id: "canvas"});
+    body.html(canvHtml);
+    ctx = $("#canvas")[0].getContext('2d');
+    drawTestStuff();
+    if ("afterInitCallback" in mode){
+        mode.afterInitCallback();
+    }
+    if ("windowResizeCallback" in mode){
+        $(window).bind("resize", mode.windowResizeCallback);
+    }
+}
+    
+        </script>        
+        
+        
+    
+    </head>
+
+    <body onload="initPage();">
+    </body>
+</html>

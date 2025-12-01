@@ -1,0 +1,268 @@
+<!DOCTYPE HTML>
+<html>
+<!--
+// written by Thomas "mathheadinclouds" Kloecker
+// THIS CODE IS PUBLIC DOMAIN. YOU DO NOT "OWN" IT IN ANY WAY, YOU MAY USE IT IN ANY AND EVERY WAY.
+// PLEASE REFRAIN FROM REMOVING THIS NOTICE
+-->
+    <head>
+    	<meta http-equiv="content-type" content="text/html" />
+    	<meta name="author" content="Thomas Kloecker" />
+    	<title>Pixel Finder / Magnifying Glass</title>
+        
+        <script type="text/javascript" src="../jquery-1.10.2.min.js"></script>
+        <script type="text/javascript" src="../jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+        <script type="text/javascript" src="../googleStringTools.js"></script>
+        <script type="text/javascript" src="../util.js"></script>
+        <script type="text/javascript" src="../css.js"></script>
+        <script type="text/javascript" src="../htmlGeneratorTools.js"></script>
+        <script type="text/javascript" src="../components.js"></script>
+        
+        <link href="../jquery-ui-1.10.3.custom/css/start/jquery-ui-1.10.3.custom.min.css" rel="stylesheet" type="text/css"/>
+
+<style>
+.fullWidth {
+    width: 100%;
+}
+.lineBreakDisabled {
+    white-space:  nowrap;
+}
+table#sliderTable th {
+    padding-right: 15px;
+}
+table#sliderTable td.sliVal {
+    min-width: 30px;
+}
+
+</style>        
+        
+        
+        <script type="text/javascript">
+H = HtmlGen;
+App = {
+    active: true,
+    sliderTableWidth: 700,
+    initialMagnificationFactor: 30,
+    initialWidth: 9,
+    initialHeight: 9,
+    go : function(){
+        var fileName = $("#fileNameInput").val();
+        var img = new Image();
+        img.src = fileName;
+        img.onload = function(){ App.imageLoaded(); };
+        this.img = img;
+    },
+    callbacks: {
+        magnificationFactorSlider: function(value, mode, component, app, event, ui){
+            component.valueElt.html(value);
+            app.magnificationFactor = value;
+            if (mode == "slide"){
+                return;
+            }
+        },
+        widthSlider: function(value, mode, component, app, event, ui){
+            component.valueElt.html(value);
+            app.width = value;
+            if (mode == "slide"){
+                return;
+            }
+        },
+        heightSlider: function(value, mode, component, app, event, ui){
+            component.valueElt.html(value);
+            app.height = value;
+            if (mode == "slide"){
+                return;
+            }
+        },
+    },
+    initPage : function(){
+        document.getElementById("alphaCheck").checked = false;
+        var cntrContainer = $("#controls");
+        var magnificationFactorSlider = new Slidr({
+            min: 2, max: 50, value: this.initialMagnificationFactor, step: 1,
+            id: "magnificationFactorSlider", name: "magnificationFactorSlider", 
+            app: this
+        });
+        var widthSlider = new Slidr({
+            min: 2, max: 20, value: this.initialWidth, step: 1,
+            id: "widthSlider", name: "widthSlider",
+            app: this
+        });
+        var heightSlider = new Slidr({
+            min: 2, max: 20, value: this.initialHeight, step: 1,
+            id: "heightSlider", name: "heightSlider",
+            app: this
+        });
+        this.magnificationFactor = this.initialMagnificationFactor;
+        this.width = this.initialWidth;
+        this.height = this.initialHeight;
+        var row1 = H.tr(
+            H.thLeft("Magnification Factor:", {"class": "lineBreakDisabled"}) +
+            H.td(magnificationFactorSlider.html, {"class": "fullWidth"}) +
+            H.tdRight("", {id: "magnificationFactorSliderValue", "class": "sliVal"})
+        );
+        var row2 = H.tr(
+            H.thLeft("Width of Magnified Area:", {"class": "lineBreakDisabled"}) +
+            H.td(widthSlider.html, {"class": "fullWidth"}) +
+            H.tdRight("", {id: "widthSliderValue", "class": "sliVal"})
+        );
+        var row3 = H.tr(
+            H.thLeft("Height of Magnified Area:", {"class": "lineBreakDisabled"}) +
+            H.td(heightSlider.html, {"class": "fullWidth"}) +
+            H.tdRight("", {id: "heightSliderValue", "class": "sliVal"})
+        );
+        var sliderTable = H.table(row1 + row2 + row3, {id: "sliderTable", width: this.sliderTableWidth});
+        cntrContainer.html(sliderTable);
+        magnificationFactorSlider.init();
+        widthSlider.init();
+        heightSlider.init();
+        magnificationFactorSlider.valueElt = $("#magnificationFactorSliderValue");
+        widthSlider.valueElt = $("#widthSliderValue");
+        heightSlider.valueElt = $("#heightSliderValue");
+        this.magnificationFactorSlider = magnificationFactorSlider;
+        this.widthSlider = widthSlider;
+        this.heightSlider = heightSlider;
+        magnificationFactorSlider.valueElt.html(magnificationFactorSlider.get());
+        widthSlider.valueElt.html(widthSlider.get());
+        heightSlider.valueElt.html(heightSlider.get());
+    },
+    showMagnification: function(x, y){
+        if (!this.active){
+            return;
+        }
+        var magnCtx = this.magnCtx;
+        var sourceCtx = this.ctx;
+        var w = this.width;
+        var h = this.height;
+        var factor = this.magnificationFactor;
+        var wf = w * factor;
+        var hf = h * factor;
+        var source = sourceCtx.getImageData(x, y, w, h).data;
+        var target = magnCtx.createImageData(wf, hf);
+        for (var i=0; i<target.data.length/4; i++){
+            var targetY = Math.floor(i/wf);
+            var targetX = i - wf *targetY;
+            var sourceY = Math.floor(targetY/factor);
+            var sourceX = Math.floor(targetX/factor);
+            var sourceIndex = 4 * (sourceY * w + sourceX);
+            var red = source[sourceIndex];
+            var green = source[sourceIndex + 1];
+            var blue  = source[sourceIndex + 2];
+            var alpha = source[sourceIndex + 3];
+            targetIndex = 4*i;
+            target.data[targetIndex]     = red;
+            target.data[targetIndex + 1] = green;
+            target.data[targetIndex + 2] = blue;
+            target.data[targetIndex + 3] = alpha;
+        }
+        magnCtx.putImageData(target, 0, 0);
+        this.showColorTable(x, y);
+    },
+    showColorTable: function(x,y){
+        var sourceCtx = this.ctx;
+        var w = this.width;
+        var h = this.height;
+        var source = sourceCtx.getImageData(x, y, w, h).data;
+        var cells = new Array(h);
+        for (var y=0; y<h; y++){
+            cells[y] = new Array(w);
+        }
+        for (var i=0; i<source.length/4; i++){
+            var sourceY = Math.floor(i/w);
+            var sourceX = i - w * sourceY;
+            var sourceIndex = 4 * i;
+            var red   = source[sourceIndex];
+            var green = source[sourceIndex + 1];
+            var blue  = source[sourceIndex + 2];
+            var alpha = source[sourceIndex + 3];
+            var colorString;
+            if (document.getElementById("alphaCheck").checked){
+                colorString = rgbaToHex(red, green, blue, alpha);
+            } else {
+                colorString = rgbToHex(red, green, blue);
+            }
+            cells[sourceY][sourceX] = colorString;
+        }
+        var tableContent = "";
+        for (var y=0; y<h; y++){
+            var trContent = "";
+            for (var x=0; x<w; x++){
+                trContent += H.td("", Style.attachToAtts({width: 10}, {"background-color": cells[y][x].slice(0,7)}));
+                trContent += H.td(cells[y][x]);
+            }
+            tableContent += H.tr(trContent);
+        }
+        var table = H.table(tableContent);
+        $("#detailsTd").html(table);
+    },
+    imageLoaded: function(){
+        var inputCanvasContainerElt = $("#inputCanvasContainer"); this.inputCanvasContainerElt = inputCanvasContainerElt;
+        var mouseInfoElt = $("#mouseInfo"); this.mouseInfoElt = mouseInfoElt;
+        var img = this.img;
+        var w = img.width;
+        var h = img.height;
+        this.sourceWidth = w;
+        this.sourceHeight = h;
+        var canvHtml = HtmlGen.canvas({width: w, height: h, id: "inputCanvas"});
+        inputCanvasContainerElt.html(canvHtml);
+        var inputCanvas = $("#inputCanvas"); this.inputCanvas = inputCanvas;
+        var ctx = inputCanvas[0].getContext('2d'); 
+        this.ctx = ctx;
+        var sourceX = 0;
+        var sourceY = 0;
+        var sourceWidth = w;
+        var sourceHeight = h;
+        var targetX = 0;
+        var targetY = 0;
+        var targetWidth = w;
+        var targetHeight = h;
+        ctx.drawImage(img, sourceX, sourceY, sourceWidth, sourceHeight, targetX, targetY, targetWidth, targetHeight);
+        var mcWidth = this.magnificationFactor * this.width;
+        var mcHeight = this.magnificationFactor * this.height;
+        var canvHtml = H.canvas({id: "maginficationCanvas", width: mcWidth, height: mcHeight});
+        var magnCanvContainer = $("#maginficationCanvasContainer");
+        var html = H.table(H.tr(
+            H.td(canvHtml) + H.td("", {id: "detailsTd"})
+        ));
+        magnCanvContainer.html(html);
+        var magnCanv = $("#maginficationCanvas");
+        var magnCtx = magnCanv[0].getContext("2d");
+        this.magnCanv = magnCanv;
+        this.magnCtx = magnCtx;
+        this.showMagnification(0,0);
+        inputCanvas.mousemove(function(evt){
+            var off = App.inputCanvas.offset();
+            var oTop = off.top;
+            var oLeft = off.left; 
+            var x = evt.pageX - oLeft;
+            var y = evt.pageY - oTop;
+            var info = "x: %10.f y: %10.1f".sprintf(x, y);
+            App.mouseInfoElt.html(info);
+            App.showMagnification(Math.round(x), Math.round(y));
+        });
+        inputCanvas.click(function(evt){
+            App.active = false;
+        });
+        inputCanvas.mouseenter(function(evt){
+            App.active = true;
+        });
+    }
+    
+};
+        </script>        
+        
+        
+    
+    </head>
+
+    <body onload="App.initPage();">
+        <input type="text" id="fileNameInput" value="112Top.png" /><button onclick="App.go();">go</button>
+        <div id="controls"></div>
+        include alpha<input type="checkbox" id="alphaCheck" />
+        <div id="inputCanvasContainer"></div>
+        <div id="mouseInfo"></div>
+        <div id="maginficationCanvasContainer"></div>
+        <div id="debug"></div>
+        <div id="dummy"></div>
+    </body>
+</html>

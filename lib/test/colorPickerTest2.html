@@ -1,0 +1,675 @@
+<!DOCTYPE HTML>
+<html>
+<!--
+// written by Thomas "mathheadinclouds" Kloecker
+// THIS CODE IS PUBLIC DOMAIN. YOU DO NOT "OWN" IT IN ANY WAY, YOU MAY USE IT IN ANY AND EVERY WAY.
+// PLEASE REFRAIN FROM REMOVING THIS NOTICE
+-->
+    <head>
+    	<meta http-equiv="content-type" content="text/html" />
+    	<meta name="author" content="Thomas Kloecker" />
+    	<title>color picker</title>
+        
+        <script type="text/javascript" src="../jquery-2.0.3.js"></script>
+        <script type="text/javascript" src="../jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+        <script type="text/javascript" src="../googleStringTools.js"></script>
+        <script type="text/javascript" src="../util.js"></script>
+        <script type="text/javascript" src="../htmlGeneratorTools.js"></script>
+        <script type="text/javascript" src="../css.js"></script>
+        <script type="text/javascript" src="../components.js"></script>
+        <link href="../jquery-ui-1.10.3.custom/css/start/jquery-ui-1.10.3.custom.min.css" rel="stylesheet" type="text/css"/>
+
+<style>
+td#colorModelTd {
+    padding-left: 30px;
+}
+td#showSizeSliderCheckTd {
+    padding-left: 30px;
+}
+#permutation {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    width: 120%;
+    cursor: default;
+}
+.fullWidth {
+    width: 100%;
+}
+.lineBreakDisabled {
+    white-space:  nowrap;
+}
+table#sliderTable th {
+    padding-right: 15px;
+}
+table#sliderTable td.sliVal {
+    min-width: 30px;
+}
+button {
+    font-size:13px;
+    background: -moz-linear-gradient(top,  #f5f5f5 0%, #c2c2c2 100%); /* FF3.6+ */
+    background: -webkit-linear-gradient(top,  #9f5f5f 0%,#c2c2c2 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #f5f5f5 0%,#c2c2c2 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #f5f5f5 0%,#c2c2c2 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #f5f5f5 0%,#c2c2c2 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f5f5f5', endColorstr='#c2c2c2',GradientType=0 ); /* IE6-9 */
+    color:#222;
+    padding:4px 6px;
+    border:1px solid #555;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px 4px;
+}
+button:hover {
+    cursor: pointer;
+    background: -moz-linear-gradient(top,  #fff 0%, #abf 100%); /* FF3.6+ */
+    background: -webkit-linear-gradient(top,  #9f5f5f 0%,#abf 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #fff 0%,#abf 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #fff 0%,#abf 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #fff 0%,#abf 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fff', endColorstr='#abf',GradientType=0 ); /* IE6-9 */
+}
+button:active {
+    background: -moz-linear-gradient(top,  #fff 0%, #fba 100%); /* FF3.6+ */
+    background: -webkit-linear-gradient(top,  #9f5f5f 0%,#fba 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #fff 0%,#fba 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #fff 0%,#fba 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #fff 0%,#fba 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fff', endColorstr='#fba',GradientType=0 ); /* IE6-9 */
+}
+button:disabled {
+    cursor: default;
+    font-size:12px;
+    background: -moz-linear-gradient(top,  #f5f5f5 0%, #c2c2c2 100%); /* FF3.6+ */
+    background: -webkit-linear-gradient(top,  #9f5f5f 0%,#c2c2c2 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #f5f5f5 0%,#c2c2c2 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #f5f5f5 0%,#c2c2c2 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #f5f5f5 0%,#c2c2c2 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f5f5f5', endColorstr='#c2c2c2',GradientType=0 ); /* IE6-9 */
+    color:#999;
+    padding:4px 6px;
+    border:1px solid #555;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px 4px;
+}
+button.chosen:hover {
+    cursor: default;
+}
+button.chosen{
+    font-weight: bold;
+}
+button.chosen {
+    background: -moz-linear-gradient(bottom,  #f5f5f5 0%, #c2c2c2 100%); /* FF3.6+ */
+    background: -webkit-linear-gradient(bottom,  #9f5f5f 0%,#c2c2c2 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(bottom,  #f5f5f5 0%,#c2c2c2 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(bottom,  #f5f5f5 0%,#c2c2c2 100%); /* IE10+ */
+    background: linear-gradient(to top,  #f5f5f5 0%,#c2c2c2 100%); /* W3C */
+    color:#000;
+    -webkit-box-shadow: inset 2px 2px 3px 0 black, inset -1px -1px 3px 0 white;
+    -moz-box-shadow: inset 2px 2px 3px 0 black, inset -1px -1px 3px 0 white;
+    box-shadow: inset 2px 2px 3px 0 black, inset -1px -1px 3px 0 white;
+}
+</style>        
+        
+        
+        <script type="text/javascript">
+H = HtmlGen;
+
+App = {
+    sizeSliderVisible: false,
+    orderingHelperR: {
+        "angle": 0,
+        "center": 1,
+        "slider": 2
+    },
+    orderingHelperL: {
+        "hue": 0,
+        "saturation": 1,
+        "liteness": 2
+    },
+    ordHelpRInv : ["angle", "center", "slider"],
+    ordHelpLInv : ["hue", "saturation", "liteness"],
+    canvasId: "colPickCanvas",
+    canvasParentId: "canvasParent",
+    size: 250,
+    hue: 0.5,
+    saturation: 0.7,
+    liteness: 0.6,
+    brightness: 0.6,
+    initiallySelectedMouseModeIndex: 1,
+    mouseMode: ["mouseMove", "click"][1],
+    initiallySelectedColorModel: 0,
+    colorModelIndex: 0,
+    updateFromHchoices: ["updateFromHsl", "updateFromHsv"],
+    updateFromRgbchoices: ["updateFromRgbToHsl", "updateFromRgbToHsv"],
+    updateFromH: null,  // either updateFromHsl or updateFromHsv, will be set later
+    updateFromRgb: null, // either updateFromRgbToHsl or updateFromRgbToHsv, will be set later
+    updateFromHsl: function(){
+        rgb = hslToRgb(this.hue, this.saturation, this.liteness);
+        var red = Math.round(rgb[0]);
+        var green = Math.round(rgb[1]);
+        var blue = Math.round(rgb[2]);
+        //console.log("updateFromHsl: " + red + ", " + green + ", " + blue);
+        this.components.redSliderParent.set(red); this.red = red;
+        this.components.greenSliderParent.set(green); this.green = green;
+        this.components.blueSliderParent.set(blue); this.blue = blue;
+    },
+    updateFromHsv: function(){
+        rgb = hsvToRgb(this.hue, this.saturation, this.brightness);
+        var red = Math.round(rgb[0]);
+        var green = Math.round(rgb[1]);
+        var blue = Math.round(rgb[2]);
+        //console.log("updateFromHsv: " + red + ", " + green + ", " + blue);
+        this.components.redSliderParent.set(red); this.red = red;
+        this.components.greenSliderParent.set(green); this.green = green;
+        this.components.blueSliderParent.set(blue); this.blue = blue;
+    },
+    updateFromRgbToHsl: function(){
+        var hsl = rgbToHsl(this.red, this.green, this.blue);
+        var hue = hsl[0];
+        var sat = hsl[1];
+        var lite = hsl[2];
+        this.components.hueSliderParent.set(hue); this.hue = hue;
+        this.components.saturationSliderParent.set(sat); this.saturation = sat;
+        this.components.litenessSliderParent.set(lite); this.liteness = lite;
+    },
+    updateFromRgbToHsv: function(){
+        var hsv = rgbToHsv(this.red, this.green, this.blue);
+        var hue = hsv[0];
+        var sat = hsv[1];
+        var brightness = hsv[2];
+        this.components.hueSliderParent.set(hue); this.hue = hue;
+        this.components.saturationSliderParent.set(sat); this.saturation = sat;
+        this.components.brightnessSliderParent.set(brightness); this.brightness = brightness;
+    },
+    callbacks: {
+        sizeSlider:  function(value, mode, component, app, event, ui){
+            app.size = value;
+            app.action();
+        },
+        hueSlider:  function(value, mode, component, app, event, ui){
+            app.hue = value;
+            app.updateFromH();
+            app.action();
+        },
+        saturationSlider:  function(value, mode, component, app, event, ui){
+            app.saturation = value;
+            app.updateFromH();
+            app.action();
+        },
+        litenessSlider:  function(value, mode, component, app, event, ui){
+            app.liteness = value;
+            app.updateFromH();
+            app.action();
+        },
+        brightnessSlider:  function(value, mode, component, app, event, ui){
+            app.brightness = value;
+            app.updateFromH();
+            app.action();
+        },
+        redSlider:  function(value, mode, component, app, event, ui){
+            app.red = value;
+            app.updateFromRgb();
+            app.action();
+        },
+        greenSlider:  function(value, mode, component, app, event, ui){
+            app.green = value;
+            app.updateFromRgb();
+            app.action();
+        },
+        blueSlider:  function(value, mode, component, app, event, ui){
+            app.blue = value;
+            app.updateFromRgb();
+            app.action();
+        },
+        mouseMode: function(index, evt, component, app, domElt){
+            app.mouseMode = ["mouseMove", "click"][index];
+        },
+        colorModel: function(index, evt, component, app, domElt){
+            app.colorModelIndex = index;
+            app.updateFromH = app[app.updateFromHchoices[index]];
+            app.updateFromRgb = app[app.updateFromRgbchoices[index]];
+            var elt = app.components.brightnessSlider.elt.parent().parent();
+            var method = ["hide", "show"][index];
+            elt[method]();
+            elt = app.components.litenessSlider.elt.parent().parent();
+            method = ["show", "hide"][index];
+            elt[method]();
+            app.updateFromRgb();
+            app.action();
+        }
+    },
+    getXYaux : [
+        // cdp = centerDistParam (saturation in default config)
+        /* 0 */function(tana, cdp, r, s){
+            var x0 = -cdp * r * s / (r + 0.5*s*tana);
+            var y0 = tana * x0;
+            return [x0, y0];
+        },
+        /* 1 */function(tana, cdp, r, s){
+            var y0 = -cdp * r;
+            var x0 = y0/tana;
+            return [x0, y0];
+        },
+        /* 2 */function(tana, cdp, r, s){
+            var x0 = -cdp * r * s / (-r + 0.5*s*tana);
+            var y0 = tana * x0;
+            return [x0, y0];
+        },
+        /* 3 */function(tana, cdp, r, s){
+            var x0 = cdp * r * s / (r + 0.5*s*tana);
+            var y0 = tana * x0;
+            return [x0, y0];
+        },
+        /* 4 */function(tana, cdp, r, s){
+            var y0 = cdp * r;
+            var x0 = y0/tana;
+            return [x0, y0];
+        },
+        /* 5 */function(tana, cdp, r, s){
+            var x0 = cdp * r * s / (-r + 0.5*s*tana);
+            var y0 = tana * x0;
+            return [x0, y0];
+        }
+    ],
+    getXY: function(angleParam, centerDistParam){
+        var pi = Math.PI;
+        var twoPi = 2*pi;
+        var s = this.size;
+        var h = this.height;
+        var r = h/2;
+        var alpha = twoPi * angleParam - pi;
+        var tana = Math.tan(alpha);
+        var sector = Math.floor(6*angleParam);
+        if (sector == 6){
+            sector = 0;
+        }
+        var x0y0 = this.getXYaux[sector](tana, centerDistParam, r, s);
+        var x0 = x0y0[0];
+        var y0 = x0y0[1];
+        var centerX = this.centerX, centerY = this.centerY;
+        var x = x0 + centerX;
+        var y = y0 + centerY;
+        return [x, y];
+    },
+    getRGB: function(x, y){
+        var ord = this.ord;
+        var iOrd = this.invOrd;
+        var params = [0,0,0];
+        var s = this.size;
+        var ss = s/2;
+        var h = this.height;
+        var hh = h/2;
+        var hhs = hh * s;
+        var pi = Math.PI;
+        var twoPi = 2*pi;
+        var centerX = this.centerX, centerY = this.centerY;
+        var x0 = x - centerX;
+        var y0 = y - centerY;
+        var angle = Math.atan2(y0, x0);
+        params[iOrd[0]] = (angle + pi)/twoPi;
+        var term1 =  hh * x0 + ss * y0;
+        var term2 = -hh * x0 + ss * y0;
+        var at1 = Math.abs(term1);
+        var at2 = Math.abs(term2);
+        var red, green, blue, alpha;
+        if (at1 <= hhs && at2 <= hhs){
+            params[iOrd[1]] = Math.max(at1/hhs, at2/hhs, Math.abs(y0)/hh);
+            var lb = ["liteness", "brightness"][this.colorModelIndex];
+            params[iOrd[2]] = this[["hue", "saturation", lb][iOrd[2]]];
+            var h2r = [hslToRgb, hsvToRgb][this.colorModelIndex];
+            var rgb = h2r(params[0], params[1], params[2]);
+            red = Math.round(rgb[0]);
+            green = Math.round(rgb[1]);
+            blue = Math.round(rgb[2]);
+            alpha = 255;
+        } else {
+            red = green = blue = alpha = 0;
+        }
+        return [red, green, blue, alpha];
+    },
+    getCoords: function(){
+        //var hue = this.hue;
+        //var sat = this.saturation;
+        //return this.getXY(hue, sat);
+        var ord = this.ord;
+        var iOrd = this.invOrd;
+        var lb = ["liteness", "brightness"][this.colorModelIndex];
+        var angleParam = this[["hue", "saturation", lb][iOrd[0]]];
+        var centerDistParam = this[["hue", "saturation", lb][iOrd[1]]];
+        return this.getXY(angleParam, centerDistParam);
+    },
+    mouseAction: function(x, y, updateSliders){
+        var rgb = this.getRGB(x,y);
+        //var info = rgb.join(",");
+        if (updateSliders){
+            // update the two sliders which correspond to angle and center-distance, not the 
+            // slider influencing the color graphics as a whole
+            var ord = this.ord;
+            var iOrd = this.invOrd;
+            var r2h = [rgbToHsl, rgbToHsv][this.colorModelIndex];
+            var hslv = r2h(rgb[0], rgb[1], rgb[2]);
+            var lbSliderName = ["litenessSliderParent", "brightnessSliderParent"][this.colorModelIndex];
+            var componentNames = ["hueSliderParent", "saturationSliderParent", lbSliderName];
+            for (var i=0; i<=1; i++){
+                this.components[componentNames[iOrd[i]]].set(hslv[iOrd[i]]);
+            }
+            // and update the sliders for red, green, blue
+            this.components.redSliderParent.set(rgb[0]);
+            this.components.greenSliderParent.set(rgb[1]);
+            this.components.blueSliderParent.set(rgb[2]);
+        }
+        var color = "rgb(" + rgb[0] + ", " + rgb[1] + ", " + rgb[2] + ")";
+        this.mouseChosenColor.css("background-color", color);
+        this.mouseChosenColorText.html(color);
+        //var xy = this.getXY(hue, sat);
+        //var xString = "%5.1f".sprintf(xy[0]);
+        //var yString = "%5.1f".sprintf(xy[1]);
+        //$("#debug").html("mouse: (x,y) = " + "(" +x+ "," +y+ ")   back n forth: (x,y) = " +xString+ "," +yString+ ")");
+    },
+    action: function(){
+        this.ord = this.ordering();
+        this.invOrd = this.ord.inversePermutation();
+        var sliderColor = "rgb(" + this.red + ", " + this.green + ", " + this.blue + ")";
+        //console.log("sliderColor: " + sliderColor);
+        this.chosenColor.css("background-color", sliderColor);
+        this.chosenColorText.html(sliderColor);
+        var canvasId = this.canvasId;
+        var s = this.size;
+        var w = 2 * s;
+        var h = Math.sqrt(3) * s;
+        this.height = h;
+        var canvHtml = H.canvas({id: canvasId, width: w, height: h});
+        this.canvasParent.html(canvHtml);
+        var canv = $("#" + canvasId);
+        this.canv = canv;
+        var ctx = canv[0].getContext('2d');
+        this.ctx = ctx;
+        var THIS = this;
+        canv.mousemove(function(evt){
+            var off = THIS.canv.offset();
+            var oTop = off.top;
+            var oLeft = off.left; 
+            var x = evt.pageX - oLeft;
+            var y = evt.pageY - oTop;
+            THIS.mouseAction(x, y, THIS.mouseMode == "mouseMove");
+        });
+        canv.click(function(evt){
+            var off = THIS.canv.offset();
+            var oTop = off.top;
+            var oLeft = off.left; 
+            var x = evt.pageX - oLeft;
+            var y = evt.pageY - oTop;
+            THIS.mouseAction(x, y, true);
+            var hue = THIS.components.hueSliderParent.get(); THIS.hue = hue;
+            var sat  = THIS.components.saturationSliderParent.get(); THIS.saturation = sat;
+            if (THIS.colorModelIndex == 0){
+                var lite = THIS.components.litenessSliderParent.get(); THIS.liteness = lite;
+                THIS.updateFromHsl();
+            }
+            if (THIS.colorModelIndex == 1){
+                var brightness = THIS.components.brightnessSliderParent.get(); THIS.brightness = brightness;
+                THIS.updateFromHsv();
+            }
+            THIS.action();
+        });
+        var centerX = w/2;
+        var centerY = h/2;
+        this.centerX = centerX;
+        this.centerY = centerY;
+        var dat = ctx.createImageData(w, h);
+        for (var i=0; i<dat.data.length/4; i++){
+            var y = Math.floor(i/w);
+            var x = i - w * y;
+            var rgba = this.getRGB(x, y);
+            var red = rgba[0], green = rgba[1], blue = rgba[2], alpha = rgba[3];
+    		var targetIndex = 4*i;
+    		dat.data[targetIndex]     = red;
+    		dat.data[targetIndex + 1] = green;
+    		dat.data[targetIndex + 2] = blue;
+    		dat.data[targetIndex + 3] = alpha;
+        }
+        ctx.putImageData(dat, 0, 0);
+        var xy = this.getCoords();
+        var x = xy[0];
+        var y = xy[1];
+        //ctx.strokeStyle = "black";
+        //ctx.beginPath();
+        //ctx.arc(x, y, 6, 0, Math.PI*2);
+        //ctx.stroke();
+        CANVAS.mathematicaCrossHairs(ctx, x, y);
+        return;
+        var xs = [];
+        var ys = [];
+        for (var i=0; i<=6; i++){
+            xs.push(centerX + Math.cos(i * 2 * Math.PI / 6) * s/2);
+            ys.push(centerY + Math.sin(i * 2 * Math.PI / 6) * s/2);
+        }
+        ctx.beginPath();
+        if (this.colorModelIndex == 0){
+            ctx.fillStyle = hslToRgbString(this.hue, this.saturation, this.liteness);
+        }
+        if (this.colorModelIndex == 1){
+            ctx.fillStyle = hsvToRgbString(this.hue, this.saturation, this.brightness);
+        }
+        for (var i=0; i<6; i++){
+            if (i==0){
+                ctx.moveTo(xs[i], ys[i]);
+            } else {
+                ctx.lineTo(xs[i], ys[i]);
+            }
+        }
+        ctx.fill();
+    },
+    run: function(){
+        //this.updateFromH = this[this.updateFromHchoices[this.colorModelIndex]];
+        //this.updateFromRgb = this[this.updateFromRgbchoices[this.colorModelIndex]];
+        var xtra = {valWidth: "42px"};
+        var sizeSlider = new SliderPlus({
+            name: "sizeSlider", id: "sizeSlider",
+            app: this,
+            min: 10, max: 350, step: 1, value: this.size,
+            xtra: {
+                //formatStr: "%4.2f",
+                //formatFun: function(value){
+                //   return "%5.1f".sprintf(100 * value) + "%"
+                //},
+                valWidth: "42px"
+            }
+        });
+        var hueSlider = new SliderPlus({
+            name: "hueSlider", id: "hueSlider",
+            app: this,
+            min: 0, max: 1, step: 0.002, value: this.hue,
+            xtra: xtra
+        });
+        var saturationSlider = new SliderPlus({
+            name: "saturationSlider", id: "saturationSlider",
+            app: this,
+            min: 0, max: 1, step: 0.002, value: this.saturation,
+            xtra: xtra
+        });
+        var litenessSlider = new SliderPlus({
+            name: "litenessSlider", id: "litenessSlider",
+            app: this,
+            min: 0, max: 1, step: 0.002, value: this.liteness,
+            xtra: xtra
+        });
+        var brightnessSlider = new SliderPlus({
+            name: "brightnessSlider", id: "brightnessSlider",
+            app: this,
+            min: 0, max: 1, step: 0.002, value: this.brightness,
+            xtra: xtra
+        });
+        var lb = [this.liteness, this.brightness][this.colorModelIndex];
+        var h2r = [hslToRgb, hsvToRgb][this.colorModelIndex];
+        var rgb = h2r(this.hue, this.saturation, lb);
+        this.red = Math.round(rgb[0]);
+        this.green = Math.round(rgb[1]);
+        this.blue = Math.round(rgb[2]);
+        var redSlider = new SliderPlus({
+            name: "redSlider", id: "redSlider", app: this,
+            min:0, max: 255, step: 1, value: this.red,
+            xtra: xtra
+        });
+        var greenSlider = new SliderPlus({
+            name: "greenSlider", id: "greenSlider", app: this,
+            min:0, max: 255, step: 1, value: this.green,
+            xtra: xtra
+        });
+        var blueSlider = new SliderPlus({
+            name: "blueSlider", id: "blueSlider", app: this,
+            min:0, max: 255, step: 1, value: this.blue,
+            xtra: xtra
+        });
+        var sliderTable = H.table(
+            H.tr(H.thLeft("hue") + hueSlider.sliderHtml + hueSlider.valueHtml) +
+            H.tr(H.thLeft("saturation") + saturationSlider.sliderHtml + saturationSlider.valueHtml) +
+            H.tr(H.thLeft("lightness") + litenessSlider.sliderHtml + litenessSlider.valueHtml) +
+            H.tr(H.thLeft("value (brightness)", {"class": "lineBreakDisabled"}) + brightnessSlider.sliderHtml + brightnessSlider.valueHtml) +
+            H.tr(H.thLeft("red") + redSlider.sliderHtml + redSlider.valueHtml) +
+            H.tr(H.thLeft("green") + greenSlider.sliderHtml + greenSlider.valueHtml) +
+            H.tr(H.thLeft("blue") + blueSlider.sliderHtml + blueSlider.valueHtml) +
+            H.tr(H.thLeft("size") + sizeSlider.sliderHtml + sizeSlider.valueHtml)
+            ,{"class": "fullWidth"}
+        );
+        var bbarMouseMode = new ButtonBar({
+            buttonLabels: ["mouse move", "click"],
+            headerLabel: "update on",
+            selectedIndex: this.initiallySelectedMouseModeIndex,
+            idPrefix: "mouseMode",
+            name: "mouseMode",
+            app: this,
+            chosenButtonClass: "chosen bold",
+            btnClass: "mouseModeButton"
+            //tableStyle: {"background-color": "rgb(255, 99, 240)"},
+            
+        });
+        var bbarModel = new ButtonBar({
+            buttonLabels: ["HSL + RGB", "HLV + RGB"],
+            headerLabel: "color model",
+            selectedIndex: this.initiallySelectedColorModel,
+            idPrefix: "colorModel",
+            name: "colorModel",
+            app: this,
+            chosenButtonClass: "chosen bold",
+            btnClass: "colorModelButton"
+        });
+        var choiceTable = H.table(
+            H.tr(
+                H.td("", {id: "chosenColor", width: 100, height:25}) +
+                H.td("", {id: "chosenColorText", style: "padding-left: 20px", width: 150}) +
+                H.td("mouse: ", {id: "mouseLabel", style: "padding-left: 50px"}) +
+                H.td("", {id: "mouseChosenColor", width: 100, height:25}) +
+                H.td("", {id: "mouseChosenColorText", style: "padding-left: 20px"})
+            )
+            , {id: "choiceTable"}
+        );
+        function permAux(id){
+            return {id: id, "class": "ui-state-default", title: "drag and drop to rearrange"};
+        }
+        var chooserModePerm = H.ul(
+            H.li("&nbsp;&#x21A8; angle", permAux("angle")) +
+            H.li("&nbsp;&#x21A8; center-distance", permAux("center")) +
+            H.li("&nbsp;&#x21A8; slider", permAux("slider"))
+            , {id: "permutation"}
+        );
+        function aux(name){
+            return H.trtd(name, {});
+        }
+        var hueSatLite = H.table(aux("hue") + aux("saturation") + aux("lightness"));
+        var chooserMode = H.table(H.tr(
+            H.td(hueSatLite) + H.td(chooserModePerm)
+        ));
+        var canvasParent = H.div("", {id: this.canvasParentId});
+        $("#universe").html(
+            H.table(
+                H.trtd(H.table(H.tr(
+                    H.td(bbarMouseMode.html) +
+                    H.td(bbarModel.html, {id: "colorModelTd"}) +
+                    H.td(H.checkbox(false, {id: "showSizeSliderCheck"}), {id: "showSizeSliderCheckTd"}) +
+                    H.td("show size slider")
+                ))) +
+                H.td(chooserMode) +
+                H.trtd(sliderTable, {"class": "fullWidth"}) +
+                H.trtd(choiceTable) +
+                H.trtd(canvasParent)
+                , {width: 800}
+            )
+        );
+        this.canvasParent = $("#" + this.canvasParentId);
+        this.chosenColor = $("#chosenColor");
+        this.chosenColorText = $("#chosenColorText");
+        this.mouseChosenColor = $("#mouseChosenColor");
+        this.mouseChosenColorText = $("#mouseChosenColorText");
+        this.initComponents();
+        this.callbacks.colorModel(this.colorModelIndex, null, null, this, null);
+        this.action();
+        var THIS = this;
+        $("#permutation").sortable({
+            start: function(evt, ui){
+                //console.log("start");
+            },
+            update: function(evt, ui){
+                //console.log("update");
+                THIS.action();
+            }
+        });
+        $("#permutation").disableSelection();
+        this.showSizeSlider(this.sizeSliderVisible);
+        $("#showSizeSliderCheck").change(function(evt){
+            var checked = this.checked;
+            App.sizeSliderVisible = checked;
+            App.showSizeSlider(checked);
+        });
+    },
+    showSizeSlider: function(bool){
+        var elt = this.components.sizeSlider.elt.parent().parent();
+        var method = ["hide", "show"][bool - 0];
+        elt[method]();
+    },
+    orderingAux: function(){
+        //var result = [];
+        //$("#permutation li").each(function(){
+        //    result.push($(this).attr("id"));
+        //});
+        //return result;
+        return $("#permutation li").map(function(){
+            return $(this).attr("id");
+        }).get();
+    },
+    ordering: function(){
+        var THIS = this;
+        return this.orderingAux().map(function(item){
+            return THIS.orderingHelperR[item];
+        });
+    },
+    initComponents: function(){
+        for (var c in this.components){
+            var component = this.components[c];
+            if (component.parentComponent == null){
+                component.init();
+            }
+        }
+    }
+};
+function initPage(){
+    App.run();
+}
+        </script>        
+        
+        
+    
+    </head>
+
+    <body onload="initPage();">
+        <div id="universe"></div>
+        <div id="log"></div>
+        <div id="dummy"></div>
+        <div id="debug"></div>
+        <div id="debugT1"></div>
+        <div id="debugT2"></div>
+        <div id="debugT3"></div>
+    </body>
+</html>

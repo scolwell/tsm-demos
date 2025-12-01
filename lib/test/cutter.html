@@ -1,0 +1,179 @@
+<!DOCTYPE HTML>
+<html>
+<!--
+// written by Thomas "mathheadinclouds" Kloecker
+// THIS CODE IS PUBLIC DOMAIN. YOU DO NOT "OWN" IT IN ANY WAY, YOU MAY USE IT IN ANY AND EVERY WAY.
+// PLEASE REFRAIN FROM REMOVING THIS NOTICE
+-->
+    <head>
+    	<meta http-equiv="content-type" content="text/html" />
+    	<meta name="author" content="Thomas Kloecker" />
+    	<title>canvas cutter</title>
+        
+        <script type="text/javascript" src="../jquery-1.10.2.min.js"></script>
+        <script type="text/javascript" src="../jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+        <script type="text/javascript" src="../googleStringTools.js"></script>
+        <script type="text/javascript" src="../util.js"></script>
+        <script type="text/javascript" src="../css.js"></script>
+        <script type="text/javascript" src="../htmlGeneratorTools.js"></script>
+        <script type="text/javascript" src="../components.js"></script>
+        
+        <link href="../jquery-ui-1.10.3.custom/css/start/jquery-ui-1.10.3.custom.min.css" rel="stylesheet" type="text/css"/>
+
+<style>
+.fullWidth {
+    width: 100%;
+}
+.lineBreakDisabled {
+    white-space:  nowrap;
+}
+table#sliderTable th {
+    padding-right: 15px;
+}
+table#sliderTable td.sliVal {
+    min-width: 30px;
+}
+
+</style>        
+        
+        
+        <script type="text/javascript">
+H = HtmlGen;
+App = {
+    sliderTableWidth: 700,
+    left: 0,
+    top: 0,
+    sourceWidth: -1,
+    sourceHeight: -1,
+    targetWidth: -1,
+    targetHeight: -1,
+    callbacks: {
+        widthSlider: function(value, mode, component, app, event, ui){
+            component.valElt.html(value);
+            app.targetWidth = value;
+            app.showCut();
+        },
+        heightSlider: function(value, mode, component, app, event, ui){
+            component.valElt.html(value);
+            app.targetHeight = value;
+            app.showCut();
+        },
+        leftSlider: function(value, mode, component, app, event, ui){
+            component.valElt.html(value);
+            app.left = value;
+            app.showCut();
+        },
+        topSlider: function(value, mode, component, app, event, ui){
+            component.valElt.html(value);
+            app.top = value;
+            app.showCut();
+        }
+    },
+    go : function(){
+        var fileName = $("#fileNameInput").val();
+        var img = new Image();
+        img.src = fileName;
+        img.onload = function(){ App.imageLoaded(); };
+        this.img = img;
+    },
+    initPage : function(){},
+    imageLoaded: function(){
+        var inputCanvasContainerElt = $("#inputCanvasContainer"); this.inputCanvasContainerElt = inputCanvasContainerElt;
+        var mouseInfoElt = $("#mouseInfo"); this.mouseInfoElt = mouseInfoElt;
+        var img = this.img;
+        var w = img.width;
+        var h = img.height;
+        this.sourceWidth = w; this.targetWidth = w; 
+        this.sourceHeight = h; this.targetHeight = h;
+        var canvHtml = HtmlGen.canvas({width: w, height: h, id: "inputCanvas"});
+        inputCanvasContainerElt.html(canvHtml);
+        var inputCanvas = $("#inputCanvas"); this.inputCanvas = inputCanvas;
+        var ctx = inputCanvas[0].getContext('2d'); 
+        this.ctx = ctx;
+        var sourceX = 0;
+        var sourceY = 0;
+        var sourceWidth = w;
+        var sourceHeight = h;
+        var targetX = 0;
+        var targetY = 0;
+        var targetWidth = w;
+        var targetHeight = h;
+        ctx.drawImage(img, sourceX, sourceY, sourceWidth, sourceHeight, targetX, targetY, targetWidth, targetHeight);
+        var cntrContainer = $("#controls");
+        var widthSlider  = new Slidr({min: 1, max: w, value: w, step: 1, name: "widthSlider",  app: this});
+        var heightSlider = new Slidr({min: 1, max: h, value: h, step: 1, name: "heightSlider", app: this});
+        var leftSlider   = new Slidr({min: 0, max: w, value: 0, step: 1, name: "leftSlider",   app: this});
+        var topSlider    = new Slidr({min: 0, max: h, value: 0, step: 1, name: "topSlider",    app: this});
+        var row1 = H.tr(
+            H.thLeft("width:", {"class": "lineBreakDisabled"}) +
+            H.td(widthSlider.html, {"class": "fullWidth"}) +
+            H.tdRight("", {id: widthSlider.id + "Value", "class": "sliVal"})
+        );
+        var row2 = H.tr(
+            H.thLeft("height:", {"class": "lineBreakDisabled"}) +
+            H.td(heightSlider.html, {"class": "fullWidth"}) +
+            H.tdRight("", {id: heightSlider.id + "Value", "class": "sliVal"})
+        );
+        var row3 = H.tr(
+            H.thLeft("left:", {"class": "lineBreakDisabled"}) +
+            H.td(leftSlider.html, {"class": "fullWidth"}) +
+            H.tdRight("", {id: leftSlider.id + "Value", "class": "sliVal"})
+        );
+        var row4 = H.tr(
+            H.thLeft("top:", {"class": "lineBreakDisabled"}) +
+            H.td(topSlider.html, {"class": "fullWidth"}) +
+            H.tdRight("", {id: topSlider.id + "Value", "class": "sliVal"})
+        );
+        var sliderTable = H.table(row1 + row2 + row3 + row4, {id: "sliderTable", width: this.sliderTableWidth});
+        cntrContainer.html(sliderTable);
+        widthSlider.init();
+        widthSlider.valElt = $("#" + widthSlider.id + "Value");
+        widthSlider.valElt.html(widthSlider.get());
+        heightSlider.init();
+        heightSlider.valElt = $("#" + heightSlider.id + "Value");
+        heightSlider.valElt.html(heightSlider.get());
+        leftSlider.init();
+        leftSlider.valElt = $("#" + leftSlider.id + "Value");
+        leftSlider.valElt.html(leftSlider.get());
+        topSlider.init();
+        topSlider.valElt = $("#" + topSlider.id + "Value");
+        topSlider.valElt.html(topSlider.get());
+        this.showCut();
+    },
+    showCut: function(){
+        var targetWidth = this.targetWidth;
+        var targetHeight = this.targetHeight;
+        var left = this.left;
+        var top = this.top;
+        var canvHtml = H.canvas({id: "outputCanvas", width: targetWidth, height: targetHeight});
+        var outCanvContainer = $("#outputCanvasContainer");
+        var html = H.table(H.tr(
+            H.td(canvHtml)
+        ));
+        outCanvContainer.html(html);
+        var outCanv = $("#outputCanvas");
+        var outCtx = outCanv[0].getContext("2d");
+        this.outCanv = outCanv;
+        this.outCtx = outCtx;
+        var sourceCtx = this.ctx;
+        var sourceData = sourceCtx.getImageData(left, top, targetWidth, targetHeight);
+        outCtx.putImageData(sourceData, 0, 0);
+    }
+    
+};
+        </script>        
+        
+        
+    
+    </head>
+
+    <body onload="App.initPage();">
+        <input type="text" id="fileNameInput" value="sliderBIG.png" /><button onclick="App.go();">go</button>
+        <div id="controls"></div>
+        <div id="inputCanvasContainer"></div>
+        <div id="mouseInfo"></div>
+        <div id="outputCanvasContainer"></div>
+        <div id="debug"></div>
+        <div id="dummy"></div>
+    </body>
+</html>

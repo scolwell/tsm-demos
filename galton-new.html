@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galton Board Simulator</title>
+    <link rel="stylesheet" href="the.css">
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
+    <style>
+        :root {
+            --primary-color: #005EE9;
+            --secondary-color: #0051D5;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --background: #f8fafc;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        
+        .app-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* Header */
+        .header {
+            background: white;
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem 2rem;
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            margin-bottom: 1rem;
+        }
+        
+        .back-button:hover {
+            background: #f8fafc;
+            color: var(--primary-color);
+        }
+        
+        .header-info {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        .header-icon {
+            flex-shrink: 0;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 12px;
+            color: white;
+        }
+        
+        .header-text h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 0 0 0.25rem 0;
+            color: var(--text-primary);
+        }
+        
+        .header-text p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin: 0;
+            max-width: 800px;
+        }
+        
+        .header-version {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        
+        /* Info Banner */
+        .info-banner {
+            background: linear-gradient(to right, #eff6ff, #f0f9ff);
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            margin: 2rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        .info-icon {
+            flex-shrink: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #3b82f6;
+        }
+        
+        .info-content {
+            flex: 1;
+        }
+        
+        .info-content strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        
+        .info-content p {
+            margin: 0.25rem 0 0 0;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        /* Content Layout */
+        .content-wrapper {
+            display: flex;
+            gap: 2rem;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .left-panel {
+            width: 380px;
+            flex-shrink: 0;
+        }
+        
+        .right-panel {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        /* Section Cards */
+        .section {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section h3 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin: 0 0 0.25rem 0;
+        }
+        
+        .section-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin: 0 0 1.25rem 0;
+        }
+        
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+        
+        /* Buttons */
+        .btn-primary-custom {
+            width: 100%;
+            padding: 0.875rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .btn-primary-custom:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 94, 233, 0.3);
+        }
+        
+        .btn-secondary-custom {
+            width: 100%;
+            padding: 0.75rem;
+            background: white;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-secondary-custom:hover {
+            background: #f0f9ff;
+        }
+        
+        .btn-outline-custom {
+            width: 100%;
+            padding: 0.75rem;
+            background: white;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-outline-custom:hover {
+            background: #f8fafc;
+            border-color: var(--text-secondary);
+        }
+        
+        /* Slider */
+        .slider-group {
+            margin-bottom: 1rem;
+        }
+        
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .slider-value {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+        
+        /* Canvas */
+        #plinkoCanvas {
+            background: #f8fafc;
+            border-radius: 12px;
+            width: 100%;
+            height: auto;
+            display: block;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Histogram */
+        .histogram-container {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .histogram-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .histogram-header h4 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .histogram-legend {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.875rem;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .legend-dot.actual {
+            background: linear-gradient(135deg, #3b82f6, #60a5fa);
+        }
+        
+        .legend-dot.theoretical {
+            border: 2px solid #f59e0b;
+            background: transparent;
+        }
+        
+        #histogramCanvas {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        /* Stats */
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .stat-row:last-child {
+            border-bottom: none;
+        }
+        
+        .stat-label {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .stat-value {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .badge {
+            padding: 0.25rem 0.75rem;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        .percentage {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        
+        /* Bin Chart */
+        .bin-chart-container {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .bin-chart {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            height: 120px;
+            gap: 0.5rem;
+        }
+        
+        .bin-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+        }
+        
+        .bin-bar {
+            width: 100%;
+            background: linear-gradient(to top, #3b82f6, #60a5fa);
+            border-radius: 4px 4px 0 0;
+            transition: height 0.3s ease;
+            min-height: 2px;
+        }
+        
+        .bin-bar.center {
+            background: linear-gradient(to top, #8b5cf6, #a78bfa);
+        }
+        
+        .bin-label {
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        .bin-count {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Footer */
+        .app-footer {
+            background: white;
+            border-top: 1px solid var(--border-color);
+            padding: 1.5rem 2rem;
+            margin-top: 3rem;
+        }
+        
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        .footer-left, .footer-right {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .footer-brand {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .footer-separator {
+            color: var(--border-color);
+        }
+        
+        .footer-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .footer-link:hover {
+            color: var(--secondary-color);
+        }
+        
+        /* Theme Selector */
+        .theme-controls {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            z-index: 10;
+        }
+        
+        .theme-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        .theme-select {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: white;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .theme-select:hover {
+            border-color: var(--primary-color);
+        }
+        
+        .theme-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 94, 233, 0.1);
+        }
+        
+        @media (max-width: 968px) {
+            .content-wrapper {
+                flex-direction: column;
+            }
+            
+            .left-panel {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-content">
+        <a href="index.html" class="back-button">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Back to Demonstrations
+        </a>
+        <div class="header-info">
+          <div class="header-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M12 16v-4"></path>
+              <path d="M12 8h.01"></path>
+            </svg>
+          </div>
+          <div class="header-text">
+            <h1>Galton Board Simulator</h1>
+            <p>Interactive demonstration of the binomial distribution and central limit theorem. Watch as random choices at each peg naturally form a bell curve pattern, illustrating fundamental concepts in probability and statistics.</p>
+          </div>
+          <div class="header-version">
+            <span>v1.0.0</span>
+            <span class="version-separator">•</span>
+            <span>Build 20251130</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Educational Tool Banner -->
+    <div class="info-banner">
+      <div class="info-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"></path>
+          <path d="M9 18h6"></path>
+          <path d="M10 22h4"></path>
+        </svg>
+      </div>
+      <div class="info-content">
+        <strong>Educational Demonstration</strong>
+        <p>This simulator helps you understand how the binomial distribution emerges from independent random trials. Each ball makes 50/50 left/right choices at every peg. As more balls drop, the distribution converges to a normal curve, demonstrating the central limit theorem in action.</p>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content-wrapper">
+      <!-- Left Panel -->
+      <div class="left-panel">
+        <!-- Simulation Controls -->
+        <section class="section">
+          <h3>Simulation Controls</h3>
+          <p class="section-subtitle">Drop balls and configure parameters</p>
+          
+          <div class="form-group">
+            <button id="dropBall" class="btn-primary-custom">Drop Ball</button>
+          </div>
+          
+          <div class="form-group">
+            <button id="autoToggle" class="btn-secondary-custom">Start Auto Drop</button>
+          </div>
+          
+          <div class="form-group">
+            <button id="reset" class="btn-outline-custom">Reset All</button>
+          </div>
+        </section>
+
+        <!-- Parameters -->
+        <section class="section">
+          <h3>Parameters</h3>
+          <p class="section-subtitle">Adjust simulation settings</p>
+          
+          <div class="slider-group">
+            <div class="slider-label">
+              <label>Number of Rows</label>
+              <span class="slider-value" id="rowsValue">6</span>
+            </div>
+            <input type="range" id="rowsSlider" min="5" max="10" value="6" step="1">
+            <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.25rem;">More rows create more bins and a smoother distribution</p>
+          </div>
+          
+          <div class="slider-group">
+            <div class="slider-label">
+              <label>Gravity Strength</label>
+              <span class="slider-value" id="gravityValue">0.30</span>
+            </div>
+            <input type="range" id="gravitySlider" min="0.1" max="0.5" step="0.05" value="0.3">
+            <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.25rem;">Controls how fast balls fall through the pegs</p>
+          </div>
+        </section>
+
+        <!-- Statistics -->
+        <section class="section">
+          <h3>Statistics</h3>
+          <p class="section-subtitle">Current distribution data</p>
+          
+          <div class="stat-row">
+            <span class="stat-label">Total Balls Dropped</span>
+            <span class="badge" id="totalBalls">0</span>
+          </div>
+          
+          <div id="binStats"></div>
+        </section>
+      </div>
+
+      <!-- Right Panel -->
+      <div class="right-panel">
+        <section class="section" style="position: relative;">
+          <div class="theme-controls">
+            <label class="theme-label">Theme</label>
+            <select id="canvasTheme" class="theme-select">
+              <option value="light" selected>Light</option>
+              <option value="dark">Dark</option>
+              <option value="midnight">Midnight</option>
+              <option value="ocean">Ocean</option>
+              <option value="forest">Forest</option>
+              <option value="sunset">Sunset</option>
+              <option value="lavender">Lavender</option>
+              <option value="christmas">🎄 Christmas</option>
+              <option value="halloween">🎃 Halloween</option>
+              <option value="summer">☀️ Summer</option>
+            </select>
+          </div>
+          <canvas id="plinkoCanvas" width="600" height="420"></canvas>
+          
+          <!-- Bin Visualization -->
+          <div class="bin-chart-container">
+            <h4 style="font-family: 'Poppins', sans-serif; font-size: 1rem; font-weight: 600; margin-bottom: 1rem;">Distribution Chart</h4>
+            <div class="bin-chart" id="binChart"></div>
+          </div>
+        </section>
+        
+        <!-- Histogram -->
+        <section class="histogram-container">
+          <div class="histogram-header">
+            <h4>Binomial Distribution Histogram</h4>
+            <div class="histogram-legend">
+              <div class="legend-item">
+                <div class="legend-dot actual"></div>
+                <span>Actual</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-dot theoretical"></div>
+                <span>Theoretical</span>
+              </div>
+            </div>
+          </div>
+          <canvas id="histogramCanvas" width="800" height="300"></canvas>
+        </section>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="footer-content">
+      <div class="footer-left">
+        <span class="footer-brand">TSM Galton Board Simulator</span>
+        <span class="footer-separator">•</span>
+        <span class="footer-version">v1.0.0</span>
+        <span class="footer-separator">•</span>
+        <span class="footer-build">Build 20251130</span>
+      </div>
+      <div class="footer-right">
+        <a href="index.html" class="footer-link">Back to Demonstrations</a>
+      </div>
+    </div>
+  </footer>
+
+    <script>
+        // Firebase Configuration
+        let db = null;
+        let unsubscribe = null;
+        
+        // Initialize Firebase
+        async function initFirebase() {
+            if (typeof __firebase_config === 'undefined' || typeof __app_id === 'undefined') {
+                console.log('Running in local mode - stats will not persist');
+                return false;
+            }
+            
+            try {
+                firebase.initializeApp(__firebase_config);
+                
+                // Auth
+                if (typeof __initial_auth_token !== 'undefined') {
+                    await firebase.auth().signInWithCustomToken(__initial_auth_token);
+                } else {
+                    await firebase.auth().signInAnonymously();
+                }
+                
+                db = firebase.firestore();
+                setupRealtimeSync();
+                return true;
+            } catch (error) {
+                console.error('Firebase init failed:', error);
+                return false;
+            }
+        }
+
+        // Theme Configuration
+        const THEMES = {
+            light: {
+                background: '#f8fafc',
+                pegHead: '#ef4444',
+                pegShine: '#fca5a5',
+                pegShaft: '#94a3b8',
+                pegPoint: '#64748b',
+                pegType: 'pin'
+            },
+            dark: {
+                background: '#1e293b',
+                pegHead: '#dc2626',
+                pegShine: '#f87171',
+                pegShaft: '#64748b',
+                pegPoint: '#475569',
+                pegType: 'pin'
+            },
+            midnight: {
+                background: '#0f172a',
+                pegHead: '#8b5cf6',
+                pegShine: '#c4b5fd',
+                pegShaft: '#475569',
+                pegPoint: '#334155',
+                pegType: 'pin'
+            },
+            ocean: {
+                background: '#ecfeff',
+                pegHead: '#06b6d4',
+                pegShine: '#67e8f9',
+                pegShaft: '#0e7490',
+                pegPoint: '#155e75',
+                pegType: 'pin'
+            },
+            forest: {
+                background: '#f0fdf4',
+                pegHead: '#10b981',
+                pegShine: '#6ee7b7',
+                pegShaft: '#059669',
+                pegPoint: '#047857',
+                pegType: 'pin'
+            },
+            sunset: {
+                background: '#fff7ed',
+                pegHead: '#f97316',
+                pegShine: '#fdba74',
+                pegShaft: '#ea580c',
+                pegPoint: '#c2410c',
+                pegType: 'pin'
+            },
+            lavender: {
+                background: '#faf5ff',
+                pegHead: '#a855f7',
+                pegShine: '#d8b4fe',
+                pegShaft: '#9333ea',
+                pegPoint: '#7e22ce',
+                pegType: 'pin'
+            },
+            christmas: {
+                background: '#fee',
+                pegHead: '#dc2626',
+                pegShine: '#fef08a',
+                pegShaft: '#16a34a',
+                pegPoint: '#166534',
+                pegType: 'ornament',
+                pegAccent: '#fbbf24'
+            },
+            halloween: {
+                background: '#1a0b2e',
+                pegHead: '#f97316',
+                pegShine: '#fbbf24',
+                pegShaft: '#6b21a8',
+                pegPoint: '#4c1d95',
+                pegType: 'pumpkin',
+                pegAccent: '#059669'
+            },
+            summer: {
+                background: '#e0f2fe',
+                pegHead: '#fbbf24',
+                pegShine: '#fef3c7',
+                pegShaft: '#0ea5e9',
+                pegPoint: '#0284c7',
+                pegType: 'sun',
+                pegAccent: '#fb923c'
+            }
+        };
+        
+        let currentTheme = THEMES.light;
+        
+        // Configuration
+        const CONFIG = {
+            width: 600,
+            height: 420,
+            pegRadius: 5,
+            ballRadius: 6,
+            gravity: 0.3,
+            drag: 0.96,
+            rows: 6,
+            pegSpacingX: 60,
+            pegSpacingY: 50,
+            startX: 300,
+            startY: 50
+        };
+
+        // State
+        let bins = Array(CONFIG.rows + 1).fill(0);
+        let totalBalls = 0;
+        let isAutoDropping = false;
+        let autoInterval = null;
+        let balls = [];
+        let pegs = [];
+        let animationId = null;
+        let useFirebase = false;
+
+        // Canvas setup
+        const canvas = document.getElementById('plinkoCanvas');
+        const ctx = canvas.getContext('2d');
+        const histogramCanvas = document.getElementById('histogramCanvas');
+        const histogramCtx = histogramCanvas.getContext('2d');
+
+        // Initialize pegs
+        function initPegs() {
+            pegs = [];
+            const rows = CONFIG.rows;
+            for (let row = 0; row < rows; row++) {
+                for (let col = 0; col <= row; col++) {
+                    const xOffset = (col - row / 2) * CONFIG.pegSpacingX;
+                    const x = CONFIG.startX + xOffset;
+                    const y = CONFIG.startY + row * CONFIG.pegSpacingY + 60;
+                    pegs.push({ x, y });
+                }
+            }
+        }
+
+        // Ball class
+        class Ball {
+            constructor() {
+                this.x = CONFIG.startX + (Math.random() - 0.5) * 2;
+                this.y = 30;
+                this.vx = 0;
+                this.vy = 0;
+                this.radius = CONFIG.ballRadius;
+                const colors = ['#f87171', '#fbbf24', '#34d399', '#60a5fa', '#a78bfa', '#f472b6'];
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.active = true;
+            }
+
+            update() {
+                // Apply physics
+                this.vx *= CONFIG.drag;
+                this.vy += CONFIG.gravity;
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Peg collisions
+                pegs.forEach(peg => {
+                    const dx = this.x - peg.x;
+                    const dy = this.y - peg.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    const minDistance = this.radius + CONFIG.pegRadius;
+
+                    if (distance < minDistance) {
+                        const angle = Math.atan2(dy, dx);
+                        const overlap = minDistance - distance;
+                        this.x += Math.cos(angle) * overlap;
+                        this.y += Math.sin(angle) * overlap;
+
+                        if (this.vy > 0) {
+                            this.vy = -1.5;
+                            const randomDir = Math.random() < 0.5 ? -1 : 1;
+                            this.vx = randomDir * 2.0;
+                        }
+                    }
+                });
+
+                // Bin detection
+                if (this.y > CONFIG.height - 30) {
+                    const halfWidth = ((CONFIG.rows / 2) + 0.5) * CONFIG.pegSpacingX;
+                    let binIndex = Math.floor((this.x - (CONFIG.startX - halfWidth)) / CONFIG.pegSpacingX);
+                    binIndex = Math.max(0, Math.min(CONFIG.rows, binIndex));
+                    
+                    if (useFirebase && db) {
+                        incrementBinFirebase(binIndex);
+                    } else {
+                        bins[binIndex]++;
+                        totalBalls++;
+                        updateStats();
+                    }
+                    
+                    this.active = false;
+                }
+
+                // Wall collisions
+                if (this.x < this.radius) {
+                    this.x = this.radius;
+                    this.vx *= -1;
+                } else if (this.x > CONFIG.width - this.radius) {
+                    this.x = CONFIG.width - this.radius;
+                    this.vx *= -1;
+                }
+            }
+
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Shine
+                ctx.fillStyle = 'rgba(255,255,255,0.4)';
+                ctx.beginPath();
+                ctx.arc(this.x - 2, this.y - 2, 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // Animation loop
+        function animate() {
+            ctx.clearRect(0, 0, CONFIG.width, CONFIG.height);
+
+            // Draw pegs (themed)
+            pegs.forEach(peg => {
+                if (currentTheme.pegType === 'ornament') {
+                    // Christmas ornament
+                    // Ornament ball
+                    ctx.fillStyle = currentTheme.pegHead;
+                    ctx.beginPath();
+                    ctx.arc(peg.x, peg.y, CONFIG.pegRadius, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Gold cap on top
+                    ctx.fillStyle = currentTheme.pegAccent;
+                    ctx.fillRect(peg.x - 2, peg.y - CONFIG.pegRadius - 2, 4, 2);
+                    
+                    // Hanger
+                    ctx.strokeStyle = currentTheme.pegAccent;
+                    ctx.lineWidth = 1.5;
+                    ctx.beginPath();
+                    ctx.moveTo(peg.x, peg.y - CONFIG.pegRadius - 2);
+                    ctx.lineTo(peg.x, peg.y - CONFIG.pegRadius - 5);
+                    ctx.stroke();
+                    
+                    // Shine
+                    ctx.fillStyle = currentTheme.pegShine;
+                    ctx.beginPath();
+                    ctx.arc(peg.x - 1.5, peg.y - 1, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                } else if (currentTheme.pegType === 'pumpkin') {
+                    // Halloween pumpkin
+                    // Pumpkin body
+                    ctx.fillStyle = currentTheme.pegHead;
+                    ctx.beginPath();
+                    ctx.arc(peg.x, peg.y, CONFIG.pegRadius, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Stem
+                    ctx.fillStyle = currentTheme.pegAccent;
+                    ctx.fillRect(peg.x - 1, peg.y - CONFIG.pegRadius - 3, 2, 3);
+                    
+                    // Ridges
+                    ctx.strokeStyle = '#c2410c';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(peg.x - 2, peg.y - CONFIG.pegRadius);
+                    ctx.lineTo(peg.x - 2, peg.y + CONFIG.pegRadius);
+                    ctx.moveTo(peg.x + 2, peg.y - CONFIG.pegRadius);
+                    ctx.lineTo(peg.x + 2, peg.y + CONFIG.pegRadius);
+                    ctx.stroke();
+                    
+                    // Face (eyes and mouth)
+                    ctx.fillStyle = '#000';
+                    ctx.fillRect(peg.x - 2, peg.y - 1, 1, 1);
+                    ctx.fillRect(peg.x + 1, peg.y - 1, 1, 1);
+                    ctx.fillRect(peg.x - 1, peg.y + 1, 2, 1);
+                    
+                } else if (currentTheme.pegType === 'sun') {
+                    // Summer sun
+                    // Sun center
+                    ctx.fillStyle = currentTheme.pegHead;
+                    ctx.beginPath();
+                    ctx.arc(peg.x, peg.y, CONFIG.pegRadius, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Sun rays
+                    ctx.strokeStyle = currentTheme.pegAccent;
+                    ctx.lineWidth = 2;
+                    for (let i = 0; i < 8; i++) {
+                        const angle = (Math.PI * 2 * i) / 8;
+                        const x1 = peg.x + Math.cos(angle) * (CONFIG.pegRadius + 1);
+                        const y1 = peg.y + Math.sin(angle) * (CONFIG.pegRadius + 1);
+                        const x2 = peg.x + Math.cos(angle) * (CONFIG.pegRadius + 4);
+                        const y2 = peg.y + Math.sin(angle) * (CONFIG.pegRadius + 4);
+                        ctx.beginPath();
+                        ctx.moveTo(x1, y1);
+                        ctx.lineTo(x2, y2);
+                        ctx.stroke();
+                    }
+                    
+                    // Shine
+                    ctx.fillStyle = currentTheme.pegShine;
+                    ctx.beginPath();
+                    ctx.arc(peg.x - 1, peg.y - 1, 1.5, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                } else {
+                    // Default pin
+                    // Pin shaft below
+                    ctx.strokeStyle = currentTheme.pegShaft;
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(peg.x, peg.y + CONFIG.pegRadius);
+                    ctx.lineTo(peg.x, peg.y + CONFIG.pegRadius + 5);
+                    ctx.stroke();
+                    
+                    // Pin point
+                    ctx.fillStyle = currentTheme.pegPoint;
+                    ctx.beginPath();
+                    ctx.moveTo(peg.x - 1, peg.y + CONFIG.pegRadius + 5);
+                    ctx.lineTo(peg.x + 1, peg.y + CONFIG.pegRadius + 5);
+                    ctx.lineTo(peg.x, peg.y + CONFIG.pegRadius + 7);
+                    ctx.closePath();
+                    ctx.fill();
+                    
+                    // Pin head
+                    ctx.fillStyle = currentTheme.pegHead;
+                    ctx.beginPath();
+                    ctx.arc(peg.x, peg.y, CONFIG.pegRadius, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Shine on pin head
+                    ctx.fillStyle = currentTheme.pegShine;
+                    ctx.beginPath();
+                    ctx.arc(peg.x - 1.5, peg.y - 1, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            });
+
+            // Update and draw balls
+            balls = balls.filter(ball => {
+                if (ball.active) {
+                    ball.update();
+                    ball.draw();
+                    return true;
+                }
+                return false;
+            });
+
+            animationId = requestAnimationFrame(animate);
+        }
+
+        // Firebase Functions
+        function setupRealtimeSync() {
+            if (!db || typeof __app_id === 'undefined') return;
+            
+            const docRef = db.collection('artifacts').doc(__app_id)
+                .collection('public').doc('data')
+                .collection('plinko_stats').doc('global_tally');
+            
+            unsubscribe = docRef.onSnapshot((doc) => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    const newBins = [];
+                    for (let i = 0; i <= CONFIG.rows; i++) {
+                        newBins.push(data[`bin${i}`] || 0);
+                    }
+                    bins = newBins;
+                    totalBalls = bins.reduce((a, b) => a + b, 0);
+                    updateStats();
+                }
+            }, (error) => {
+                console.error('Firestore sync error:', error);
+            });
+        }
+
+        async function incrementBinFirebase(binIndex) {
+            if (!db || typeof __app_id === 'undefined') return;
+            
+            const docRef = db.collection('artifacts').doc(__app_id)
+                .collection('public').doc('data')
+                .collection('plinko_stats').doc('global_tally');
+            
+            try {
+                await db.runTransaction(async (transaction) => {
+                    const doc = await transaction.get(docRef);
+                    const binField = `bin${binIndex}`;
+                    const currentValue = doc.exists ? (doc.data()[binField] || 0) : 0;
+                    transaction.set(docRef, {
+                        [binField]: currentValue + 1
+                    }, { merge: true });
+                });
+            } catch (error) {
+                console.error('Firebase increment error:', error);
+                // Fallback to local
+                bins[binIndex]++;
+                totalBalls++;
+                updateStats();
+            }
+        }
+
+        // Add ball
+        function addBall() {
+            balls.push(new Ball());
+        }
+
+        // Binomial probability function
+        function binomialProbability(n, k, p) {
+            function factorial(num) {
+                if (num <= 1) return 1;
+                let result = 1;
+                for (let i = 2; i <= num; i++) result *= i;
+                return result;
+            }
+            
+            function combinations(n, k) {
+                if (k > n) return 0;
+                if (k === 0 || k === n) return 1;
+                return factorial(n) / (factorial(k) * factorial(n - k));
+            }
+            
+            return combinations(n, k) * Math.pow(p, k) * Math.pow(1 - p, n - k);
+        }
+        
+        // Draw histogram
+        function drawHistogram() {
+            const width = histogramCanvas.width;
+            const height = histogramCanvas.height;
+            const padding = 60;
+            const chartWidth = width - 2 * padding;
+            const chartHeight = height - 2 * padding;
+            
+            histogramCtx.clearRect(0, 0, width, height);
+            
+            // Background
+            histogramCtx.fillStyle = '#f8fafc';
+            histogramCtx.fillRect(0, 0, width, height);
+            
+            const n = CONFIG.rows;
+            const numBins = bins.length;
+            const barWidth = chartWidth / numBins;
+            
+            // Calculate max for scaling
+            const maxCount = Math.max(...bins, 1);
+            const maxPercent = totalBalls > 0 ? maxCount / totalBalls : 0;
+            const theoreticalMax = Math.max(...bins.map((_, i) => binomialProbability(n, i, 0.5)));
+            const yScale = chartHeight / Math.max(maxPercent, theoreticalMax * 1.1);
+            
+            // Draw grid lines
+            histogramCtx.strokeStyle = '#e2e8f0';
+            histogramCtx.lineWidth = 1;
+            for (let i = 0; i <= 5; i++) {
+                const y = padding + (chartHeight * i / 5);
+                histogramCtx.beginPath();
+                histogramCtx.moveTo(padding, y);
+                histogramCtx.lineTo(width - padding, y);
+                histogramCtx.stroke();
+                
+                // Y-axis labels
+                const percent = ((1 - i / 5) * Math.max(maxPercent, theoreticalMax * 1.1) * 100).toFixed(1);
+                histogramCtx.fillStyle = '#64748b';
+                histogramCtx.font = '12px Inter';
+                histogramCtx.textAlign = 'right';
+                histogramCtx.fillText(percent + '%', padding - 10, y + 4);
+            }
+            
+            // Draw bars (actual data)
+            bins.forEach((count, i) => {
+                const x = padding + i * barWidth;
+                const barHeight = totalBalls > 0 ? (count / totalBalls) * yScale : 0;
+                const y = padding + chartHeight - barHeight;
+                
+                // Gradient fill
+                const gradient = histogramCtx.createLinearGradient(x, y, x, y + barHeight);
+                gradient.addColorStop(0, '#60a5fa');
+                gradient.addColorStop(1, '#3b82f6');
+                
+                histogramCtx.fillStyle = gradient;
+                histogramCtx.fillRect(x + 2, y, barWidth - 4, barHeight);
+            });
+            
+            // Draw theoretical curve
+            histogramCtx.strokeStyle = '#f59e0b';
+            histogramCtx.lineWidth = 2;
+            histogramCtx.beginPath();
+            
+            for (let i = 0; i < numBins; i++) {
+                const prob = binomialProbability(n, i, 0.5);
+                const x = padding + i * barWidth + barWidth / 2;
+                const y = padding + chartHeight - (prob * yScale);
+                
+                if (i === 0) {
+                    histogramCtx.moveTo(x, y);
+                } else {
+                    histogramCtx.lineTo(x, y);
+                }
+                
+                // Draw points
+                histogramCtx.fillStyle = '#f59e0b';
+                histogramCtx.beginPath();
+                histogramCtx.arc(x, y, 4, 0, Math.PI * 2);
+                histogramCtx.fill();
+                histogramCtx.beginPath();
+                if (i < numBins - 1) {
+                    histogramCtx.moveTo(x, y);
+                }
+            }
+            histogramCtx.stroke();
+            
+            // X-axis labels
+            histogramCtx.fillStyle = '#64748b';
+            histogramCtx.font = '12px Inter';
+            histogramCtx.textAlign = 'center';
+            bins.forEach((_, i) => {
+                const x = padding + i * barWidth + barWidth / 2;
+                histogramCtx.fillText(i.toString(), x, height - padding + 20);
+            });
+            
+            // Axis labels
+            histogramCtx.fillStyle = '#1e293b';
+            histogramCtx.font = 'bold 13px Inter';
+            histogramCtx.textAlign = 'center';
+            histogramCtx.fillText('Bin Number', width / 2, height - 10);
+            
+            histogramCtx.save();
+            histogramCtx.translate(15, height / 2);
+            histogramCtx.rotate(-Math.PI / 2);
+            histogramCtx.fillText('Probability', 0, 0);
+            histogramCtx.restore();
+            
+            // Draw axes
+            histogramCtx.strokeStyle = '#1e293b';
+            histogramCtx.lineWidth = 2;
+            histogramCtx.beginPath();
+            histogramCtx.moveTo(padding, padding);
+            histogramCtx.lineTo(padding, height - padding);
+            histogramCtx.lineTo(width - padding, height - padding);
+            histogramCtx.stroke();
+        }
+        
+        // Update statistics
+        function updateStats() {
+            document.getElementById('totalBalls').textContent = totalBalls;
+            
+            // Update bin chart
+            const maxBin = Math.max(...bins, 1);
+            const binChart = document.getElementById('binChart');
+            binChart.innerHTML = bins.map((count, i) => {
+                const heightPercent = (count / maxBin) * 100;
+                const isCenter = i === 3;
+                return `
+                    <div class="bin-column">
+                        <div class="bin-bar ${isCenter ? 'center' : ''}" style="height: ${heightPercent}%;"></div>
+                        <div class="bin-label">${i}</div>
+                        <div class="bin-count">${count}</div>
+                    </div>
+                `;
+            }).join('');
+
+            // Update stats panel
+            const binStats = document.getElementById('binStats');
+            binStats.innerHTML = bins.map((count, i) => {
+                const percent = totalBalls > 0 ? ((count / totalBalls) * 100).toFixed(1) : 0;
+                return `
+                    <div class="stat-row">
+                        <span class="stat-label">Bin ${i}</span>
+                        <div class="stat-value">
+                            <span class="badge">${count}</span>
+                            <span class="percentage">${percent}%</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            // Update histogram
+            drawHistogram();
+        }
+
+        // Reset
+        async function reset() {
+            if (useFirebase && db && typeof __app_id !== 'undefined') {
+                // Reset Firebase
+                const docRef = db.collection('artifacts').doc(__app_id)
+                    .collection('public').doc('data')
+                    .collection('plinko_stats').doc('global_tally');
+                
+                try {
+                    const resetData = {};
+                    for (let i = 0; i <= CONFIG.rows; i++) {
+                        resetData[`bin${i}`] = 0;
+                    }
+                    await docRef.set(resetData);
+                } catch (error) {
+                    console.error('Firebase reset error:', error);
+                }
+            } else {
+                // Local reset
+                bins = Array(CONFIG.rows + 1).fill(0);
+                totalBalls = 0;
+                balls = [];
+                updateStats();
+            }
+        }
+
+        // Event listeners
+        document.getElementById('dropBall').addEventListener('click', addBall);
+        
+        document.getElementById('autoToggle').addEventListener('click', function() {
+            isAutoDropping = !isAutoDropping;
+            if (isAutoDropping) {
+                this.textContent = 'Stop Auto Drop';
+                this.classList.remove('btn-secondary-custom');
+                this.classList.add('btn-outline-custom');
+                autoInterval = setInterval(addBall, 150);
+            } else {
+                this.textContent = 'Start Auto Drop';
+                this.classList.remove('btn-outline-custom');
+                this.classList.add('btn-secondary-custom');
+                clearInterval(autoInterval);
+            }
+        });
+
+        document.getElementById('reset').addEventListener('click', reset);
+
+        document.getElementById('rowsSlider').addEventListener('input', function() {
+            CONFIG.rows = parseInt(this.value);
+            document.getElementById('rowsValue').textContent = this.value;
+            initPegs();
+            // Reset bins when rows change
+            const newBinCount = CONFIG.rows + 1;
+            bins = Array(newBinCount).fill(0);
+            totalBalls = 0;
+            balls = [];
+            updateStats();
+        });
+
+        document.getElementById('gravitySlider').addEventListener('input', function() {
+            CONFIG.gravity = parseFloat(this.value);
+            document.getElementById('gravityValue').textContent = parseFloat(this.value).toFixed(2);
+        });
+
+        canvas.addEventListener('click', addBall);
+        
+        // Theme selector
+        document.getElementById('canvasTheme').addEventListener('change', function(e) {
+            const themeName = e.target.value;
+            currentTheme = THEMES[themeName];
+            canvas.style.background = currentTheme.background;
+        });
+
+        // Initialize
+        (async () => {
+            useFirebase = await initFirebase();
+            initPegs();
+            animate();
+            updateStats();
+            
+            if (useFirebase) {
+                console.log('✓ Firebase connected - stats synced globally');
+            } else {
+                console.log('✓ Local mode - stats reset on refresh');
+            }
+        })();
+    </script>
+</body>
+</html>
