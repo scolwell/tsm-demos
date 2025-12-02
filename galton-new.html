@@ -1095,6 +1095,22 @@
             border-color: #4f46e5;
             box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
         }
+
+        /* Canvas toolbar */
+        .canvas-toolbar {
+            pointer-events: auto;
+        }
+        .canvas-toolbar .clear-button {
+            background: #ffffff;
+            border-color: #e2e8f0;
+        }
+        .canvas-toolbar .clear-button:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+        }
+        .canvas-toolbar .menu-item:hover {
+            background: #f8fafc;
+        }
         
         @media (max-width: 1280px) {
             .content-wrapper {
@@ -1183,7 +1199,7 @@
             <div class="form-group">
               <label style="display: flex; align-items: center; gap: 0.25rem; line-height: 1;">
                 Drop Mode
-                <button class="info-button" data-modal-title="Drop Mode" data-modal-content="Choose between Single Drop (drop one ball at a time) or Auto Drop (continuously drop balls). Use Single Drop for detailed observation of individual paths, or Auto Drop to quickly build up the distribution and see the Central Limit Theorem in action.">
+                <button class="info-button" data-modal-title="Drop Mode" data-modal-content="Choose between SINGLE DROP (drop one ball at a time) or AUTO DROP (continuously drop balls).&#10;&#10;Use SINGLE DROP for detailed observation of individual ball paths.&#10;&#10;Use AUTO DROP to quickly build up the distribution and see the CENTRAL LIMIT THEOREM in action.">
                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-question-mark" aria-hidden="true">
                     <circle cx="12" cy="12" r="10"></circle>
                     <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
@@ -1198,7 +1214,7 @@
             </div>
             
                         <div class="form-group" style="display: flex; gap: 0.5rem; align-items: center;">
-                            <button id="startBtn" class="btn-primary-custom" style="flex: 1;">Start</button>
+                            <button id="startBtn" class="btn-primary-custom" style="flex: 1;">Run</button>
                             <button id="pauseBtn" class="btn-secondary-custom" style="flex: 1;">Pause</button>
                             <button id="reset" class="btn-outline-custom" style="flex: 1;">Reset All</button>
                         </div>
@@ -1209,7 +1225,7 @@
             <div class="slider-group">
               <div class="slider-label">
                 <label>Number of Rows</label>
-                <button class="info-button" data-modal-title="Number of Rows" data-modal-content="Controls the number of peg rows in the Galton Board. More rows create more bins and produce a smoother, more bell-shaped distribution that better demonstrates the Central Limit Theorem.">
+                <button class="info-button" data-modal-title="Number of Rows" data-modal-content="Controls the NUMBER OF PEG ROWS in the Galton Board (5-10 rows).&#10;&#10;MORE ROWS create more bins and produce a SMOOTHER, MORE BELL-SHAPED DISTRIBUTION that better demonstrates the CENTRAL LIMIT THEOREM.&#10;&#10;Recommended: Start with 6 rows for balanced visualization.">
                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-question-mark" aria-hidden="true">
                     <circle cx="12" cy="12" r="10"></circle>
                     <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
@@ -1228,7 +1244,7 @@
                         <div class="slider-group">
                             <div class="slider-label">
                                 <label>Number of Balls</label>
-                                <button class="info-button" data-modal-title="Number of Balls" data-modal-content="Sets the maximum number of balls that can be active or dropped. Use this to control the size of the sample for the histogram.">
+                                <button class="info-button" data-modal-title="Number of Balls" data-modal-content="Sets the MAXIMUM NUMBER OF BALLS that can be dropped in each simulation run (1-400 balls).&#10;&#10;Use this to control the SAMPLE SIZE for the histogram and frequency distribution.&#10;&#10;LARGER SAMPLES (200-400) produce more stable distributions that better approximate the theoretical curve.">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-question-mark" aria-hidden="true">
                                         <circle cx="12" cy="12" r="10"></circle>
                                         <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
@@ -1237,9 +1253,9 @@
                                 </button>
                             </div>
                             <div class="slider-controls">
-                                <button class="slider-btn" onclick="adjustNumBalls(-10)">−</button>
+                                <button class="slider-btn" onclick="adjustNumBalls(-1)">−</button>
                                 <input type="range" id="numBallsSlider" min="1" max="400" step="1" value="200">
-                                <button class="slider-btn" onclick="adjustNumBalls(10)">+</button>
+                                <button class="slider-btn" onclick="adjustNumBalls(1)">+</button>
                                 <span class="slider-value" id="numBallsValue" style="background:#7C3AED;">200</span>
                             </div>
                         </div>
@@ -1247,7 +1263,7 @@
                         <div class="slider-group">
                             <div class="slider-label">
                                 <label>Gravity Strength</label>
-                                <button class="info-button" data-modal-title="Gravity Strength" data-modal-content="Adjusts the gravitational acceleration affecting the balls. Higher values make balls fall faster through the pegs, while lower values create a slower, more observable descent.">
+                                <button class="info-button" data-modal-title="Gravity Strength" data-modal-content="Adjusts the GRAVITATIONAL ACCELERATION affecting ball movement (0.1-0.5).&#10;&#10;HIGHER VALUES (0.4-0.5): Balls fall faster through the pegs - better for quick simulations.&#10;&#10;LOWER VALUES (0.1-0.2): Creates a slower, more observable descent - better for detailed observation.&#10;&#10;Default: 0.30 provides balanced visualization speed.">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-question-mark" aria-hidden="true">
                                         <circle cx="12" cy="12" r="10"></circle>
                                         <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
@@ -1256,9 +1272,9 @@
                                 </button>
                             </div>
                             <div class="slider-controls">
-                                <button class="slider-btn" onclick="adjustGravity(-0.05)">−</button>
-                                <input type="range" id="gravitySlider" min="0.1" max="0.5" step="0.05" value="0.3">
-                                <button class="slider-btn" onclick="adjustGravity(0.05)">+</button>
+                                <button class="slider-btn" onclick="adjustGravity(-0.01)">−</button>
+                                <input type="range" id="gravitySlider" min="0.1" max="0.5" step="0.01" value="0.3">
+                                <button class="slider-btn" onclick="adjustGravity(0.01)">+</button>
                                 <span class="slider-value orange" id="gravityValue">0.30</span>
                             </div>
                         </div>
@@ -1268,7 +1284,7 @@
                     <div style="margin-top: 2rem;">
                         <label style="font-weight: 500; font-size: 0.875rem; color: #0F172A; display: flex; align-items: center; margin-bottom: 0.75rem; gap: 0.25rem; line-height: 1;">
                             Visualization
-                            <button class="info-button" data-modal-title="Visualization Toggles" data-modal-content="Control what appears on the histogram: Ball Trails show the path each ball took through the pegs. Bin Shading highlights alternating bins for easier counting. Empirical Curve displays a line connecting actual data points (solid purple). Theoretical Curve shows the expected binomial distribution (dashed blue).">
+                            <button class="info-button" data-modal-title="Visualization Toggles" data-modal-content="Control what appears on the histogram:&#10;&#10;• BALL TRAILS: Show the path each ball took through the pegs (useful for understanding randomness)&#10;&#10;• BIN SHADING: Highlights alternating bins for easier counting&#10;&#10;• EMPIRICAL CURVE: Displays a line connecting ACTUAL DATA POINTS (solid purple line)&#10;&#10;• THEORETICAL CURVE: Shows the EXPECTED BINOMIAL DISTRIBUTION (dashed blue line)&#10;&#10;• DESCRIPTIVE MARKERS: Display mean, median, and standard deviation markers">
                               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-question-mark" aria-hidden="true">
                                 <circle cx="12" cy="12" r="10"></circle>
                                 <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
@@ -1340,6 +1356,22 @@
             <div id="freqChart" style="margin-top: 0.75rem;">
                 <div class="stat-label" style="margin-bottom: 0.5rem; display:flex; align-items:center; justify-content:space-between;">
                     <span>Frequency Chart</span>
+                    <div class="dropdown" style="position:relative;">
+                        <button id="freqDownloadBtn" class="clear-button" type="button" title="Download" style="padding:4px 6px; display:inline-flex; align-items:center; gap:4px; font-size:0.75rem;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M12 3v12"></path>
+                                <path d="M8 11l4 4 4-4"></path>
+                                <path d="M21 21H3"></path>
+                            </svg>
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M6 9l6 6 6-6"></path>
+                            </svg>
+                        </button>
+                        <div id="freqDownloadMenu" class="menu" style="position:absolute; right:0; top:28px; background:#fff; border:1px solid #e2e8f0; border-radius:6px; box-shadow:0 4px 12px rgba(0,0,0,0.08); display:none; min-width:140px; z-index:100;">
+                            <button id="freqDownloadPNG" class="menu-item" style="width:100%; text-align:left; padding:8px 10px; background:#fff; border:none; cursor:pointer; font-size:12px; color:#0F172A;">Save as PNG</button>
+                            <button id="freqDownloadPDF" class="menu-item" style="width:100%; text-align:left; padding:8px 10px; background:#fff; border:none; cursor:pointer; font-size:12px; color:#0F172A; border-top:1px solid #e2e8f0;">Save as PDF</button>
+                        </div>
+                    </div>
                 </div>
                 <table id="freqTable" style="width:95%; margin:0 auto; border-collapse: collapse; font-size: 0.8125rem; border: none !important; padding:0; table-layout: fixed;">
                     <colgroup>
@@ -1410,17 +1442,7 @@
                     <!-- Chart Section (Level 1 container) -->
                     <div class="chart-section">
                         <div class="chart-header">
-                            <h4>Distribution</h4>
-                            <div class="chart-legend">
-                                <div class="legend-item">
-                                    <div class="legend-dot actual"></div>
-                                    <span>Actual</span>
-                                </div>
-                                <div class="legend-item">
-                                    <div class="legend-dot theoretical"></div>
-                                    <span>Target</span>
-                                </div>
-                            </div>
+                            <!-- Removed Distribution header and legend items per request -->
                             <div class="curve-style-controls">
                                 <span class="curve-control-label">Theme</span>
                                 <select id="canvasTheme" class="curve-control-select">
@@ -1439,6 +1461,24 @@
                         </div>
                         <!-- Level 2: unified rectangular inner box with square corners -->
                         <div class="chart-container unified-box">
+                            <div class="canvas-toolbar" style="position:absolute; top:8px; right:8px; z-index:10;">
+                                <div class="dropdown" style="position:relative;">
+                                    <button id="downloadMenuBtn" class="clear-button" type="button" title="Download" style="padding:6px 8px; display:inline-flex; align-items:center; gap:6px;">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                            <path d="M12 3v12"></path>
+                                            <path d="M8 11l4 4 4-4"></path>
+                                            <path d="M21 21H3"></path>
+                                        </svg>
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="margin-left:2px;">
+                                            <path d="M6 9l6 6 6-6"></path>
+                                        </svg>
+                                    </button>
+                                    <div id="downloadMenu" class="menu" style="position:absolute; right:0; top:32px; background:#fff; border:1px solid #e2e8f0; border-radius:6px; box-shadow:0 4px 12px rgba(0,0,0,0.08); display:none; min-width:140px;">
+                                        <button id="downloadPNG" class="menu-item" style="width:100%; text-align:left; padding:8px 10px; background:#fff; border:none; cursor:pointer; font-size:12px; color:#0F172A;">Save as PNG</button>
+                                        <button id="downloadPDF" class="menu-item" style="width:100%; text-align:left; padding:8px 10px; background:#fff; border:none; cursor:pointer; font-size:12px; color:#0F172A; border-top:1px solid #e2e8f0;">Save as PDF</button>
+                                    </div>
+                                </div>
+                            </div>
                             <canvas id="chartCanvas" width="800" height="800"></canvas>
                         </div>
                     </div>
@@ -1454,9 +1494,9 @@
       <div class="footer-left">
         <span class="footer-brand">TSM Galton Board Simulator</span>
         <span class="footer-separator">•</span>
-        <span class="footer-version">v1.0.1</span>
+        <span class="footer-version">v1.0.2</span>
         <span class="footer-separator">•</span>
-        <span class="footer-build">Build 20251202</span>
+        <span class="footer-build">Build 20251202-2</span>
       </div>
       <div class="footer-right">
         <a href="index.html" class="footer-link">Back to Demonstrations</a>
@@ -2755,6 +2795,191 @@
 
         canvas.addEventListener('click', addBall);
         
+        // Download menu handlers
+        const downloadMenuBtn = document.getElementById('downloadMenuBtn');
+        const downloadMenu = document.getElementById('downloadMenu');
+        
+        downloadMenuBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            downloadMenu.style.display = downloadMenu.style.display === 'block' ? 'none' : 'block';
+        });
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!downloadMenuBtn.contains(e.target) && !downloadMenu.contains(e.target)) {
+                downloadMenu.style.display = 'none';
+            }
+        });
+        
+        // PNG download
+        document.getElementById('downloadPNG').addEventListener('click', function() {
+            const link = document.createElement('a');
+            link.download = 'galton-board.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            downloadMenu.style.display = 'none';
+        });
+        
+        // PDF download
+        document.getElementById('downloadPDF').addEventListener('click', function() {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF({
+                orientation: canvas.width > canvas.height ? 'landscape' : 'portrait',
+                unit: 'px',
+                format: [canvas.width, canvas.height]
+            });
+            
+            const imgData = canvas.toDataURL('image/png');
+            pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+            pdf.save('galton-board.pdf');
+            downloadMenu.style.display = 'none';
+        });
+        
+        // Frequency table download handlers
+        const freqDownloadBtn = document.getElementById('freqDownloadBtn');
+        const freqDownloadMenu = document.getElementById('freqDownloadMenu');
+        
+        freqDownloadBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            freqDownloadMenu.style.display = freqDownloadMenu.style.display === 'block' ? 'none' : 'block';
+        });
+        
+        document.addEventListener('click', function(e) {
+            if (!freqDownloadBtn.contains(e.target) && !freqDownloadMenu.contains(e.target)) {
+                freqDownloadMenu.style.display = 'none';
+            }
+        });
+        
+        // Frequency table PNG download
+        document.getElementById('freqDownloadPNG').addEventListener('click', function() {
+            generateAPATable('png');
+            freqDownloadMenu.style.display = 'none';
+        });
+        
+        // Frequency table PDF download
+        document.getElementById('freqDownloadPDF').addEventListener('click', function() {
+            generateAPATable('pdf');
+            freqDownloadMenu.style.display = 'none';
+        });
+        
+        // Generate APA-formatted table
+        function generateAPATable(format) {
+            const { jsPDF } = window.jspdf;
+            
+            // Create APA-formatted table in a temporary container
+            const container = document.createElement('div');
+            container.style.cssText = 'position:absolute; left:-9999px; background:#fff; padding:40px; font-family:"Times New Roman",Times,serif;';
+            
+            const title = document.createElement('div');
+            title.style.cssText = 'font-size:12pt; font-weight:bold; text-align:center; margin-bottom:20px;';
+            title.textContent = 'Table 1';
+            container.appendChild(title);
+            
+            const tableTitle = document.createElement('div');
+            tableTitle.style.cssText = 'font-size:12pt; font-style:italic; text-align:center; margin-bottom:20px;';
+            tableTitle.textContent = 'Frequency Distribution of Galton Board Simulation';
+            container.appendChild(tableTitle);
+            
+            const table = document.createElement('table');
+            table.style.cssText = 'width:100%; border-collapse:collapse; font-size:12pt;';
+            
+            // Header
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            headerRow.style.borderTop = '2px solid #000';
+            headerRow.style.borderBottom = '1px solid #000';
+            ['Bin', 'f', 'f/n', '%f', 'c.%f', 'E[f]'].forEach(h => {
+                const th = document.createElement('th');
+                th.style.cssText = 'padding:8px; text-align:' + (h === 'Bin' ? 'left' : 'right') + '; font-weight:normal;';
+                th.innerHTML = h.includes('f') ? h.replace(/f/g, '<i>f</i>') : h.replace(/E\[(.+)\]/, 'E[<i>$1</i>]');
+                headerRow.appendChild(th);
+            });
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+            
+            // Body
+            const tbody = document.createElement('tbody');
+            const freqBody = document.getElementById('freqBody');
+            const rows = freqBody.querySelectorAll('tr');
+            rows.forEach(row => {
+                const newRow = document.createElement('tr');
+                const cells = row.querySelectorAll('td');
+                cells.forEach((cell, i) => {
+                    const td = document.createElement('td');
+                    td.style.cssText = 'padding:8px; text-align:' + (i === 0 ? 'left' : 'right') + ';';
+                    td.textContent = cell.textContent;
+                    newRow.appendChild(td);
+                });
+                tbody.appendChild(newRow);
+            });
+            table.appendChild(tbody);
+            
+            // Footer
+            const tfoot = document.createElement('tfoot');
+            const footerRow = document.createElement('tr');
+            footerRow.style.borderTop = '1px solid #000';
+            footerRow.style.borderBottom = '2px solid #000';
+            ['Total', 
+             document.getElementById('freqTotal').textContent,
+             document.getElementById('relTotal').textContent,
+             document.getElementById('pctTotal').textContent,
+             document.getElementById('cumPctTotal').textContent,
+             document.getElementById('expTotal').textContent
+            ].forEach((text, i) => {
+                const td = document.createElement('td');
+                td.style.cssText = 'padding:8px; text-align:' + (i === 0 ? 'left' : 'right') + '; font-weight:' + (i <= 1 ? 'bold' : 'normal') + ';';
+                td.textContent = text;
+                footerRow.appendChild(td);
+            });
+            tfoot.appendChild(footerRow);
+            table.appendChild(tfoot);
+            
+            container.appendChild(table);
+            
+            const note = document.createElement('div');
+            note.style.cssText = 'font-size:10pt; margin-top:15px; text-indent:-20px; padding-left:20px;';
+            note.innerHTML = '<i>Note.</i> f = frequency; f/n = relative frequency; %f = percent frequency; c.%f = cumulative percent frequency; E[f] = expected count based on binomial distribution with n = ' + totalBalls + ' and p = 0.5.';
+            container.appendChild(note);
+            
+            document.body.appendChild(container);
+            
+            if (format === 'png') {
+                // Use html2canvas for PNG
+                html2canvas(container, { 
+                    scale: 2,
+                    backgroundColor: '#ffffff'
+                }).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = 'frequency-table-apa.png';
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                    document.body.removeChild(container);
+                });
+            } else {
+                // Use jsPDF for PDF
+                html2canvas(container, { 
+                    scale: 2,
+                    backgroundColor: '#ffffff'
+                }).then(canvas => {
+                    const imgData = canvas.toDataURL('image/png');
+                    const pdf = new jsPDF({
+                        orientation: 'portrait',
+                        unit: 'mm',
+                        format: 'letter'
+                    });
+                    
+                    const imgWidth = 170;
+                    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                    const x = (pdf.internal.pageSize.getWidth() - imgWidth) / 2;
+                    const y = 20;
+                    
+                    pdf.addImage(imgData, 'PNG', x, y, imgWidth, imgHeight);
+                    pdf.save('frequency-table-apa.pdf');
+                    document.body.removeChild(container);
+                });
+            }
+        }
+        
         // Visualization toggles
         document.getElementById('toggleTrails').addEventListener('change', function() {
             TOGGLES.showTrails = this.checked;
@@ -2833,7 +3058,10 @@
                 
                 function openModal(title, content) {
                     modalTitle.textContent = title;
-                    modalContent.textContent = content;
+                    // Support line breaks and basic formatting
+                    const formattedContent = content.replace(/&#10;/g, '\n');
+                    modalContent.style.whiteSpace = 'pre-line';
+                    modalContent.textContent = formattedContent;
                     modal.classList.add('active');
                     modal.setAttribute('aria-hidden', 'false');
                     document.body.style.overflow = 'hidden';
@@ -2884,5 +3112,7 @@
                 }
             })();
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </body>
 </html>
