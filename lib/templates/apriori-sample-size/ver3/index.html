@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A-Priori Sample Size Calculator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-content">
+        <button class="back-button">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Back to Calculators
+        </button>
+        <div class="header-info">
+          <div class="header-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calculator" aria-hidden="true">
+              <rect width="16" height="20" x="4" y="2" rx="2"></rect>
+              <line x1="8" x2="16" y1="6" y2="6"></line>
+              <line x1="16" x2="16" y1="14" y2="18"></line>
+              <path d="M16 10h.01"></path>
+              <path d="M12 10h.01"></path>
+              <path d="M8 10h.01"></path>
+              <path d="M12 14h.01"></path>
+              <path d="M8 14h.01"></path>
+              <path d="M12 18h.01"></path>
+              <path d="M8 18h.01"></path>
+            </svg>
+          </div>
+          <div class="header-text">
+            <h1>A-Priori Sample Size Calculator</h1>
+            <p>Interactive tool for calculating required sample sizes across different study designs and sampling methods. Visualize sampling strategies and understand design effects.</p>
+          </div>
+          <div class="header-version">
+            <span id="headerVersion">v2.0.0</span>
+            <span class="version-separator">•</span>
+            <span id="headerBuild">Build 20251028</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Educational Tool Banner -->
+    <div class="info-banner">
+      <div class="info-icon" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-lightbulb" aria-hidden="true">
+          <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"></path>
+          <path d="M9 18h6"></path>
+          <path d="M10 22h4"></path>
+        </svg>
+      </div>
+      <div class="info-content">
+        <strong>Educational Tool</strong>
+        <p>This estimator helps you understand how sampling methods and study designs affect required sample sizes. Adjust parameters to see real-time effects on power and sample size requirements.</p>
+      </div>
+    </div>
+
+      <!-- Tab Navigation -->
+      <div class="tab-navigation">
+        <button class="tab-button active" data-tab="means">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calculator" aria-hidden="true">
+            <rect width="16" height="20" x="4" y="2" rx="2"></rect>
+            <line x1="8" x2="16" y1="6" y2="6"></line>
+            <line x1="16" x2="16" y1="14" y2="18"></line>
+            <path d="M16 10h.01"></path>
+            <path d="M12 10h.01"></path>
+            <path d="M8 10h.01"></path>
+            <path d="M12 14h.01"></path>
+            <path d="M8 14h.01"></path>
+            <path d="M12 18h.01"></path>
+            <path d="M8 18h.01"></path>
+          </svg>
+          Means
+        </button>
+        <button class="tab-button disabled" data-tab="proportions" aria-disabled="true" title="Coming soon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calculator" aria-hidden="true">
+            <rect width="16" height="20" x="4" y="2" rx="2"></rect>
+            <line x1="8" x2="16" y1="6" y2="6"></line>
+            <line x1="16" x2="16" y1="14" y2="18"></line>
+            <path d="M16 10h.01"></path>
+            <path d="M12 10h.01"></path>
+            <path d="M8 10h.01"></path>
+            <path d="M12 14h.01"></path>
+            <path d="M8 14h.01"></path>
+            <path d="M12 18h.01"></path>
+            <path d="M8 18h.01"></path>
+          </svg>
+          Proportions <span class="soon-badge" style="margin-left:6px;">Coming Soon</span>
+        </button>
+        <button class="tab-button disabled" data-tab="anova" aria-disabled="true" title="Coming soon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calculator" aria-hidden="true">
+            <rect width="16" height="20" x="4" y="2" rx="2"></rect>
+            <line x1="8" x2="16" y1="6" y2="6"></line>
+            <line x1="16" x2="16" y1="14" y2="18"></line>
+            <path d="M16 10h.01"></path>
+            <path d="M12 10h.01"></path>
+            <path d="M8 10h.01"></path>
+            <path d="M12 14h.01"></path>
+            <path d="M8 14h.01"></path>
+            <path d="M12 18h.01"></path>
+            <path d="M8 18h.01"></path>
+          </svg>
+          ANOVA <span class="soon-badge">Coming Soon</span>
+        </button>
+      </div>
+
+      <div class="content-wrapper">
+        <!-- Left Panel -->
+        <div class="left-panel">
+          <!-- Study Design -->
+          <section class="section">
+            <h3>Study Design</h3>
+            <p class="section-subtitle">Select your test type</p>
+            
+            <div class="form-group">
+              <label>
+                Test Type
+                <button class="info-button" data-modal-title="Test Type" data-modal-content="Single sample compares to a known value. Paired samples compare before/after or matched pairs. Independent samples compare two independent groups.">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-question-mark" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                    <path d="M12 17h.01"></path>
+                  </svg>
+                </button>
+              </label>
+              <select class="select-input" id="testType">
+                <option value="single-sample">Single Sample</option>
+                <option value="paired">Paired Samples</option>
+                <option value="two-sample">Independent Samples</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>
+                Statistical Power
+                <button class="info-button" data-modal-title="Statistical Power (1-β)" data-modal-content="Probability of detecting a true effect if it exists. Standard is 80% (0.80). Higher power requires larger sample sizes but reduces risk of missing real effects (Type II errors).">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-question-mark" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                    <path d="M12 17h.01"></path>
+                  </svg>
+                </button>
+              </label>
+              <div class="power-container">
+                <button type="button" class="stepper-btn" id="decrementPower" aria-label="Decrease power">−</button>
+                <input type="range" class="slider power-slider" id="statisticalPower" min="0.5" max="0.99" step="0.01" value="0.8">
+                <button type="button" class="stepper-btn" id="incrementPower" aria-label="Increase power">+</button>
+                <div class="power-value">80%</div>
+              </div>
+              <p class="help-text">Probability of detecting an effect if it exists (typically 80%)</p>
+            </div>
+
+            <div class="form-group">
+              <label>
+                Effect Size (Cohen's d)
+                <button class="info-button" data-modal-title="Effect Size (Cohen's d)" data-modal-content="Effect size measures the magnitude of the difference you expect to detect. Cohen's d is the standardized mean difference between groups. Small effect = 0.2, Medium effect = 0.5, Large effect = 0.8. Larger effect sizes require smaller sample sizes to detect.">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-question-mark" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                    <path d="M12 17h.01"></path>
+                  </svg>
+                </button>
+              </label>
+              <div class="slider-container">
+                <div class="effect-row">
+                  <button type="button" class="stepper-btn" id="decrementEffect" aria-label="Decrease effect size">−</button>
+                  <input type="range" class="slider effect-slider" id="effectSize" min="0.1" max="2.0" step="0.01" value="0.5">
+                  <button type="button" class="stepper-btn" id="incrementEffect" aria-label="Increase effect size">+</button>
+                  <div class="slider-value">0.50</div>
+                </div>
+                <div class="segmented" id="effectSizeToggle" role="group" aria-label="Effect size presets">
+                  <button type="button" class="segment" data-value="0.2">Small (0.2)</button>
+                  <button type="button" class="segment active" data-value="0.5">Medium (0.5)</button>
+                  <button type="button" class="segment" data-value="0.8">Large (0.8)</button>
+                </div>
+                <!-- Effect size from summary statistics toggle/panel -->
+                <button type="button" class="calc-toggle" id="toggleEffectCalc" aria-expanded="false" aria-controls="effectCalcPanel">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                    <path d="M4 5L7 8L10 5" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  <span class="label-full">Compute effect size from means / sd</span>
+                  <span class="label-compact">Compute from x&#772; / s</span>
+                </button>
+                <div class="calc-panel" id="effectCalcPanel" hidden>
+                  <!-- Single sample -->
+                  <div class="calc-section" data-type="single-sample">
+                    <div class="form-row">
+                      <div class="field">
+                        <label class="small">Sample Mean (x&#772;)</label>
+                        <input type="number" step="any" class="text-input" id="ss_mean" placeholder="e.g., 5.2">
+                      </div>
+                      <div class="field">
+                        <label class="small">Null Mean (&mu;<sub>0</sub>)</label>
+                        <input type="number" step="any" class="text-input" id="ss_null_mean" placeholder="e.g., 5.0">
+                      </div>
+                    </div>
+                    <div class="form-row">
+                      <div class="field">
+                        <label class="small">SD (s)</label>
+                        <input type="number" step="any" class="text-input" id="ss_sd" placeholder="e.g., 1.2">
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Paired -->
+                  <div class="calc-section" data-type="paired" hidden>
+                    <div class="form-row">
+                      <div class="field">
+                        <label class="small">Mean Difference (x&#772;<sub>D</sub>)</label>
+                        <input type="number" step="any" class="text-input" id="pd_mean_diff" placeholder="e.g., 0.3">
+                      </div>
+                      <div class="field">
+                        <label class="small">SD of Differences (s<sub>D</sub>)</label>
+                        <input type="number" step="any" class="text-input" id="pd_sd_diff" placeholder="e.g., 0.8">
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Two-sample -->
+                  <div class="calc-section" data-type="two-sample" hidden>
+                    <div class="form-row">
+                      <div class="field">
+                        <label class="small">Mean (Group 1)</label>
+                        <input type="number" step="any" class="text-input" id="ts_mean1" placeholder="e.g., 5.2">
+                      </div>
+                      <div class="field">
+                        <label class="small">Mean (Group 2)</label>
+                        <input type="number" step="any" class="text-input" id="ts_mean2" placeholder="e.g., 4.7">
+                      </div>
+                    </div>
+                    <div class="form-row">
+                      <div class="field">
+                        <label class="small">SD1 (Group 1)</label>
+                        <input type="number" step="any" class="text-input" id="ts_sd1" placeholder="e.g., 1.1">
+                      </div>
+                      <div class="field">
+                        <label class="small">SD2 (Group 2)</label>
+                        <input type="number" step="any" class="text-input" id="ts_sd2" placeholder="e.g., 1.3">
+                      </div>
+                    </div>
+                    <div class="form-row">
+                      <div class="field">
+                        <label class="small">n1 (optional)</label>
+                        <input type="number" step="1" min="2" class="text-input" id="ts_n1" placeholder="e.g., 30">
+                      </div>
+                      <div class="field">
+                        <label class="small">n2 (optional)</label>
+                        <input type="number" step="1" min="2" class="text-input" id="ts_n2" placeholder="e.g., 30">
+                      </div>
+                    </div>
+                    <p class="small-note">If n1 and n2 are omitted, pooled SD uses equal weighting: sqrt((SD1<sup>2</sup> + SD2<sup>2</sup>) / 2).</p>
+                  </div>
+                  <div class="calc-actions">
+                    <button type="button" class="code-action" id="computeEffectSize">
+                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M12 4L5 11L1 7" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                      Compute d
+                    </button>
+                    <span class="calc-error" id="effectCalcError" aria-live="polite"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>
+                Significance Level (α)
+                <button class="info-button" data-modal-title="Significance Level (α)" data-modal-content="Probability of false positive (Type I error). Standard is 0.05 (5%). Lower α is more conservative but requires larger sample sizes. α = 0.05 means 5% chance of detecting an effect when none exists.">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-question-mark" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                    <path d="M12 17h.01"></path>
+                  </svg>
+                </button>
+              </label>
+              <div class="segmented" id="significanceToggle" role="group" aria-label="Significance level selection">
+                <button type="button" class="segment active" data-value="0.05">0.05 (standard)</button>
+                <button type="button" class="segment" data-value="0.01">0.01</button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>
+                Test Direction
+                <button class="info-button" data-modal-title="Test Direction" data-modal-content="Two-tailed tests detect any difference (most common). One-tailed tests detect a specific direction only (requires theoretical justification). Two-tailed is more conservative and recommended unless you have strong a-priori reasons to expect a specific direction.">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-question-mark" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                    <path d="M12 17h.01"></path>
+                  </svg>
+                </button>
+              </label>
+              <div class="segmented" id="testDirectionToggle" role="group" aria-label="Test direction selection">
+                <button type="button" class="segment" data-value="one-tailed">One-tailed</button>
+                <button type="button" class="segment active" data-value="two-tailed">Two-tailed</button>
+              </div>
+            </div>
+
+            <!-- Advanced options -->
+            <div class="form-group" style="margin-top: 1.5rem;">
+              <button type="button" class="calc-toggle" id="toggleAdvanced" aria-expanded="false" aria-controls="advancedPanel">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                  <path d="M4 5L7 8L10 5" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span class="label-full">Advanced: Finite Population Correction</span>
+                <span class="label-compact">Advanced: FPC</span>
+              </button>
+              <div class="calc-panel" id="advancedPanel" hidden>
+                <div class="form-row">
+                  <div class="field">
+                    <label class="small">Population size
+                      <button class="info-button" data-modal-title="Finite Population Correction (FPC)" data-modal-content="If your population size N is known and relatively small, you can apply the finite population correction to reduce the required sample size. Formula: n_adj = N·n0 / (N + n0 − 1). FPC is most beneficial when sampling more than 5% of the population.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-question-mark" aria-hidden="true">
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                          <path d="M12 17h.01"></path>
+                        </svg>
+                      </button>
+                    </label>
+                    <input type="number" id="populationSize" class="text-input" min="1" step="1" placeholder="e.g., 10000" />
+                  </div>
+                </div>
+                <p class="small-note">or use a preset</p>
+                <div class="form-row">
+                  <div class="field">
+                    <select class="select-input" id="populationPreset">
+                      <option value="">Select a Location</option>
+                      <optgroup label="Provinces & Territories (Canada)">
+                        <option value="Ontario|14900000">Ontario (~14.9M)</option>
+                        <option value="Quebec|8950000">Quebec (~8.95M)</option>
+                        <option value="British Columbia|5400000">British Columbia (~5.4M)</option>
+                        <option value="Alberta|4700000">Alberta (~4.7M)</option>
+                        <option value="Manitoba|1400000">Manitoba (~1.4M)</option>
+                        <option value="Saskatchewan|1200000">Saskatchewan (~1.2M)</option>
+                        <option value="Nova Scotia|1060000">Nova Scotia (~1.06M)</option>
+                        <option value="New Brunswick|840000">New Brunswick (~0.84M)</option>
+                        <option value="Newfoundland and Labrador|530000">Newfoundland and Labrador (~0.53M)</option>
+                        <option value="Prince Edward Island|170000">Prince Edward Island (~0.17M)</option>
+                        <option value="Northwest Territories|45000">Northwest Territories (~45k)</option>
+                        <option value="Yukon|45000">Yukon (~45k)</option>
+                        <option value="Nunavut|40000">Nunavut (~40k)</option>
+                      </optgroup>
+                      <optgroup label="Major Cities (Canada)">
+                        <option value="Toronto|3000000">Toronto (~3.0M)</option>
+                        <option value="Montreal|1800000">Montreal (~1.8M)</option>
+                        <option value="Calgary|1400000">Calgary (~1.4M)</option>
+                        <option value="Ottawa|1050000">Ottawa (~1.05M)</option>
+                        <option value="Edmonton|1000000">Edmonton (~1.0M)</option>
+                        <option value="Winnipeg|750000">Winnipeg (~0.75M)</option>
+                        <option value="Vancouver|675000">Vancouver (city proper ~0.68M)</option>
+                        <option value="Quebec City|550000">Quebec City (~0.55M)</option>
+                        <option value="Hamilton|570000">Hamilton (~0.57M)</option>
+                        <option value="Kitchener|260000">Kitchener (~0.26M)</option>
+                        <option value="Halifax|480000">Halifax (~0.48M)</option>
+                        <option value="London|420000">London (~0.42M)</option>
+                        <option value="Victoria|95000">Victoria (city proper ~95k)</option>
+                      </optgroup>
+                    </select>
+                  </div>
+                </div>
+                <p class="small-note">Choosing a preset will auto-fill N. You can still edit it.</p>
+              </div>
+            </div>
+
+            <!-- Combined Advanced: Study Design (moved under Study Design section) -->
+            <div class="form-group" style="margin-top: 1rem;">
+              <button type="button" class="calc-toggle" id="toggleDesignAdvanced" aria-expanded="false" aria-controls="designAdvancedPanel">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                  <path d="M4 5L7 8L10 5" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span class="label-full">Advanced: Study Design</span>
+                <span class="label-compact">Advanced</span>
+              </button>
+              <div class="calc-panel" id="designAdvancedPanel" hidden>
+                <p class="small-note" id="designAdvSummary" style="margin: 6px 0 12px; color:#64748b;">Configure finite population correction and design-specific options.</p>
+                <div id="advancedGlobalContainer"></div>
+                <div id="advancedDesignContainer" style="margin-top:12px;"></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Sampling Method -->
+          <section class="section">
+            <h3>Sampling Method</h3>
+            <p class="section-subtitle">Choose design and extraction</p>
+
+            <div class="form-group">
+              <label>
+                Sampling Design
+                <button class="info-button" data-modal-title="Sampling Design" data-modal-content="Choose how you will select participants from your population. Simple Random Sampling (SRS): Every unit has equal probability. Stratified: Divide population into groups first. Clustered: Sample naturally occurring groups. Stratified-Clustered: Combine both approaches. Complex designs may require larger sample sizes.">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-question-mark" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                    <path d="M12 17h.01"></path>
+                  </svg>
+                </button>
+              </label>
+              <div class="sampling-grid">
+                <div class="sampling-option active" data-design="no-stratification">
+                  <span class="option-check" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13 5l-6 6L3 7" stroke="#005EE9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </span>
+                  <h4>No stratification or clustering</h4>
+                  <p>Single homogeneous population</p>
+                </div>
+                <div class="sampling-option" data-design="stratified">
+                  <span class="option-check" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13 5l-6 6L3 7" stroke="#005EE9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </span>
+                  <h4>Stratified</h4>
+                  <p>Sample within subgroups</p>
+                </div>
+                <div class="sampling-option" data-design="cluster">
+                  <span class="option-check" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13 5l-6 6L3 7" stroke="#005EE9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </span>
+                  <h4>Cluster</h4>
+                  <p>Sample groups, then all within</p>
+                </div>
+                <div class="sampling-option" data-design="stratified-cluster">
+                  <span class="option-check" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13 5l-6 6L3 7" stroke="#005EE9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </span>
+                  <h4>Stratified + Cluster</h4>
+                  <p>Strata, then clusters within</p>
+                </div>
+              </div>
+
+              <!-- Design parameters panel (shows context-specific inputs) -->
+              <div class="calc-panel design-params" id="designParamsPanel" hidden data-collapsed="false">
+                <div class="params-header">
+                  <strong id="designParamsTitle">Design parameters</strong>
+                  <span class="params-summary" id="paramsSummary"></span>
+                  <button type="button" class="params-toggle" id="toggleDesignParams" aria-expanded="true">
+                    <span class="toggle-text">Hide</span>
+                    <svg class="chevron" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                      <path d="M4 9L7 6L10 9" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </button>
+                </div>
+                <div class="params-body">
+                <!-- Stratified parameters -->
+                <div class="design-section" data-design="stratified" hidden>
+                  <div class="section-body">
+                  <div class="form-group">
+                    <label class="small">
+                      Number of strata (optional)
+                      <button class="info-button" data-modal-title="Number of Strata" data-modal-content="Divide your population into non-overlapping groups (e.g., age groups, regions, income levels). More strata can improve precision by accounting for population heterogeneity, but require more planning and potentially larger sample sizes per stratum.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-question-mark" aria-hidden="true">
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                          <path d="M12 17h.01"></path>
+                        </svg>
+                      </button>
+                    </label>
+                    <input type="number" min="1" step="1" class="text-input" id="numStrata" placeholder="e.g., 4">
+                  </div>
+                  
+                  <div class="form-group">
+                    <label class="small">
+                      Allocation across strata
+                      <button class="info-button" data-modal-title="Allocation Across Strata" data-modal-content="Proportional: Allocates sample to each stratum proportional to its population size (ensures representation). Equal (disproportional): Assigns n/S to each stratum regardless of size (use when you need minimum sample sizes per stratum for subgroup analysis).">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-question-mark" aria-hidden="true">
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                          <path d="M12 17h.01"></path>
+                        </svg>
+                      </button>
+                    </label>
+                    <div class="segmented" id="strataAllocMode" role="group" aria-label="Strata allocation mode">
+                      <button type="button" class="segment active" data-mode="proportional">Proportional</button>
+                      <button type="button" class="segment" data-mode="equal">Equal (disproportional)</button>
+                    </div>
+                    <p class="small-note" style="margin-top: 4px; color: #64748b;">Proportional allocates by stratum size; Equal assigns n/S per stratum.</p>
+                  </div>
+                  <button type="button" class="section-toggle" id="stratAdvancedToggle" aria-expanded="false">
+                    Advanced options
+                    <svg class="chevron" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                      <path d="M4 5L7 8L10 5" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </button>
+                  <div class="advanced-content" id="stratAdvanced" hidden>
+                    <div class="form-row">
+                      <div class="field">
+                        <label class="small">
+                          Custom allocation (optional)
+                          <button class="info-button" data-modal-title="Custom Allocation" data-modal-content="Define per-stratum percentages of the total sample. Enter the percentage for each stratum - the tool will normalize values to 100% and round using largest remainder method to ensure exact allocation.">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-question-mark" aria-hidden="true">
+                              <circle cx="12" cy="12" r="10"></circle>
+                              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                              <path d="M12 17h.01"></path>
+                            </svg>
+                          </button>
+                        </label>
+                        <div class="toggle-row">
+                          <label class="switch">
+                            <input type="checkbox" id="stratCustomAllocToggle" />
+                            <span class="slider"></span>
+                          </label>
+                          <span class="small" style="margin-left:8px;color:#64748b;">Use per-stratum % of total n</span>
+                        </div>
+                        <div id="stratCustomAllocEditor" class="custom-alloc-editor" hidden>
+                          <div class="small-note" style="color:#64748b;margin:6px 0 8px;">Enter % for each stratum (we'll normalize to 100%).</div>
+                          <div class="alloc-rows" id="stratAllocRows"></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-row">
+                      <div class="field">
+                        <label class="small">
+                          Variance reduction from stratification (%)
+                          <button class="info-button" data-modal-title="Variance Reduction" data-modal-content="How much stratification reduces outcome variability. For example, 20% means strata explain 20% of variance in the outcome. This reduces required sample size. Higher values = more efficient design. Typical range: 10-40%.">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-question-mark" aria-hidden="true">
+                              <circle cx="12" cy="12" r="10"></circle>
+                              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                              <path d="M12 17h.01"></path>
+                            </svg>
+                          </button>
+                        </label>
+                        <input type="number" min="0" max="90" step="1" class="text-input" id="stratVarReduction" placeholder="e.g., 20">
+                      </div>
+                    </div>
+                  </div>
+                  <p class="small-note">Stratification can reduce required N when strata explain outcome variation. % reduction approximates this gain.</p>
+                  </div>
+                </div>
+
+                <!-- Cluster parameters -->
+                  <div class="design-section" data-design="cluster" hidden>
+                    <div class="section-body">
+                    <div class="form-group">
+                      <label class="small">
+                        Number of clusters
+                        <button class="info-button" data-modal-title="Number of Clusters" data-modal-content="How many naturally occurring groups to sample (e.g., schools, clinics, villages, households). Clustering typically increases required sample size due to within-cluster correlation (people in the same cluster tend to be more similar).">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-question-mark" aria-hidden="true">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M9.09 9a3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                            <path d="M12 17h.01"></path>
+                          </svg>
+                        </button>
+                      </label>
+                      <input type="number" min="2" step="1" class="text-input" id="numClusters" placeholder="e.g., 40">
+                    </div>
+                    
+                    <div class="form-group">
+                      <label class="small">Estimated avg cluster size (m)</label>
+                      <input type="text" class="text-input" id="clusterM_est" placeholder="—" readonly>
+                    </div>
+                    <button type="button" class="section-toggle" id="clusterAdvancedToggle" aria-expanded="false">
+                      Advanced options
+                      <svg class="chevron" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                        <path d="M4 5L7 8L10 5" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </button>
+                    <div class="advanced-content" id="clusterAdvanced" hidden>
+                      <div class="form-group">
+                        <label class="small">
+                          ICC (ρ)
+                          <button class="info-button" title="Intraclass Correlation Coefficient (ICC): Measures similarity within clusters. Higher ICC (closer to 1) means cluster members are more alike, increasing required sample size. Typical values: 0.01-0.05 for communities, 0.05-0.20 for classrooms. If left blank, defaults to 0.05.">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-question-mark" aria-hidden="true">
+                              <circle cx="12" cy="12" r="10"></circle>
+                              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                              <path d="M12 17h.01"></path>
+                            </svg>
+                          </button>
+                        </label>
+                        <input type="number" min="0" max="1" step="0.001" class="text-input" id="clusterICC" placeholder="e.g., 0.05">
+                      </div>
+                      
+                      <div class="form-group">
+                        <label class="small">
+                          Cluster size variability
+                          <button class="info-button" title="Cluster size variability: Accounts for unequal cluster sizes. CV (Coefficient of Variation) expresses size variation as a ratio. Mix mode lets you specify proportions of small/medium/large clusters. Higher variability increases design effect.">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-question-mark" aria-hidden="true">
+                              <circle cx="12" cy="12" r="10"></circle>
+                              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                              <path d="M12 17h.01"></path>
+                            </svg>
+                          </button>
+                        </label>
+                        <div class="segmented" id="clusterVarMode" role="group" aria-label="Cluster variability input mode">
+                          <button type="button" class="segment active" data-mode="cv">CV</button>
+                          <button type="button" class="segment" data-mode="mix">Mix % / % / %</button>
+                        </div>
+                      </div>
+                      
+                      <!-- CV input row -->
+                      <div class="form-group" id="clusterCVRow">
+                        <label class="small">CV of cluster sizes (optional)</label>
+                        <input type="number" min="0" step="0.01" class="text-input" id="clusterCV" placeholder="e.g., 0.3">
+                      </div>
+                      <!-- Mix input row -->
+                      <div class="form-row" id="clusterMixRow" hidden>
+                        <div class="field">
+                          <label class="small">Mix: Small (%)</label>
+                          <input type="number" min="0" max="100" step="1" class="text-input" id="clusterMixSmall" placeholder="e.g., 20">
+                        </div>
+                        <div class="field">
+                          <label class="small">Medium (%)</label>
+                          <input type="number" min="0" max="100" step="1" class="text-input" id="clusterMixMed" placeholder="e.g., 60">
+                        </div>
+                        <div class="field">
+                          <label class="small">Large (%)</label>
+                          <input type="number" min="0" max="100" step="1" class="text-input" id="clusterMixLarge" placeholder="e.g., 20">
+                        </div>
+                      </div>
+                      <p class="small-note">Design effect: DEFF = 1 + ((m − 1) × ρ), where m is average cluster size and ρ is ICC.</p>
+                    </div>
+                    </div>
+                </div>
+
+                <!-- Stratified + Cluster parameters -->
+                  <div class="design-section" data-design="stratified-cluster" hidden>
+                    <div class="section-body">
+                    <div class="form-group">
+                      <label class="small">
+                        Number of clusters
+                        <button class="info-button" title="Number of clusters: How many naturally occurring groups to sample (e.g., schools, clinics, villages). Clustering typically increases required sample size due to within-cluster correlation.">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-question-mark" aria-hidden="true">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                            <path d="M12 17h.01"></path>
+                          </svg>
+                        </button>
+                      </label>
+                      <input type="number" min="2" step="1" class="text-input" id="sc_numClusters" placeholder="e.g., 40">
+                    </div>
+                    
+                    <div class="form-group">
+                      <label class="small">Estimated avg cluster size (m)</label>
+                      <input type="text" class="text-input" id="sc_clusterM_est" placeholder="—" readonly>
+                    </div>
+                    
+                    <div class="form-group">
+                      <label class="small">Allocation across strata</label>
+                      <div class="segmented" id="sc_strataAllocMode" role="group" aria-label="Strata allocation mode">
+                        <button type="button" class="segment active" data-mode="proportional">Proportional</button>
+                        <button type="button" class="segment" data-mode="equal">Equal (disproportional)</button>
+                      </div>
+                      <p class="small-note" style="margin-top: 4px; color: #64748b;">Proportional allocates by stratum size; Equal assigns n/S per stratum.</p>
+                    </div>
+                    <button type="button" class="section-toggle" id="scAdvancedToggle" aria-expanded="false">
+                      Advanced options
+                      <svg class="chevron" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                        <path d="M4 5L7 8L10 5" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </button>
+                    <div class="advanced-content" id="scAdvanced" hidden>
+                      <div class="form-group">
+                        <label class="small">
+                          ICC (ρ)
+                          <button class="info-button" title="Intraclass Correlation Coefficient (ICC): Measures similarity within clusters. Higher ICC (closer to 1) means cluster members are more alike, increasing required sample size. Typical values: 0.01-0.05 for communities, 0.05-0.20 for classrooms. If left blank, defaults to 0.05.">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-question-mark" aria-hidden="true">
+                              <circle cx="12" cy="12" r="10"></circle>
+                              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                              <path d="M12 17h.01"></path>
+                            </svg>
+                          </button>
+                        </label>
+                        <input type="number" min="0" max="1" step="0.001" class="text-input" id="sc_clusterICC" placeholder="e.g., 0.05">
+                      </div>
+                      
+                      <div class="form-group">
+                        <label class="small">
+                          Custom allocation (optional)
+                          <button class="info-button" title="Define per-stratum percentages of the total sample. We'll normalize values to 100% and round by largest remainder.">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-question-mark" aria-hidden="true">
+                              <circle cx="12" cy="12" r="10"></circle>
+                              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                              <path d="M12 17h.01"></path>
+                            </svg>
+                          </button>
+                        </label>
+                        <div class="toggle-row">
+                          <label class="switch">
+                            <input type="checkbox" id="sc_stratCustomAllocToggle" />
+                            <span class="slider"></span>
+                          </label>
+                          <span class="small" style="margin-left:8px;color:#64748b;">Use per-stratum % of total n</span>
+                        </div>
+                        <div id="sc_stratCustomAllocEditor" class="custom-alloc-editor" hidden>
+                          <div class="small-note" style="color:#64748b;margin:6px 0 8px;">Enter % for each stratum (we'll normalize to 100%).</div>
+                          <div class="alloc-rows" id="sc_stratAllocRows"></div>
+                        </div>
+                      </div>
+                      
+                      <div class="form-group">
+                        <label class="small">
+                          Variance reduction from stratification (%)
+                          <button class="info-button" title="Variance reduction: How much stratification reduces outcome variability. E.g., 20% means strata explain 20% of variance, reducing required sample size.">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-question-mark" aria-hidden="true">
+                              <circle cx="12" cy="12" r="10"></circle>
+                              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                              <path d="M12 17h.01"></path>
+                            </svg>
+                          </button>
+                        </label>
+                        <input type="number" min="0" max="90" step="1" class="text-input" id="sc_stratVarReduction" placeholder="e.g., 20">
+                      </div>
+                      
+                      <div class="form-group">
+                        <label class="small">
+                          Cluster size variability
+                          <button class="info-button" title="Cluster size variability: Accounts for unequal cluster sizes. CV (Coefficient of Variation) expresses size variation as a ratio. Mix mode lets you specify proportions of small/medium/large clusters. Higher variability increases design effect.">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-question-mark" aria-hidden="true">
+                              <circle cx="12" cy="12" r="10"></circle>
+                              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                              <path d="M12 17h.01"></path>
+                            </svg>
+                          </button>
+                        </label>
+                        <div class="segmented" id="sc_clusterVarMode" role="group" aria-label="Cluster variability input mode">
+                          <button type="button" class="segment active" data-mode="cv">CV</button>
+                          <button type="button" class="segment" data-mode="mix">Mix % / % / %</button>
+                        </div>
+                      </div>
+                      
+                      <!-- CV input row -->
+                      <div class="form-group" id="sc_clusterCVRow">
+                        <label class="small">CV of cluster sizes (optional)</label>
+                        <input type="number" min="0" step="0.01" class="text-input" id="sc_clusterCV" placeholder="e.g., 0.3">
+                      </div>
+                      <!-- Mix input row -->
+                      <div class="form-row" id="sc_clusterMixRow" hidden>
+                        <div class="field">
+                          <label class="small">Mix: Small (%)</label>
+                          <input type="number" min="0" max="100" step="1" class="text-input" id="sc_clusterMixSmall" placeholder="e.g., 20">
+                        </div>
+                        <div class="field">
+                          <label class="small">Medium (%)</label>
+                          <input type="number" min="0" max="100" step="1" class="text-input" id="sc_clusterMixMed" placeholder="e.g., 60">
+                        </div>
+                        <div class="field">
+                          <label class="small">Large (%)</label>
+                          <input type="number" min="0" max="100" step="1" class="text-input" id="sc_clusterMixLarge" placeholder="e.g., 20">
+                        </div>
+                      </div>
+                      <p class="small-note">Combined DEFF ≈ cluster DEFF × (1 − stratification %).</p>
+                    </div>
+                    </div>
+                </div>
+                </div> <!-- /params-body -->
+              </div>
+            </div>
+
+            
+
+            <div class="form-group">
+              <label>
+                Extraction Method
+                <button class="info-button" data-modal-title="Extraction Method" data-modal-content="Simple Random Sampling: Every unit has equal probability of selection (gold standard). Systematic Random Sampling: Select every k-th unit after a random start - efficient and spreads sample evenly across the sampling frame. Note: Systematic sampling can introduce bias if there are periodic patterns in your data (e.g., every 7th day, seasonal cycles).">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-question-mark" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                    <path d="M12 17h.01"></path>
+                  </svg>
+                </button>
+              </label>
+              <div class="extraction-grid" id="extractionGrid">
+                <div class="extraction-option active" data-method="simple-random">
+                  <span class="option-check" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13 5l-6 6L3 7" stroke="#005EE9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </span>
+                  <h4>Simple Random</h4>
+                  <p>Equal probability for all units</p>
+                </div>
+                <div class="extraction-option" data-method="systematic">
+                  <span class="option-check" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13 5l-6 6L3 7" stroke="#005EE9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </span>
+                  <h4>Systematic Random</h4>
+                  <p>Select every kth unit</p>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="right-panel">
+          <!-- Sample Size Results -->
+          <div class="results-card">
+            <div class="results-header-row">
+              <h3>Sample Size Required</h3>
+              <button id="clearAllBtn" class="clear-button" type="button" title="Reset all inputs to defaults">Clear all</button>
+            </div>
+            <p class="results-subtitle">Based on your study parameters</p>
+            
+            <div class="results-grid">
+              <div class="result-item">
+                <div class="result-value">73</div>
+                <div class="result-label">
+                  Required Sample Size
+                  <button class="info-button" data-modal-title="Required Sample Size" data-modal-content="This is the total number of participants you need to recruit for your study to achieve your target power when detecting the specified effect size at the chosen significance level.">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-question-mark" aria-hidden="true">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                      <path d="M12 17h.01"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div class="result-item">
+                <div class="result-value power">58%</div>
+                <div class="result-label">
+                  Target Power
+                  <button class="info-button" data-modal-title="Target Power" data-modal-content="This is the desired statistical power (1-β) you set for your a-priori sample size calculation. The calculated sample size is designed to give you this probability of detecting a true effect of the specified size if it exists. Higher power means lower risk of missing a real effect (Type II error).">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-question-mark" aria-hidden="true">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                      <path d="M12 17h.01"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div class="result-item">
+                  <div class="result-value effect">0.50</div>
+                <div class="result-label">
+                    Effect Size
+                    <button class="info-button" data-modal-title="Effect Size (Cohen's d)" data-modal-content="The magnitude of the difference you expect to detect (Cohen's d). This is the standardized mean difference between groups. Typical benchmarks: Small = 0.2, Medium = 0.5, Large = 0.8. Larger effect sizes require smaller sample sizes to detect. This is what your study is designed and powered to detect.">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-question-mark" aria-hidden="true">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                      <path d="M12 17h.01"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Power Analysis Curve -->
+            <div class="chart-section">
+              <div class="chart-header">
+                <h4>Power Analysis Curve</h4>
+                <div class="chart-legend">
+                <div class="legend-item">
+                  <div class="legend-color statistical"></div>
+                  <span>Statistical Power</span>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-color target"></div>
+                  <span id="powerTargetLabel">Target (0.80)</span>
+                </div>
+                </div>
+                <!-- Chart Theme Controls -->
+                <div class="curve-style-controls">
+                  <span class="curve-control-label">Theme</span>
+                  <span id="themeSwatch" class="theme-swatch" aria-hidden="true"></span>
+                  <select id="chartTheme" class="curve-control-select" aria-label="Theme">
+                    <option value="default" selected>Default</option>
+                    <option value="midnight">Midnight</option>
+                    <option value="emerald">Emerald</option>
+                    <option value="crimson">Crimson</option>
+                    <option value="amber">Amber</option>
+                    <option value="indigo">Indigo</option>
+                    <option value="graphite">Graphite</option>
+                    <option value="ocean">Ocean</option>
+                    <option value="forest">Forest</option>
+                    <option value="magenta">Magenta</option>
+                  </select>
+                </div>
+              </div>
+              <div class="chart-container">
+                <div id="powerChart" style="width: 100%; height: 480px;"></div>
+              </div>
+            </div>
+
+            <!-- Current Design Info -->
+            <div class="design-info">
+              <p><strong>Current Design:</strong> With N = 73, you have 57.7% power to detect an effect size of 0.50 at α = 0.05.</p>
+              <div class="warning">
+                <span class="warning-icon" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" fill="#F59E0B"/>
+                    <path d="M12 9v5" stroke="#111827" stroke-width="2" stroke-linecap="round"/>
+                    <circle cx="12" cy="17" r="1" fill="#111827"/>
+                  </svg>
+                </span>
+                Power is below the recommended 80% threshold.
+              </div>
+            </div>
+          </div>
+
+          <!-- Sampling Visualization -->
+          <div class="visualization-card">
+            <div class="visualization-header">
+              <h3>Sampling Design Report</h3>
+              <div class="visualization-actions">
+                <div class="download-dropdown">
+                  <button type="button" class="code-action dropdown-toggle" id="downloadDropdownBtn" aria-haspopup="true" aria-expanded="false">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                      <path d="M7 1V10" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+                      <path d="M4 7L7 10L10 7" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+                      <path d="M1 12H13" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+                    </svg>
+                    <span>Download</span>
+                    <svg class="chevron" width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="margin-left:6px;">
+                      <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </button>
+                  <div class="dropdown-menu" id="downloadDropdownMenu" hidden>
+                    <button type="button" class="dropdown-item" data-format="png">PNG</button>
+                    <button type="button" class="dropdown-item" data-format="pdf">PDF</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p class="visualization-subtitle">APA-formatted summary of your sampling design</p>
+            
+            <!-- APA Table -->
+            <div class="apa-table-container" id="apaTableContainer">
+              <table class="apa-table" id="samplingTable">
+                <colgroup>
+                  <col class="col-param">
+                  <col class="col-value">
+                  <col class="col-desc">
+                </colgroup>
+                <caption>Table 1<br><em>Sample Size Requirements for Detecting Mean Differences</em></caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Parameter</th>
+                    <th scope="col">Value</th>
+                    <th scope="col">Description</th>
+                  </tr>
+                </thead>
+                <tbody id="samplingTableBody">
+                  <tr>
+                    <td>Test Type</td>
+                    <td id="tableTestType">—</td>
+                    <td id="tableTestTypeDesc">—</td>
+                  </tr>
+                  <tr>
+                    <td>Effect Size (<em>d</em>)</td>
+                    <td id="tableEffectSize">—</td>
+                    <td id="tableEffectSizeDesc">—</td>
+                  </tr>
+                  <tr>
+                    <td>Significance Level (α)</td>
+                    <td id="tableAlpha">—</td>
+                    <td id="tableAlphaDesc">—</td>
+                  </tr>
+                  <tr>
+                    <td>Statistical Power (1-β)</td>
+                    <td id="tablePower">—</td>
+                    <td id="tablePowerDesc">—</td>
+                  </tr>
+                  <tr>
+                    <td>Test Direction</td>
+                    <td id="tableDirection">—</td>
+                    <td id="tableDirectionDesc">—</td>
+                  </tr>
+                  <tr class="table-divider">
+                    <td>Sampling Design</td>
+                    <td id="tableSamplingDesign">—</td>
+                    <td id="tableSamplingDesignDesc">—</td>
+                  </tr>
+                  <tr id="tableDesignParamsRow" style="display: none;">
+                    <td>Design Parameters</td>
+                    <td id="tableDesignParams">—</td>
+                    <td id="tableDesignParamsDesc">—</td>
+                  </tr>
+                  <tr>
+                    <td>Extraction Method</td>
+                    <td id="tableExtraction">—</td>
+                    <td id="tableExtractionDesc">—</td>
+                  </tr>
+                  <tr id="tableFPCRow" style="display: none;">
+                    <td>Population Size (<em>N</em>)</td>
+                    <td id="tablePopSize">—</td>
+                    <td id="tablePopSizeDesc">—</td>
+                  </tr>
+                  <tr class="table-result">
+                    <td>Required Sample Size</td>
+                    <td id="tableSampleSize"><strong>—</strong></td>
+                    <td id="tableSampleSizeDesc">—</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Visualization Notes -->
+            <div class="viz-notes-section" id="vizNotesSection" aria-live="polite">
+              <div class="viz-notes-header" style="font-weight:normal;font-style:italic;">Note:</div>
+              <p class="viz-notes-text" id="vizNotesText">Sample size calculated using power analysis for mean differences. Design effects and finite population corrections applied where specified.</p>
+            </div>
+
+            <!-- Sample Notes (caveats/explanations, kept for backward compatibility) -->
+            <div class="viz-notes" id="vizNotes" hidden>
+              <div class="viz-notes-header">Sample Notes</div>
+              <ul class="viz-notes-list" id="vizNotesListOld"></ul>
+            </div>
+          </div>
+
+          <!-- R Code Section -->
+          <div class="code-section">
+            <div class="code-header">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M2 3L14 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M2 7L14 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M2 11L14 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+              <h3>R Code</h3>
+            </div>
+            <p>Reproduce this analysis in R using the pwr package</p>
+
+            <div class="code-tabs">
+              <div class="segmented" id="codeLangToggle" role="group" aria-label="Code language">
+                <button type="button" class="segment active" data-lang="r">R Code</button>
+                <button type="button" class="segment" data-lang="py" disabled aria-disabled="true">Python <span class="soon-badge" style="margin-left:6px;">Coming Soon</span></button>
+              </div>
+            </div>
+
+            <p class="code-description" id="codeLangDescription">Copy this code to reproduce the analysis in R (pwr). Python support is coming soon.</p>
+
+            <!-- Computation engine note -->
+            <div class="small-note" style="color:#64748b; display:flex; align-items:center; gap:6px; margin:6px 0 10px;">
+              <button class="info-button" data-modal-title="About Computation Accuracy" data-modal-content="Calculations are performed locally in your browser using JavaScript (no server calls). Results typically match R's pwr package for common settings. Small discrepancies can occur due to: (1) distributional approximations (normal vs noncentral t/F/chi-square), (2) integer rounding of sample sizes, (3) optional continuity corrections for proportions, and (4) conventions around finite population correction (FPC). When exact parity with pwr is critical for a specific test, prefer running the provided R code.">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-question-mark" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                  <path d="M12 17h.01"></path>
+                </svg>
+              </button>
+              <span>Computed locally in your browser. Results typically match R <code>pwr</code>; minor differences may occur for the reasons above.</span>
+            </div>
+
+            <!-- R Code Input Box -->
+            <div class="r-label">
+              R Code
+              <div class="code-actions">
+                <button class="code-action-btn" id="printCode" title="Print R Code">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                    <rect x="6" y="14" width="12" height="8"></rect>
+                  </svg>
+                </button>
+                <button class="code-action-btn" id="downloadCode" title="Download R Code">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                  </svg>
+                </button>
+                <button class="code-action-btn" id="copyCode" title="Copy R Code">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div class="r-block">
+              <code id="codeBlock" class="language-r"></code>
+            </div>
+
+            <!-- R Output Box -->
+            <div class="r-label">
+              R Output
+              <div class="code-actions">
+                <button class="code-action-btn" id="printOutput" title="Print R Output">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                    <rect x="6" y="14" width="12" height="8"></rect>
+                  </svg>
+                </button>
+                <button class="code-action-btn" id="downloadOutput" title="Download R Output">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                  </svg>
+                </button>
+                <button class="code-action-btn" id="copyOutput" title="Copy R Output">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div class="r-block">
+              <code id="outputBlock" class="language-r"></code>
+            </div>
+
+            <!-- New to R Info -->
+            <div class="r-info">
+              <div class="r-info-header">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <rect x="2" y="3" width="12" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                  <circle cx="6.5" cy="6.5" r="1.5" fill="currentColor"/>
+                  <path d="M9 9L12 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                <strong>New to R?</strong> This code uses base R functions and common packages.
+              </div>
+              <ul class="r-info-list">
+                <li>Install required packages once with <code>install.packages()</code></li>
+                <li>Load packages with <code>library()</code></li>
+                <li>Modify the values to match your data</li>
+                <li>Run line-by-line to understand each step</li>
+              </ul>
+            </div>
+
+            <div class="learn-more">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M8 12V8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M8 6H8.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+              <span>Want to learn more about using R for statistical analysis?</span>
+              <a href="#" class="learn-link">View R Tutorials</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  
+  <!-- Footer with version info -->
+  <footer class="app-footer">
+    <div class="footer-content">
+      <div class="footer-left">
+        <span class="footer-brand">TSM A-Priori Sample Size Calculator</span>
+        <span class="footer-separator">•</span>
+        <span class="footer-version" id="appVersion">v2.0.0</span>
+        <span class="footer-separator">•</span>
+        <span class="footer-build" id="appBuild">Build 20251028</span>
+      </div>
+      <div class="footer-right">
+        <a href="#" class="footer-link">Documentation</a>
+        <span class="footer-separator">•</span>
+        <a href="#" class="footer-link">Release Notes</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Info Modal -->
+  <div id="infoModal" class="modal" aria-hidden="true">
+    <div class="modal-overlay"></div>
+    <div class="modal-container">
+      <div class="modal-header">
+        <h2 id="modalTitle" class="modal-title">Information</h2>
+        <button class="modal-close" aria-label="Close modal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p id="modalContent"></p>
+      </div>
+    </div>
+  </div>
+</div>
+  
+  <!-- Math library for distributions (local computation parity with R pwr) -->
+  <script src="https://cdn.jsdelivr.net/npm/jstat@1.9.6/dist/jstat.min.js"></script>
+  <!-- Plotly for interactive charts -->
+  <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+  <!-- Libraries for table export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,239 @@
+{
+  "metadata": {
+    "id": "confidence-interval-explorer",
+    "title": "Confidence Interval Explorer",
+    "version": "2.0.0",
+    "build": "20251201",
+    "description": "Interactive tool for calculating and visualizing confidence intervals for means, proportions, and differences. Understand interval width, coverage probability, and sample size effects.",
+    "icon": "calculator"
+  },
+  
+  "infoBanner": {
+    "title": "Educational Tool",
+    "content": "This estimator helps you understand how sample size, confidence level, and variability affect confidence interval width. Adjust parameters to see real-time effects on precision and coverage."
+  },
+  
+  "tabs": [
+    {
+      "id": "means",
+      "label": "Means",
+      "icon": "calculator",
+      "active": true
+    },
+    {
+      "id": "proportions",
+      "label": "Proportions",
+      "icon": "calculator",
+      "disabled": true,
+      "badge": "Coming Soon"
+    },
+    {
+      "id": "differences",
+      "label": "Differences",
+      "icon": "calculator",
+      "disabled": true,
+      "badge": "Coming Soon"
+    }
+  ],
+  
+  "leftPanels": [
+    {
+      "id": "estimation-parameters",
+      "title": "Estimation Parameters",
+      "subtitle": "Configure your confidence interval",
+      "controls": [
+        {
+          "type": "select",
+          "id": "estimationType",
+          "label": "Estimation Type",
+          "infoModal": {
+            "title": "Estimation Type",
+            "content": "Single mean: CI for one population mean. Difference in means: CI for the difference between two group means. Paired difference: CI for mean of paired differences."
+          },
+          "options": [
+            {"value": "single-mean", "label": "Single Mean"},
+            {"value": "two-means", "label": "Difference in Means"},
+            {"value": "paired-diff", "label": "Paired Difference"}
+          ],
+          "default": "single-mean"
+        },
+        {
+          "type": "slider-with-stepper",
+          "id": "sampleSize",
+          "label": "Sample Size (n)",
+          "infoModal": {
+            "title": "Sample Size",
+            "content": "Number of observations in your sample. Larger samples produce narrower confidence intervals (more precision). The width of the CI is inversely proportional to √n."
+          },
+          "min": 5,
+          "max": 500,
+          "step": 1,
+          "default": 30,
+          "valueDisplay": "numeric",
+          "color": "blue"
+        },
+        {
+          "type": "slider-with-value",
+          "id": "confidenceLevel",
+          "label": "Confidence Level",
+          "infoModal": {
+            "title": "Confidence Level (1-α)",
+            "content": "Probability that the interval captures the true population parameter. Common values: 90% (α=0.10), 95% (α=0.05), 99% (α=0.01). Higher confidence produces wider intervals."
+          },
+          "min": 0.8,
+          "max": 0.99,
+          "step": 0.01,
+          "default": 0.95,
+          "valueDisplay": "percent",
+          "color": "purple"
+        },
+        {
+          "type": "slider-with-value",
+          "id": "standardDeviation",
+          "label": "Standard Deviation (σ)",
+          "infoModal": {
+            "title": "Standard Deviation",
+            "content": "Population standard deviation (or estimated from sample). Higher variability produces wider confidence intervals. For means: typical values range from 5-50 depending on scale."
+          },
+          "min": 1,
+          "max": 100,
+          "step": 0.5,
+          "default": 15,
+          "valueDisplay": "numeric",
+          "color": "orange"
+        },
+        {
+          "type": "slider-with-value",
+          "id": "sampleMean",
+          "label": "Sample Mean (x̄)",
+          "infoModal": {
+            "title": "Sample Mean",
+            "content": "Observed mean from your sample data. This is the point estimate around which the confidence interval is constructed. The interval is symmetric around this value."
+          },
+          "min": 0,
+          "max": 200,
+          "step": 0.5,
+          "default": 100,
+          "valueDisplay": "numeric",
+          "color": "green"
+        }
+      ]
+    },
+    {
+      "id": "distribution-options",
+      "title": "Distribution Options",
+      "subtitle": "Select estimation method",
+      "controls": [
+        {
+          "type": "segmented",
+          "id": "distributionType",
+          "label": "Distribution",
+          "infoModal": {
+            "title": "Distribution Type",
+            "content": "t-distribution: Use when σ is unknown (most common). Exact for normal data, robust for large n. z-distribution: Use when σ is known (rare in practice). More appropriate for very large samples (n > 100)."
+          },
+          "options": [
+            {"value": "t", "label": "t-distribution"},
+            {"value": "z", "label": "z-distribution"}
+          ],
+          "default": "t"
+        }
+      ]
+    }
+  ],
+  
+  "rightPanels": [
+    {
+      "type": "results-card",
+      "title": "Confidence Interval Results",
+      "subtitle": "Based on your estimation parameters",
+      "metrics": [
+        {
+          "id": "intervalWidth",
+          "label": "Interval Width",
+          "color": "blue",
+          "infoModal": {
+            "title": "Interval Width",
+            "content": "The range spanned by the confidence interval (upper bound - lower bound). Narrower intervals indicate more precision. Width depends on: sample size (↑n → ↓width), confidence level (↑CL → ↑width), and variability (↑σ → ↑width)."
+          }
+        },
+        {
+          "id": "marginOfError",
+          "label": "Margin of Error",
+          "color": "purple",
+          "infoModal": {
+            "title": "Margin of Error",
+            "content": "Half the width of the confidence interval. Represents the maximum expected difference between the sample estimate and true population parameter at the specified confidence level. Formula: ME = t* × (σ/√n)."
+          }
+        },
+        {
+          "id": "lowerBound",
+          "label": "Lower Bound",
+          "color": "orange",
+          "infoModal": {
+            "title": "Lower Bound",
+            "content": "The smallest plausible value for the population parameter at the specified confidence level. Calculated as: x̄ - ME."
+          }
+        },
+        {
+          "id": "upperBound",
+          "label": "Upper Bound",
+          "color": "green",
+          "infoModal": {
+            "title": "Upper Bound",
+            "content": "The largest plausible value for the population parameter at the specified confidence level. Calculated as: x̄ + ME."
+          }
+        }
+      ],
+      "chart": {
+        "type": "interval-visualization",
+        "title": "Sample Size vs. Interval Width",
+        "legend": [
+          {"id": "intervalWidth", "label": "Interval Width", "color": "statistical"},
+          {"id": "currentN", "label": "Current n", "color": "target"}
+        ]
+      },
+      "designInfo": {
+        "template": "With n = {{sampleSize}}, your {{confidenceLevel}}% CI spans {{intervalWidth}} units (Margin of Error = ±{{marginOfError}}).",
+        "warning": {
+          "condition": "intervalWidth > 40",
+          "message": "Interval is quite wide. Consider increasing sample size for better precision."
+        }
+      }
+    },
+    {
+      "type": "visualization-card",
+      "title": "Confidence Interval Visualization",
+      "subtitle": "Visual representation of your interval estimate",
+      "content": "apa-table",
+      "downloadFormats": ["png", "pdf"]
+    },
+    {
+      "type": "code-section",
+      "title": "R Code",
+      "subtitle": "Reproduce this analysis in R",
+      "languages": [
+        {"id": "r", "label": "R Code", "active": true},
+        {"id": "python", "label": "Python", "disabled": true, "badge": "Coming Soon"}
+      ],
+      "outputs": ["code", "results"],
+      "info": {
+        "title": "New to R?",
+        "content": "This code uses base R functions and common packages.",
+        "tips": [
+          "Install required packages once with install.packages()",
+          "Load packages with library()",
+          "Modify the values to match your data",
+          "Run line-by-line to understand each step"
+        ]
+      }
+    }
+  ],
+  
+  "calculations": {
+    "main": "calculateCI",
+    "helpers": ["getTCritical", "getZCritical", "calculateMarginOfError"],
+    "rCode": "generateRCode",
+    "rOutput": "generateROutput"
+  }
+}

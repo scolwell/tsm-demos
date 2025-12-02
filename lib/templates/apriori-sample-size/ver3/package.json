@@ -1,0 +1,15 @@
+{
+  "name": "tsm-calculator-builder",
+  "version": "1.0.0",
+  "description": "Build system for TSM statistical calculators",
+  "main": "build/generate.js",
+  "scripts": {
+    "build": "node build/generate.js",
+    "build:ci": "node build/generate.js calculators/confidence-interval/config.json",
+    "build:all": "node build/build-all.js"
+  },
+  "keywords": ["statistics", "calculator", "education"],
+  "author": "TSM",
+  "license": "MIT",
+  "devDependencies": {}
+}

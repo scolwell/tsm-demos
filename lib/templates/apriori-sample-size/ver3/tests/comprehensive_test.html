@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comprehensive JS Test - 288 Cases</title>
+  <script src="https://cdn.jsdelivr.net/npm/jstat@latest/dist/jstat.min.js"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+      background: #f8fafc;
+    }
+    h1 { color: #1e293b; }
+    .controls {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    button {
+      background: #0051c9;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+    button:hover { background: #003d99; }
+    .status {
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      font-family: monospace;
+    }
+    .status.success { border-left: 4px solid #16a34a; }
+    .status.running { border-left: 4px solid #0051c9; }
+    pre {
+      background: #1e293b;
+      color: #e2e8f0;
+      padding: 1rem;
+      border-radius: 8px;
+      overflow: auto;
+      max-height: 600px;
+      font-size: 0.875rem;
+    }
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .stat-card {
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .stat-card h3 {
+      margin: 0 0 0.5rem 0;
+      color: #64748b;
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .stat-card .value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1e293b;
+    }
+  </style>
+</head>
+<body>
+  <h1>Comprehensive Sample Size Test Suite</h1>
+  <p>Testing 864 combinations: 3 test types × 3 power levels × 3 effect sizes × 2 significance levels × 2 directions × 4 sampling methods × 2 extraction methods</p>
+  
+  <div class="controls">
+    <button id="runTests">Run All 864 Tests</button>
+    <button id="downloadJson" style="margin-left: 1rem; background: #64748b;">Download Results (JSON)</button>
+    <button id="downloadCsv" style="margin-left: 0.5rem; background: #64748b;">Download Results (CSV)</button>
+  </div>
+  
+  <div id="statusDiv" class="status" style="display:none;"></div>
+  
+  <div class="summary" id="summaryDiv" style="display:none;"></div>
+  
+  <h2>Results</h2>
+  <pre id="results">Click "Run All 288 Tests" to begin...</pre>
+
+  <script src="../script.js"></script>
+  <script>
+    let testResults = [];
+
+    // Test parameters
+    const testTypes = ['single-sample', 'paired', 'two-sample'];
+    const powerLevels = [0.60, 0.70, 0.80];
+    const effectSizes = [0.2, 0.5, 0.8]; // small, medium, large
+    const sigLevels = [0.05, 0.01];
+    const directions = ['two.sided', 'greater'];
+    const samplingMethods = ['simple', 'stratified', 'cluster', 'systematic'];
+    const extractionMethods = ['with-replacement', 'without-replacement'];
+
+    // Generate all combinations
+    function generateCombinations() {
+      const combinations = [];
+      let id = 1;
+      
+      for (const testType of testTypes) {
+        for (const power of powerLevels) {
+          for (const d of effectSizes) {
+            for (const alpha of sigLevels) {
+              for (const alternative of directions) {
+                for (const sampling of samplingMethods) {
+                  for (const extraction of extractionMethods) {
+                    combinations.push({
+                      case_id: id++,
+                      testType,
+                      power,
+                      effect_size: d,
+                      sig_level: alpha,
+                      alternative,
+                      sampling,
+                      extraction
+                    });
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      
+      return combinations;
+    }
+
+    // Compute sample size using app logic
+    function computeSampleSize({ testType, effect_size, power, sig_level, alternative, sampling, extraction }) {
+      const d = effect_size;
+      const alpha = sig_level;
+      const twoTailed = alternative === 'two.sided';
+      const beta = 1 - power;
+      
+      // Get z-values
+      const zAlpha = twoTailed 
+        ? jStat.normal.inv(1 - alpha / 2, 0, 1) 
+        : jStat.normal.inv(1 - alpha, 0, 1);
+      const zBeta = jStat.normal.inv(1 - beta, 0, 1);
+      
+      // Base sample size calculation
+      let n_base, n_per_group;
+      if (testType === 'two-sample') {
+        const nPer = 2 * Math.pow((zAlpha + zBeta) / d, 2);
+        n_per_group = Math.ceil(nPer);
+        n_base = 2 * n_per_group;
+      } else {
+        n_base = Math.ceil(Math.pow((zAlpha + zBeta) / d, 2));
+        n_per_group = n_base;
+      }
+      
+      // Apply design effect
+      let n_with_deff = n_base;
+      let deff = 1;
+      
+      if (sampling === 'stratified') {
+        deff = 0.8; // 20% reduction
+        n_with_deff = Math.ceil(n_base * deff);
+      } else if (sampling === 'cluster') {
+        const icc = 0.05;
+        const m = 25;
+        deff = 1 + (m - 1) * icc;
+        n_with_deff = Math.ceil(n_base * deff);
+      } else if (sampling === 'systematic') {
+        deff = 1;
+        n_with_deff = n_base;
+      }
+      
+      // Apply FPC for finite population
+      let n_final = n_with_deff;
+      const N_population = extraction === 'without-replacement' ? 1000 : null;
+      
+      if (extraction === 'without-replacement' && N_population) {
+        n_final = Math.ceil(n_with_deff / (1 + n_with_deff / N_population));
+      }
+      
+      return {
+        n_base,
+        n_per_group_base: n_per_group,
+        n_with_design_effect: n_with_deff,
+        n_final_with_fpc: n_final,
+        design_effect: deff,
+        N_population,
+        design_effect_applied: sampling !== 'simple',
+        fpc_applied: extraction === 'without-replacement'
+      };
+    }
+
+    // Run all tests
+    function runAllTests() {
+      const statusDiv = document.getElementById('statusDiv');
+      const resultsDiv = document.getElementById('results');
+      const summaryDiv = document.getElementById('summaryDiv');
+      
+      statusDiv.style.display = 'block';
+      statusDiv.className = 'status running';
+      statusDiv.textContent = 'Running tests...';
+      
+      const combinations = generateCombinations();
+      testResults = [];
+      
+      let successCount = 0;
+      let errorCount = 0;
+      
+      combinations.forEach(combo => {
+        try {
+          const result = computeSampleSize(combo);
+          testResults.push({
+            ...combo,
+            ...result,
+            status: 'success'
+          });
+          successCount++;
+        } catch (error) {
+          testResults.push({
+            ...combo,
+            status: 'error',
+            error_message: error.message
+          });
+          errorCount++;
+        }
+      });
+      
+      // Update status
+      statusDiv.className = 'status success';
+      statusDiv.textContent = `✓ Completed ${combinations.length} tests (${successCount} successful, ${errorCount} errors)`;
+      
+      // Show summary
+      const validResults = testResults.filter(r => r.status === 'success');
+      const nBaseValues = validResults.map(r => r.n_base);
+      const nFinalValues = validResults.map(r => r.n_final_with_fpc);
+      
+      summaryDiv.style.display = 'grid';
+      summaryDiv.innerHTML = `
+        <div class="stat-card">
+          <h3>Total Cases</h3>
+          <div class="value">${combinations.length}</div>
+        </div>
+        <div class="stat-card">
+          <h3>Successful</h3>
+          <div class="value" style="color: #16a34a;">${successCount}</div>
+        </div>
+        <div class="stat-card">
+          <h3>Min n (base)</h3>
+          <div class="value">${Math.min(...nBaseValues)}</div>
+        </div>
+        <div class="stat-card">
+          <h3>Max n (base)</h3>
+          <div class="value">${Math.max(...nBaseValues)}</div>
+        </div>
+        <div class="stat-card">
+          <h3>Min n (adjusted)</h3>
+          <div class="value">${Math.min(...nFinalValues)}</div>
+        </div>
+        <div class="stat-card">
+          <h3>Max n (adjusted)</h3>
+          <div class="value">${Math.max(...nFinalValues)}</div>
+        </div>
+      `;
+      
+      // Display results
+      resultsDiv.textContent = JSON.stringify(testResults.slice(0, 20), null, 2) + 
+        `\n\n... (showing first 20 of ${testResults.length} results)\n` +
+        `\nClick "Download Results" to get the full dataset.`;
+    }
+
+    // Download JSON
+    function downloadJSON() {
+      if (testResults.length === 0) {
+        alert('Please run tests first');
+        return;
+      }
+      
+      const blob = new Blob([JSON.stringify(testResults, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'js_comprehensive_results.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // Download CSV
+    function downloadCSV() {
+      if (testResults.length === 0) {
+        alert('Please run tests first');
+        return;
+      }
+    }
+
+    // Download JSON
+    function downloadJSON() {
+      if (testResults.length === 0) {
+        alert('Please run tests first');
+        return;
+      }
+      
+      const blob = new Blob([JSON.stringify(testResults, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'js_comprehensive_results.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // Download CSV
+    function downloadCSV() {
+      if (testResults.length === 0) {
+        alert('Please run tests first');
+        return;
+      }
+      
+      const headers = ['case_id', 'test', 'power', 'effect_size', 'sig_level', 'alternative', 
+                       'sampling', 'extraction', 'n_base', 'n_with_design_effect', 
+                       'n_final_with_fpc', 'design_effect', 'status'];
+      
+      const rows = testResults.map(r => [
+        r.case_id,
+        r.testType,
+        r.power,
+        r.effect_size,
+        r.sig_level,
+        r.alternative,
+        r.sampling,
+        r.extraction,
+        r.n_base || '',
+        r.n_with_design_effect || '',
+        r.n_final_with_fpc || '',
+        r.design_effect || '',
+        r.status
+      ]);
+      
+      const csv = [headers, ...rows].map(row => row.join(',')).join('\n');
+      
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'js_comprehensive_results.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // Event listeners
+    document.getElementById('runTests').addEventListener('click', runAllTests);
+    document.getElementById('downloadJson').addEventListener('click', downloadJSON);
+    document.getElementById('downloadCsv').addEventListener('click', downloadCSV);
+  </script>
+</body>
+</html>

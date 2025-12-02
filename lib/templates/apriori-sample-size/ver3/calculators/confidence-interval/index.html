@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confidence Interval Explorer</title>
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+  <div class="app-container">
+    
+    <header class="header">
+      <div class="header-content">
+        <button class="back-button">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Back to Calculators
+        </button>
+        <div class="header-info">
+          <div class="header-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calculator">
+              <rect width="16" height="20" x="4" y="2" rx="2"></rect>
+              <line x1="8" x2="16" y1="6" y2="6"></line>
+              <line x1="16" x2="16" y1="14" y2="18"></line>
+              <path d="M16 10h.01"></path>
+              <path d="M12 10h.01"></path>
+              <path d="M8 10h.01"></path>
+              <path d="M12 14h.01"></path>
+              <path d="M8 14h.01"></path>
+              <path d="M12 18h.01"></path>
+              <path d="M8 18h.01"></path>
+            </svg>
+          </div>
+          <div class="header-text">
+            <h1>Confidence Interval Explorer</h1>
+            <p>Interactive tool for calculating and visualizing confidence intervals for means, proportions, and differences. Understand interval width, coverage probability, and sample size effects.</p>
+          </div>
+          <div class="header-version">
+            <span id="headerVersion">2.0.0</span>
+            <span class="version-separator">•</span>
+            <span id="headerBuild">Build 20251201</span>
+          </div>
+        </div>
+      </div>
+    </header>
+    
+    <div class="info-banner">
+      <div class="info-icon" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"></path>
+          <path d="M9 18h6"></path>
+          <path d="M10 22h4"></path>
+        </svg>
+      </div>
+      <div class="info-content">
+        <strong>Educational Tool</strong>
+        <p>This estimator helps you understand how sample size, confidence level, and variability affect confidence interval width. Adjust parameters to see real-time effects on precision and coverage.</p>
+      </div>
+    </div>
+    <div class="tab-navigation">
+        <button class="tab-button active" data-tab="means" >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect width="16" height="20" x="4" y="2" rx="2"></rect>
+            <line x1="8" x2="16" y1="6" y2="6"></line>
+            <line x1="16" x2="16" y1="14" y2="18"></line>
+            <path d="M16 10h.01"></path>
+            <path d="M12 10h.01"></path>
+            <path d="M8 10h.01"></path>
+          </svg>
+          Means
+          
+        </button>
+        <button class="tab-button disabled" data-tab="proportions" aria-disabled="true">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect width="16" height="20" x="4" y="2" rx="2"></rect>
+            <line x1="8" x2="16" y1="6" y2="6"></line>
+            <line x1="16" x2="16" y1="14" y2="18"></line>
+            <path d="M16 10h.01"></path>
+            <path d="M12 10h.01"></path>
+            <path d="M8 10h.01"></path>
+          </svg>
+          Proportions
+          <span class="soon-badge">Coming Soon</span>
+        </button>
+        <button class="tab-button disabled" data-tab="differences" aria-disabled="true">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect width="16" height="20" x="4" y="2" rx="2"></rect>
+            <line x1="8" x2="16" y1="6" y2="6"></line>
+            <line x1="16" x2="16" y1="14" y2="18"></line>
+            <path d="M16 10h.01"></path>
+            <path d="M12 10h.01"></path>
+            <path d="M8 10h.01"></path>
+          </svg>
+          Differences
+          <span class="soon-badge">Coming Soon</span>
+        </button></div>
+    
+    <div class="content-wrapper">
+      <div class="left-panel">
+      <section class="section">
+        <h3>Estimation Parameters</h3>
+        <p class="section-subtitle">Configure your confidence interval</p>
+        
+      <div class="form-group">
+        <label>
+          Estimation Type
+          
+      <button class="info-button" data-modal-title="Estimation Type" data-modal-content="Single mean: CI for one population mean. Difference in means: CI for the difference between two group means. Paired difference: CI for mean of paired differences.">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+          <path d="M12 17h.01"></path>
+        </svg>
+      </button>
+        </label>
+        <select class="select-input" id="estimationType">
+          <option value="single-mean" selected>Single Mean</option><option value="two-means" >Difference in Means</option><option value="paired-diff" >Paired Difference</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>
+          Sample Size (n)
+          
+      <button class="info-button" data-modal-title="Sample Size" data-modal-content="Number of observations in your sample. Larger samples produce narrower confidence intervals (more precision). The width of the CI is inversely proportional to √n.">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+          <path d="M12 17h.01"></path>
+        </svg>
+      </button>
+        </label>
+        <div class="power-container">
+          <button type="button" class="stepper-btn" id="decrementSampleSize" aria-label="Decrease Sample Size (n)">−</button>
+          <input type="range" class="slider" id="sampleSize" 
+            min="5" max="500" step="1" value="30">
+          <button type="button" class="stepper-btn" id="incrementSampleSize" aria-label="Increase Sample Size (n)">+</button>
+          <div class="power-value" style="background: #005EE9">30</div>
+        </div>
+        
+      </div>
+      <div class="form-group">
+        <label>
+          Confidence Level
+          
+      <button class="info-button" data-modal-title="Confidence Level (1-α)" data-modal-content="Probability that the interval captures the true population parameter. Common values: 90% (α=0.10), 95% (α=0.05), 99% (α=0.01). Higher confidence produces wider intervals.">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+          <path d="M12 17h.01"></path>
+        </svg>
+      </button>
+        </label>
+        <div class="effect-row">
+          <button type="button" class="stepper-btn" id="decrementConfidenceLevel" aria-label="Decrease Confidence Level">−</button>
+          <input type="range" class="slider" id="confidenceLevel" 
+            min="0.8" max="0.99" step="0.01" value="0.95">
+          <button type="button" class="stepper-btn" id="incrementConfidenceLevel" aria-label="Increase Confidence Level">+</button>
+          <div class="slider-value" style="background: #7c3aed">95%</div>
+        </div>
+        
+      </div>
+      <div class="form-group">
+        <label>
+          Standard Deviation (σ)
+          
+      <button class="info-button" data-modal-title="Standard Deviation" data-modal-content="Population standard deviation (or estimated from sample). Higher variability produces wider confidence intervals. For means: typical values range from 5-50 depending on scale.">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+          <path d="M12 17h.01"></path>
+        </svg>
+      </button>
+        </label>
+        <div class="effect-row">
+          <button type="button" class="stepper-btn" id="decrementStandardDeviation" aria-label="Decrease Standard Deviation (σ)">−</button>
+          <input type="range" class="slider" id="standardDeviation" 
+            min="1" max="100" step="0.5" value="15">
+          <button type="button" class="stepper-btn" id="incrementStandardDeviation" aria-label="Increase Standard Deviation (σ)">+</button>
+          <div class="slider-value" style="background: #f97316">15</div>
+        </div>
+        
+      </div>
+      <div class="form-group">
+        <label>
+          Sample Mean (x̄)
+          
+      <button class="info-button" data-modal-title="Sample Mean" data-modal-content="Observed mean from your sample data. This is the point estimate around which the confidence interval is constructed. The interval is symmetric around this value.">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+          <path d="M12 17h.01"></path>
+        </svg>
+      </button>
+        </label>
+        <div class="effect-row">
+          <button type="button" class="stepper-btn" id="decrementSampleMean" aria-label="Decrease Sample Mean (x̄)">−</button>
+          <input type="range" class="slider" id="sampleMean" 
+            min="0" max="200" step="0.5" value="100">
+          <button type="button" class="stepper-btn" id="incrementSampleMean" aria-label="Increase Sample Mean (x̄)">+</button>
+          <div class="slider-value" style="background: #10b981">100</div>
+        </div>
+        
+      </div>
+      </section>
+      <section class="section">
+        <h3>Distribution Options</h3>
+        <p class="section-subtitle">Select estimation method</p>
+        
+      <div class="form-group">
+        <label>
+          Distribution
+          
+      <button class="info-button" data-modal-title="Distribution Type" data-modal-content="t-distribution: Use when σ is unknown (most common). Exact for normal data, robust for large n. z-distribution: Use when σ is known (rare in practice). More appropriate for very large samples (n > 100).">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+          <path d="M12 17h.01"></path>
+        </svg>
+      </button>
+        </label>
+        <div class="segmented" id="distributionType" role="group" aria-label="Distribution">
+          <button type="button" class="segment active" data-value="t">t-distribution</button><button type="button" class="segment " data-value="z">z-distribution</button>
+        </div>
+      </div>
+      </section></div>
+      <div class="right-panel">
+      <div class="results-card">
+        <div class="results-header-row">
+          <h3>Confidence Interval Results</h3>
+          <button id="clearAllBtn" class="clear-button" type="button" title="Reset all inputs to defaults">Clear all</button>
+        </div>
+        <p class="results-subtitle">Based on your estimation parameters</p>
+        
+        <div class="results-grid">
+          
+      <div class="result-item">
+        <div class="result-value ">73</div>
+        <div class="result-label">
+          Interval Width
+          
+      <button class="info-button" data-modal-title="Interval Width" data-modal-content="The range spanned by the confidence interval (upper bound - lower bound). Narrower intervals indicate more precision. Width depends on: sample size (↑n → ↓width), confidence level (↑CL → ↑width), and variability (↑σ → ↑width).">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+          <path d="M12 17h.01"></path>
+        </svg>
+      </button>
+        </div>
+      </div>
+      <div class="result-item">
+        <div class="result-value power">±5.2</div>
+        <div class="result-label">
+          Margin of Error
+          
+      <button class="info-button" data-modal-title="Margin of Error" data-modal-content="Half the width of the confidence interval. Represents the maximum expected difference between the sample estimate and true population parameter at the specified confidence level. Formula: ME = t* × (σ/√n).">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+          <path d="M12 17h.01"></path>
+        </svg>
+      </button>
+        </div>
+      </div>
+      <div class="result-item">
+        <div class="result-value effect">94.8</div>
+        <div class="result-label">
+          Lower Bound
+          
+      <button class="info-button" data-modal-title="Lower Bound" data-modal-content="The smallest plausible value for the population parameter at the specified confidence level. Calculated as: x̄ - ME.">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+          <path d="M12 17h.01"></path>
+        </svg>
+      </button>
+        </div>
+      </div>
+      <div class="result-item">
+        <div class="result-value ">105.2</div>
+        <div class="result-label">
+          Upper Bound
+          
+      <button class="info-button" data-modal-title="Upper Bound" data-modal-content="The largest plausible value for the population parameter at the specified confidence level. Calculated as: x̄ + ME.">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+          <path d="M12 17h.01"></path>
+        </svg>
+      </button>
+        </div>
+      </div>
+        </div>
+
+        
+      <div class="chart-section">
+        <div class="chart-header">
+          <h4>Sample Size vs. Interval Width</h4>
+          <div class="chart-legend">
+            
+      <div class="legend-item">
+        <div class="legend-color statistical"></div>
+        <span id="powerTargetLabel">Interval Width</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color target"></div>
+        <span id="powerTargetLabel">Current n</span>
+      </div>
+          </div>
+          <div class="curve-style-controls">
+            <span class="curve-control-label">Theme</span>
+            <span id="themeSwatch" class="theme-swatch" aria-hidden="true"></span>
+            <select id="chartTheme" class="curve-control-select" aria-label="Theme">
+              <option value="default" selected>Default</option>
+              <option value="midnight">Midnight</option>
+              <option value="emerald">Emerald</option>
+              <option value="crimson">Crimson</option>
+              <option value="amber">Amber</option>
+              <option value="indigo">Indigo</option>
+              <option value="graphite">Graphite</option>
+              <option value="ocean">Ocean</option>
+              <option value="forest">Forest</option>
+              <option value="magenta">Magenta</option>
+            </select>
+          </div>
+        </div>
+        <div class="chart-container">
+          <div id="powerChart" style="width: 100%; height: 480px;"></div>
+        </div>
+      </div>
+        
+      <div class="design-info">
+        <p><strong>Current Design:</strong> With n = {{sampleSize}}, your {{confidenceLevel}}% CI spans {{intervalWidth}} units (Margin of Error = ±{{marginOfError}}).</p>
+        <div class="warning" style="display: none;">
+          <span class="warning-icon" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" fill="#F59E0B"/>
+              <path d="M12 9v5" stroke="#111827" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="12" cy="17" r="1" fill="#111827"/>
+            </svg>
+          </span>
+          Interval is quite wide. Consider increasing sample size for better precision.
+        </div>
+      </div>
+      </div>
+      <div class="visualization-card">
+        <div class="visualization-header">
+          <h3>Confidence Interval Visualization</h3>
+          <div class="visualization-actions">
+            <div class="download-dropdown">
+              <button type="button" class="code-action dropdown-toggle" id="downloadDropdownBtn">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <path d="M7 1V10" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+                  <path d="M4 7L7 10L10 7" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+                  <path d="M1 12H13" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+                </svg>
+                <span>Download</span>
+                <svg class="chevron" width="12" height="12" viewBox="0 0 16 16" fill="none">
+                  <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5"/>
+                </svg>
+              </button>
+              <div class="dropdown-menu" id="downloadDropdownMenu" hidden>
+                <button type="button" class="dropdown-item" data-format="png">PNG</button>
+                <button type="button" class="dropdown-item" data-format="pdf">PDF</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="visualization-subtitle">Visual representation of your interval estimate</p>
+        
+        <div class="apa-table-container" id="apaTableContainer">
+          <table class="apa-table" id="samplingTable">
+            <caption>Table 1<br><em>Confidence Interval Explorer Results</em></caption>
+            <thead>
+              <tr>
+                <th scope="col">Parameter</th>
+                <th scope="col">Value</th>
+                <th scope="col">Description</th>
+              </tr>
+            </thead>
+            <tbody id="samplingTableBody">
+              <tr><td>Test Type</td><td id="tableTestType">—</td><td id="tableTestTypeDesc">—</td></tr>
+              <tr><td>Effect Size</td><td id="tableEffectSize">—</td><td id="tableEffectSizeDesc">—</td></tr>
+              <tr><td>Significance Level (α)</td><td id="tableAlpha">—</td><td id="tableAlphaDesc">—</td></tr>
+              <tr><td>Statistical Power (1-β)</td><td id="tablePower">—</td><td id="tablePowerDesc">—</td></tr>
+              <tr><td>Test Direction</td><td id="tableDirection">—</td><td id="tableDirectionDesc">—</td></tr>
+              <tr class="table-divider"><td>Sampling Design</td><td id="tableSamplingDesign">—</td><td id="tableSamplingDesignDesc">—</td></tr>
+              <tr id="tableDesignParamsRow" style="display: none;"><td>Design Parameters</td><td id="tableDesignParams">—</td><td id="tableDesignParamsDesc">—</td></tr>
+              <tr><td>Extraction Method</td><td id="tableExtraction">—</td><td id="tableExtractionDesc">—</td></tr>
+              <tr id="tableFPCRow" style="display: none;"><td>Population Size</td><td id="tablePopSize">—</td><td id="tablePopSizeDesc">—</td></tr>
+              <tr class="table-result"><td>Required Sample Size</td><td id="tableSampleSize"><strong>—</strong></td><td id="tableSampleSizeDesc">—</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="viz-notes-section" id="vizNotesSection">
+          <div class="viz-notes-header" style="font-weight:normal;font-style:italic;">Note:</div>
+          <p class="viz-notes-text" id="vizNotesText">Results calculated using statistical power analysis.</p>
+        </div>
+      </div>
+      <div class="code-section">
+        <div class="code-header">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M2 3L14 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M2 7L14 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M2 11L14 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <h3>R Code</h3>
+        </div>
+        <p>Reproduce this analysis in R</p>
+
+        <div class="code-tabs">
+          <div class="segmented" id="codeLangToggle">
+            
+      <button type="button" class="segment active" data-lang="r" >
+        R Code
+        
+      </button>
+      <button type="button" class="segment " data-lang="python" disabled aria-disabled="true">
+        Python
+        <span class="soon-badge">Coming Soon</span>
+      </button>
+          </div>
+        </div>
+
+        <p class="code-description" id="codeLangDescription">Copy this code to reproduce the analysis in R.</p>
+
+        <div class="r-label">
+          R Code
+          <div class="code-actions">
+            <button class="code-action-btn" id="printCode" title="Print R Code">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                <rect x="6" y="14" width="12" height="8"></rect>
+              </svg>
+            </button>
+            <button class="code-action-btn" id="downloadCode" title="Download R Code">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+            </button>
+            <button class="code-action-btn" id="copyCode" title="Copy R Code">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="r-block">
+          <code id="codeBlock" class="language-r"># Code will be generated here</code>
+        </div>
+
+        <div class="r-label">
+          R Output
+          <div class="code-actions">
+            <button class="code-action-btn" id="printOutput" title="Print R Output">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                <rect x="6" y="14" width="12" height="8"></rect>
+              </svg>
+            </button>
+            <button class="code-action-btn" id="downloadOutput" title="Download R Output">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+            </button>
+            <button class="code-action-btn" id="copyOutput" title="Copy R Output">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="r-block">
+          <code id="outputBlock" class="language-r"># Output will be generated here</code>
+        </div>
+
+        
+      <div class="r-info">
+        <div class="r-info-header">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <rect x="2" y="3" width="12" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/>
+            <circle cx="6.5" cy="6.5" r="1.5" fill="currentColor"/>
+            <path d="M9 9L12 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <strong>New to R?</strong> This code uses base R functions and common packages.
+        </div>
+        <ul class="r-info-list">
+          <li>Install required packages once with install.packages()</li><li>Load packages with library()</li><li>Modify the values to match your data</li><li>Run line-by-line to understand each step</li>
+        </ul>
+      </div>
+
+        <div class="learn-more">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M8 12V8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M8 6H8.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <span>Want to learn more about using R for statistical analysis?</span>
+          <a href="#" class="learn-link">View R Tutorials</a>
+        </div>
+      </div></div>
+    </div>
+
+    
+      <footer class="app-footer">
+        <div class="footer-content">
+          <div class="footer-left">
+            <span class="footer-brand">TSM Confidence Interval Explorer</span>
+            <span class="footer-separator">•</span>
+            <span class="footer-version" id="appVersion">2.0.0</span>
+            <span class="footer-separator">•</span>
+            <span class="footer-build" id="appBuild">Build 20251201</span>
+          </div>
+          <div class="footer-right">
+            <a href="#" class="footer-link">Documentation</a>
+            <span class="footer-separator">•</span>
+            <a href="#" class="footer-link">Release Notes</a>
+          </div>
+        </div>
+      </footer>
+    
+      <div id="infoModal" class="modal" aria-hidden="true">
+        <div class="modal-overlay"></div>
+        <div class="modal-container">
+          <div class="modal-header">
+            <h2 id="modalTitle" class="modal-title">Information</h2>
+            <button class="modal-close" aria-label="Close modal">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p id="modalContent"></p>
+          </div>
+        </div>
+      </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/jstat@1.9.6/dist/jstat.min.js"></script>
+  <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="../../script.js"></script>
+  <script src="formulas.js"></script>
+</body>
+</html>

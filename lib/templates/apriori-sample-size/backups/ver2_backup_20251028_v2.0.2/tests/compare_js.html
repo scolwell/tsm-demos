@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JS Sample Size Test Harness</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 16px; }
+    h1 { font-size: 18px; margin: 0 0 8px; }
+    p { color: #475569; margin: 4px 0 12px; }
+    pre { background: #0b1020; color: #e5e7eb; padding: 12px; border-radius: 8px; white-space: pre-wrap; word-break: break-word; }
+    .actions { margin: 12px 0; }
+    button { padding: 8px 12px; border-radius: 6px; border: 1px solid #cbd5e1; background: #fff; cursor: pointer; }
+    button:hover { background: #f1f5f9; }
+  </style>
+</head>
+<body>
+  <h1>JS Sample Size Test Harness</h1>
+  <p>Generates JS estimator outputs for a fixed set of cases. Click Download to save js_results.json, then run the R script to produce r_results.json for comparison.</p>
+  <div class="actions">
+    <button id="downloadJs" type="button">Download js_results.json</button>
+  </div>
+  <pre id="jsResults" aria-live="polite"></pre>
+
+  <!-- jStat for accurate z values -->
+  <script src="https://cdn.jsdelivr.net/npm/jstat@1.9.6/dist/jstat.min.js"></script>
+  <script src="./js_compute.js"></script>
+</body>
+</html>

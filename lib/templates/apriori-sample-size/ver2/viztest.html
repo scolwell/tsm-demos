@@ -1,0 +1,635 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Interactive Sampling Visualizer — TSM v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --tsm-blue:#0067FF; --tsm-blue-dark:#005EE9; --tsm-accent:#3399FF;
+    --tsm-bg:#FFFFFF; --tsm-panel:#F7F9FC; --tsm-border:#E5EAF2; --tsm-text:#0F172A;
+    --muted:#94A3B8;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:24px;background:var(--tsm-bg);color:var(--tsm-text);
+       font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+  h1{font-family:Poppins,Inter,sans-serif;font-weight:700;font-size:22px;margin:0 0 12px}
+  .sub{color:#475569;margin-bottom:18px}
+
+  .panel{background:var(--tsm-panel);border:1px solid var(--tsm-border);border-radius:16px;padding:14px}
+  .bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px}
+  .btn{background:#fff;border:1.5px solid var(--tsm-border);color:var(--tsm-text);
+       padding:10px 14px;border-radius:14px;cursor:pointer;font-weight:600;transition:.15s}
+  .btn:hover{transform:translateY(-1px)}
+  .btn.active{background:var(--tsm-blue);color:#fff;border-color:var(--tsm-blue)}
+  .controls{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end}
+  .control{display:flex;flex-direction:column;gap:6px;min-width:180px}
+  .control label{font-size:12px;color:#334155;font-weight:600}
+  .control input[type="number"], .control input[type="text"], .control select{
+    width:100%;padding:8px 10px;border:1px solid var(--tsm-border);border-radius:10px;background:#fff
+  }
+  .tog{display:flex;align-items:center;gap:10px;padding:8px 12px;border:1px solid var(--tsm-border);
+       background:#fff;border-radius:12px;font-size:13px}
+  .download{margin-left:auto}
+
+  .layout{display:grid;grid-template-columns:1fr 320px;gap:18px;margin-top:16px}
+  @media (max-width:1000px){.layout{grid-template-columns:1fr}}
+
+  .stage{background:#fff;border:1px solid var(--tsm-border);border-radius:18px;padding:16px;position:relative}
+  .grid{--cols:40;--dot:18px;--gap:6px;display:grid;grid-template-columns:repeat(var(--cols),var(--dot));gap:var(--gap);
+        justify-content:center;max-width:calc(var(--cols)*(var(--dot)+var(--gap)));margin-inline:auto;position:relative}
+  .cell{width:var(--dot);height:var(--dot);border-radius:6px;background:#E6ECF5;
+        transition:background .12s,box-shadow .12s,transform .06s}
+  .cell.sampled{background:var(--tsm-blue);box-shadow:0 0 0 3px rgba(0,103,255,.18) inset}
+  .cell.flash{animation:flash .6s ease}
+  @keyframes flash{0%{box-shadow:0 0 0 0 rgba(0,103,255,0);transform:scale(1)}
+    40%{box-shadow:0 0 0 6px rgba(0,103,255,.15);transform:scale(1.15)}100%{box-shadow:0 0 0 0 rgba(0,103,255,0);transform:scale(1)}}
+
+  /* strata background bands (rows) */
+  .stratum-0{background:#E7F0FF}.stratum-1{background:#EAFBF3}.stratum-2{background:#FFF6E5}.stratum-3{background:#FDECF0}
+
+  /* cluster visuals (applied per-cell) */
+  .cluster-outline{position:relative}
+  .cluster-outline::after{content:"";position:absolute;inset:-4px;border:2px dashed var(--muted);border-radius:10px;pointer-events:none}
+  .cluster-selected .cell{background:var(--tsm-accent)}
+  .cluster-selected::after{border-color:var(--tsm-blue)}
+
+  /* guideline overlay */
+  .guides{position:absolute;inset:16px;pointer-events:none}
+  .guide-line{position:absolute;background:linear-gradient(90deg, rgba(0,103,255,.2), rgba(0,103,255,.0));height:2px}
+  .guide-label{position:absolute;background:#fff;color:#0f172a;border:1px solid var(--tsm-border);border-radius:8px;
+               padding:2px 6px;font-size:11px}
+
+  .info{background:#fff;border:1px solid var(--tsm-border);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:12px;height:fit-content}
+  .stat{font-size:13px;color:#334155}
+  .legend{display:flex;gap:8px;flex-wrap:wrap}
+  .chip{display:inline-flex;gap:8px;align-items:center;padding:8px 10px;border:1px solid var(--tsm-border);border-radius:12px;background:#fff;font-size:12px}
+  .sw{width:14px;height:14px;border-radius:4px;background:#E6ECF5;border:1px solid #dfe6f2}
+  .caption{font-size:14px;color:#334155;line-height:1.5}
+  .strong{font-weight:700}
+  .hr{height:1px;background:var(--tsm-border);margin:4px 0 12px}
+</style>
+</head>
+<body>
+  <h1>Interactive Sampling Visualizer</h1>
+  <div class="sub">TSM Theme • Compare <strong>Simple Random</strong>, <strong>Systematic</strong>, <strong>Stratified</strong>, <strong>Cluster</strong>, and <strong>Stratified&nbsp;+&nbsp;Cluster</strong> on a 20×40 population (N=800).</div>
+
+  <div class="panel">
+    <div class="bar" id="modeBar">
+      <div class="tog">
+        <input id="guidesToggle" type="checkbox" />
+        <label for="guidesToggle">Show Guidelines</label>
+      </div>
+
+      <div class="control" style="min-width:160px">
+        <label for="seed">Seed (reproducible)</label>
+        <input id="seed" type="text" placeholder="e.g., 12345" />
+      </div>
+
+      <button class="btn" id="regenerate" title="New random draw">↻ Regenerate</button>
+      <button class="btn download" id="download">⬇ Download PNG</button>
+    </div>
+
+    <div class="controls" id="controls"></div>
+  </div>
+
+  <div class="layout">
+    <div class="stage" id="stage">
+      <div id="grid" class="grid" aria-label="Population grid"></div>
+      <div id="guides" class="guides" hidden></div>
+    </div>
+    <aside class="info">
+      <div class="stat"><span class="strong">Population:</span> <span id="popStat">20×20 = 400</span></div>
+      <div class="stat"><span class="strong">Sampled:</span> <span id="sampleStat">0</span></div>
+      <div class="hr"></div>
+      <div class="legend" id="legend"></div>
+      <div class="hr"></div>
+      <div class="caption" id="caption">
+        In <span class="strong">Simple Random Sampling</span>, each unit has an equal chance. The sample is scattered and unpatterned.
+      </div>
+    </aside>
+  </div>
+
+<script>
+/* ==============================
+   CONFIG / STATE
+============================== */
+const ROWS = 20, COLS = 40, N = ROWS*COLS;
+const gridEl = document.getElementById('grid');
+const guidesEl = document.getElementById('guides');
+const stageEl = document.getElementById('stage');
+const sampleStat = document.getElementById('sampleStat');
+const captionEl = document.getElementById('caption');
+const controlsEl = document.getElementById('controls');
+const legendEl = document.getElementById('legend');
+const guidesToggle = document.getElementById('guidesToggle');
+const seedInput = document.getElementById('seed');
+
+const state = {
+  mode: 'srs',
+  n: 40,
+  k: 10,
+  strataRows: 4,
+  perStratum: 10,
+  clustersAcross: 4,
+  clustersDown: 4,
+  clustersPick: 3,
+  sc_pickPerStratum: 1,
+  showGuides: false,
+  rngSeed: null,
+  rng: Math.random
+};
+
+/* ==============================
+   RNG (seeded): mulberry32
+============================== */
+function mulberry32(a){ return function(){ a|=0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a);
+  t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; } }
+function setSeed(s){
+  if(!s && s !== 0){ state.rng = Math.random; return; }
+  const str = String(s).trim();
+  let h = 1779033703 ^ str.length;
+  for (let i=0;i<str.length;i++){
+    h = Math.imul(h ^ str.charCodeAt(i), 3432918353);
+    h = h << 13 | h >>> 19;
+  }
+  state.rng = mulberry32(h >>> 0);
+}
+function randInt(max){ return Math.floor(state.rng()*max); }
+
+/* ==============================
+   UTILS
+============================== */
+const idx = (r,c)=> r*COLS + c;
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(state.rng()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]] } return arr }
+function sampleWithoutReplacement(K, n){
+  const a = Array.from({length:K}, (_,i)=>i);
+  shuffle(a);
+  return a.slice(0, Math.min(n, K));
+}
+function clearAll(){
+  for(const cell of gridEl.children){
+    cell.className = 'cell';
+    cell.style.removeProperty('--c');
+  }
+  sampleStat.textContent = '0';
+}
+
+/* Build base grid once */
+(function buildGrid(){
+  for(let r=0;r<ROWS;r++){
+    for(let c=0;c<COLS;c++){
+      const d = document.createElement('div');
+      d.className = 'cell';
+      d.dataset.r = r; d.dataset.c = c;
+      gridEl.appendChild(d);
+    }
+  }
+})();
+
+/* Visual helpers */
+function setStrataBackgrounds(){
+  const bandSize = Math.floor(ROWS / state.strataRows) || 1;
+  for(const cell of gridEl.children){
+    const r = +cell.dataset.r;
+    const band = Math.min(Math.floor(r / bandSize), state.strataRows-1);
+    cell.classList.add(`stratum-${band}`);
+  }
+}
+function clearStrataBackgrounds(){
+  for(let band=0; band<8; band++){
+    for(const cell of gridEl.children) cell.classList.remove(`stratum-${band}`);
+  }
+}
+function outlineClusters(selectSet = new Set()){
+  for(const cell of gridEl.children){
+    cell.classList.remove('cluster-selected','cluster-outline');
+  }
+  const blockH = Math.floor(ROWS / state.clustersDown) || 1;
+  const blockW = Math.floor(COLS / state.clustersAcross) || 1;
+
+  for(let br=0;br<state.clustersDown;br++){
+    for(let bc=0;bc<state.clustersAcross;bc++){
+      const id = br*state.clustersAcross + bc;
+      for(let rr=0; rr<blockH; rr++){
+        for(let cc=0; cc<blockW; cc++){
+          const r = br*blockH + rr;
+          const c = bc*blockW + cc;
+          if(r<ROWS && c<COLS){
+            const cell = gridEl.children[idx(r,c)];
+            if(rr===0 && cc===0) cell.classList.add('cluster-outline');
+            if(selectSet.has(id)) cell.classList.add('cluster-selected');
+          }
+        }
+      }
+    }
+  }
+}
+
+/* ==============================
+   GUIDELINES OVERLAY
+============================== */
+function drawGuides(){
+  guidesEl.innerHTML = '';
+  if(!state.showGuides) { guidesEl.hidden = true; return; }
+  guidesEl.hidden = false;
+
+  const gridRect = gridEl.getBoundingClientRect();
+  const stageRect = stageEl.getBoundingClientRect();
+
+  const offsetX = gridRect.left - stageRect.left;
+  const offsetY = gridRect.top  - stageRect.top;
+
+  // compute dot/gap sizes from first two cells
+  const first = gridEl.children[0].getBoundingClientRect();
+  const second = gridEl.children[1].getBoundingClientRect();
+  const dot = first.width; const gap = second.left - first.right;
+  const colWidth = dot + gap;
+  const rowHeight = dot + gap;
+
+  // STRATA (row bands)
+  const bandH = Math.floor(ROWS / state.strataRows) || 1;
+  for(let b=0;b<state.strataRows;b++){
+    const y = offsetY + b*bandH*rowHeight - 6; // line above band
+    const line = document.createElement('div');
+    line.className='guide-line';
+    line.style.width = gridRect.width+'px';
+    line.style.left = offsetX+'px';
+    line.style.top = y+'px';
+    guidesEl.appendChild(line);
+
+    const lab = document.createElement('div');
+    lab.className='guide-label';
+    lab.style.left = (offsetX+4)+'px';
+    lab.style.top  = (y-18)+'px';
+    lab.textContent = `Stratum ${b+1}`;
+    guidesEl.appendChild(lab);
+  }
+
+  // SYSTEMATIC (every k-th) markers along top
+  if(state.mode==='systematic'){
+    const k = Math.max(2, Math.floor(state.k));
+    const r0 = Math.floor(state.rng()*k); // deterministic with seed
+    for(let i=r0;i<N;i+=k){
+      const r = Math.floor(i/COLS), c = i%COLS;
+      const x = offsetX + c*colWidth + dot/2;
+      const topY = offsetY - 10;
+      const m = document.createElement('div');
+      m.className='guide-label';
+      m.style.left = (x-10)+'px';
+      m.style.top  = (topY)+'px';
+      m.textContent = 'k';
+      guidesEl.appendChild(m);
+    }
+  }
+
+  // CLUSTERS grid lines
+  const blockH = Math.floor(ROWS / state.clustersDown) || 1;
+  const blockW = Math.floor(COLS / state.clustersAcross) || 1;
+
+  for(let r=0;r<=ROWS;r+=blockH){
+    const y = offsetY + r*rowHeight - 6;
+    const line = document.createElement('div');
+    line.className='guide-line';
+    line.style.width = gridRect.width+'px';
+    line.style.left = offsetX+'px';
+    line.style.top = y+'px';
+    line.style.background = 'rgba(51,65,85,.25)';
+    guidesEl.appendChild(line);
+  }
+  for(let c=0;c<=COLS;c+=blockW){
+    const x = offsetX + c*colWidth - 6;
+    const v = document.createElement('div');
+    v.style.position='absolute';
+    v.style.width='2px';
+    v.style.height=gridRect.height+'px';
+    v.style.left = x+'px';
+    v.style.top  = offsetY+'px';
+    v.style.background='rgba(51,65,85,.25)';
+    guidesEl.appendChild(v);
+  }
+}
+
+/* ==============================
+   MODES
+============================== */
+function runSRS(){
+  clearAll(); clearStrataBackgrounds(); outlineClusters(new Set());
+  const chosen = sampleWithoutReplacement(N, state.n);
+  chosen.forEach(i=>gridEl.children[i].classList.add('sampled','flash'));
+  sampleStat.textContent = String(chosen.length);
+  setLegend([
+    {label:'Population unit', color:'#E6ECF5'},
+    {label:'Sampled unit', color:'#0067FF'}
+  ]);
+  captionEl.innerHTML = `In <span class="strong">Simple Random Sampling</span>, every unit has equal chance; the selected units are scattered without pattern.`;
+}
+
+function runSystematic(){
+  clearAll(); clearStrataBackgrounds(); outlineClusters(new Set());
+  const k = Math.max(2, Math.floor(state.k));
+  const r0 = Math.floor(state.rng()*k);
+  const chosen = [];
+  for(let i=r0;i<N;i+=k) chosen.push(i);
+  chosen.forEach(i=>gridEl.children[i].classList.add('sampled','flash'));
+  sampleStat.textContent = String(chosen.length);
+  setLegend([
+    {label:'Population unit', color:'#E6ECF5'},
+    {label:`Every k-th (k=${k})`, color:'#0067FF'}
+  ]);
+  captionEl.innerHTML = `In <span class="strong">Systematic Sampling</span>, a random start is chosen, then every <span class="strong">k</span>-th unit is selected (k = ${k}).`;
+}
+
+function runStratified(){
+  clearAll(); outlineClusters(new Set());
+  clearStrataBackgrounds(); setStrataBackgrounds();
+  const bands = state.strataRows;
+  const bandSize = Math.floor(ROWS / bands) || 1;
+  let total = 0;
+  for(let b=0;b<bands;b++){
+    const rowsInBand=[]; for(let r=b*bandSize; r<Math.min((b+1)*bandSize,ROWS); r++) rowsInBand.push(r);
+    const indices=[]; for(const r of rowsInBand){ for(let c=0;c<COLS;c++) indices.push(r*COLS+c); }
+    const chosen = sampleWithoutReplacement(indices.length, state.perStratum).map(j=>indices[j]);
+    total += chosen.length;
+    chosen.forEach(i=>gridEl.children[i].classList.add('sampled','flash'));
+  }
+  sampleStat.textContent = String(total);
+  setLegend([
+    {label:'Strata (row bands)', color:'#E7F0FF'},
+    {label:'Sampled within stratum', color:'#0067FF'}
+  ]);
+  captionEl.innerHTML = `In <span class="strong">Stratified Sampling</span>, the population is split into <span class="strong">${bands}</span> strata (row bands). We draw <span class="strong">${state.perStratum}</span> units from each stratum.`;
+}
+
+function runCluster(){
+  clearAll(); clearStrataBackgrounds();
+  const totalClusters = state.clustersAcross * state.clustersDown;
+  const picks = sampleWithoutReplacement(totalClusters, state.clustersPick);
+  const pickSet = new Set(picks);
+  outlineClusters(pickSet);
+
+  let count=0;
+  const blockH = Math.floor(ROWS / state.clustersDown) || 1;
+  const blockW = Math.floor(COLS / state.clustersAcross) || 1;
+  for(let br=0;br<state.clustersDown;br++){
+    for(let bc=0;bc<state.clustersAcross;bc++){
+      const id = br*state.clustersAcross + bc;
+      if(!pickSet.has(id)) continue;
+      for(let rr=0; rr<blockH; rr++){
+        for(let cc=0; cc<blockW; cc++){
+          const r = br*blockH + rr, c = bc*blockW + cc;
+          if(r<ROWS && c<COLS){ gridEl.children[r*COLS+c].classList.add('sampled','flash'); count++; }
+        }
+      }
+    }
+  }
+  sampleStat.textContent = String(count);
+  setLegend([
+    {label:'Cluster (outlined)', color:'#CBD5E1'},
+    {label:'Selected cluster', color:'#3399FF'}
+  ]);
+  captionEl.innerHTML = `In <span class="strong">Cluster Sampling</span>, we randomly select <span class="strong">${state.clustersPick}</span> whole clusters (out of ${totalClusters}), and include all units in those clusters.`;
+}
+
+function runStratifiedCluster(){
+  clearAll();
+  const bands = state.strataRows;
+  const bandH = Math.floor(ROWS / bands) || 1;
+
+  clearStrataBackgrounds(); setStrataBackgrounds();
+
+  const across = state.clustersAcross, down = state.clustersDown;
+  const blockH = Math.floor(ROWS / down) || 1, blockW = Math.floor(COLS / across) || 1;
+
+  let totalSampled=0; const selectedSet = new Set();
+  for(let b=0;b<bands;b++){
+    const rStart = b*bandH, rEnd = Math.min((b+1)*bandH, ROWS)-1;
+    const clusterRowStart = Math.floor(rStart / blockH);
+    const clusterRowEnd   = Math.floor(rEnd   / blockH);
+    const clusterIDs=[];
+    for(let cr=clusterRowStart; cr<=clusterRowEnd; cr++){
+      for(let cc=0; cc<across; cc++) clusterIDs.push(cr*across + cc);
+    }
+    const picks = sampleWithoutReplacement(clusterIDs.length, state.sc_pickPerStratum).map(j=>clusterIDs[j]);
+    picks.forEach(id=>selectedSet.add(id));
+  }
+  outlineClusters(selectedSet);
+
+  for(const id of selectedSet){
+    const br = Math.floor(id / across), bc = id % across;
+    for(let rr=0; rr<blockH; rr++){
+      for(let cc=0; cc<blockW; cc++){
+        const r = br*blockH + rr, c = bc*blockW + cc;
+        if(r<ROWS && c<COLS){ gridEl.children[r*COLS+c].classList.add('sampled','flash'); totalSampled++; }
+      }
+    }
+  }
+  sampleStat.textContent = String(totalSampled);
+  setLegend([
+    {label:'Strata (row bands)', color:'#E7F0FF'},
+    {label:'Selected clusters within strata', color:'#3399FF'}
+  ]);
+  captionEl.innerHTML = `In <span class="strong">Stratified + Cluster Sampling</span>, we form strata by rows and then randomly select clusters within each stratum (here: <span class="strong">${state.sc_pickPerStratum}</span> cluster per stratum). All units inside those clusters are included.`;
+}
+
+/* ==============================
+   CONTROLS & RENDER
+============================== */
+function renderControls(){
+  controlsEl.innerHTML='';
+  const add = html => { const w=document.createElement('div'); w.className='control'; w.innerHTML=html; controlsEl.appendChild(w); };
+
+  if(state.mode==='srs'){
+    add(`<label>Sample size (n)</label><input type="number" id="n" min="1" max="${N}" value="${state.n}">`);
+  }
+  if(state.mode==='systematic'){
+    add(`<label>Step (k)</label><input type="number" id="k" min="2" max="${N}" value="${state.k}">`);
+  }
+  if(state.mode==='stratified'){
+    add(`<label>Number of strata (row bands)</label><input type="number" id="strata" min="2" max="10" value="${state.strataRows}">`);
+    add(`<label>Per-stratum sample</label><input type="number" id="perStratum" min="1" max="${Math.floor(N/state.strataRows)}" value="${state.perStratum}">`);
+  }
+  if(state.mode==='cluster'){
+    add(`<label>Clusters across</label><input type="number" id="cAcross" min="2" max="10" value="${state.clustersAcross}">`);
+    add(`<label>Clusters down</label><input type="number" id="cDown" min="2" max="10" value="${state.clustersDown}">`);
+    add(`<label>Clusters to select</label><input type="number" id="cPick" min="1" max="20" value="${state.clustersPick}">`);
+  }
+  if(state.mode==='stratifiedCluster'){
+    add(`<label>Strata (row bands)</label><input type="number" id="scStrata" min="2" max="10" value="${state.strataRows}">`);
+    add(`<label>Clusters across</label><input type="number" id="scAcross" min="2" max="10" value="${state.clustersAcross}">`);
+    add(`<label>Clusters down</label><input type="number" id="scDown" min="2" max="10" value="${state.clustersDown}">`);
+    add(`<label>Clusters per stratum</label><input type="number" id="scPickPer" min="1" max="10" value="${state.sc_pickPerStratum}">`);
+  }
+
+  // listeners
+  const byId = id => document.getElementById(id);
+  if(byId('n')) byId('n').oninput=e=>{ state.n = +e.target.value; runCurrent(); drawGuides(); }
+  if(byId('k')) byId('k').oninput=e=>{ state.k = +e.target.value; runCurrent(); drawGuides(); }
+  if(byId('strata')) byId('strata').oninput=e=>{ state.strataRows = Math.max(2, +e.target.value|0); runCurrent(); drawGuides(); }
+  if(byId('perStratum')) byId('perStratum').oninput=e=>{ state.perStratum = Math.max(1, +e.target.value|0); runCurrent(); drawGuides(); }
+  if(byId('cAcross')) byId('cAcross').oninput=e=>{ state.clustersAcross = Math.max(2, +e.target.value|0); runCurrent(); drawGuides(); }
+  if(byId('cDown')) byId('cDown').oninput=e=>{ state.clustersDown = Math.max(2, +e.target.value|0); runCurrent(); drawGuides(); }
+  if(byId('cPick')) byId('cPick').oninput=e=>{ state.clustersPick = Math.max(1, +e.target.value|0); runCurrent(); drawGuides(); }
+  if(byId('scStrata')) byId('scStrata').oninput=e=>{ state.strataRows = Math.max(2, +e.target.value|0); runCurrent(); drawGuides(); }
+  if(byId('scAcross')) byId('scAcross').oninput=e=>{ state.clustersAcross = Math.max(2, +e.target.value|0); runCurrent(); drawGuides(); }
+  if(byId('scDown')) byId('scDown').oninput=e=>{ state.clustersDown = Math.max(2, +e.target.value|0); runCurrent(); drawGuides(); }
+  if(byId('scPickPer')) byId('scPickPer').oninput=e=>{ state.sc_pickPerStratum = Math.max(1, +e.target.value|0); runCurrent(); drawGuides(); }
+}
+
+/* Legend builder */
+function setLegend(items){
+  legendEl.innerHTML='';
+  for(const it of items){
+    const chip = document.createElement('div');
+    chip.className='chip';
+    const sw = document.createElement('span'); sw.className='sw'; sw.style.background = it.color;
+    chip.appendChild(sw); chip.appendChild(document.createTextNode(it.label));
+    legendEl.appendChild(chip);
+  }
+}
+
+/* Mode runner */
+function runCurrent(){
+  // seed handling (global)
+  const s = seedInput.value.trim();
+  setSeed(s.length ? s : null);
+
+  switch(state.mode){
+    case 'srs': runSRS(); break;
+    case 'systematic': runSystematic(); break;
+    case 'stratified': runStratified(); break;
+    case 'cluster': runCluster(); break;
+    case 'stratifiedCluster': runStratifiedCluster(); break;
+  }
+  drawGuides();
+}
+
+/* Top bar interactions - removed mode buttons, now listen to parent */
+document.getElementById('regenerate').addEventListener('click', runCurrent);
+guidesToggle.addEventListener('change', e=>{ state.showGuides = e.target.checked; drawGuides(); });
+seedInput.addEventListener('change', runCurrent);
+
+/* ==============================
+   LISTEN TO PARENT WINDOW
+============================== */
+window.addEventListener('message', (event) => {
+  // Accept messages from parent with sampling configuration
+  if (event.data && event.data.type === 'updateSampling') {
+    const { samplingDesign, extractionMethod } = event.data;
+    
+    // Map parent's design to our mode
+    let newMode = 'srs';
+    if (samplingDesign === 'no-stratification' && extractionMethod === 'systematic') {
+      newMode = 'systematic';
+    } else if (samplingDesign === 'stratified') {
+      newMode = 'stratified';
+    } else if (samplingDesign === 'cluster') {
+      newMode = 'cluster';
+    } else if (samplingDesign === 'stratified-cluster') {
+      newMode = 'stratifiedCluster';
+    }
+    
+    if (state.mode !== newMode) {
+      state.mode = newMode;
+      renderControls();
+      runCurrent();
+    }
+  }
+});
+
+/* Top bar interactions - removed, was here */
+
+/* ==============================
+   DOWNLOAD PNG (re-render to canvas)
+============================== */
+document.getElementById('download').addEventListener('click', ()=>{
+  // Create canvas matching grid layout
+  const first = gridEl.children[0].getBoundingClientRect();
+  const second = gridEl.children[1].getBoundingClientRect();
+  const dot = first.width; const gap = second.left - first.right;
+  const colW = dot + gap, rowH = dot + gap;
+
+  const pad = 24;
+  const w = Math.round(COLS*colW + pad*2);
+  const h = Math.round(ROWS*rowH + pad*2);
+
+  const canvas = document.createElement('canvas');
+  canvas.width = w; canvas.height = h;
+  const ctx = canvas.getContext('2d');
+
+  // background
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(0,0,w,h);
+
+  // strata background bands if in those modes or guides on
+  const showStrata = state.mode==='stratified' || state.mode==='stratifiedCluster' || state.showGuides;
+  if(showStrata){
+    const bandHrows = Math.floor(ROWS / state.strataRows) || 1;
+    const bandColors = ['#E7F0FF','#EAFBF3','#FFF6E5','#FDECF0'];
+    for(let b=0;b<state.strataRows;b++){
+      const y = pad + b*bandHrows*rowH;
+      const height = Math.min((b+1)*bandHrows, ROWS)*rowH - b*bandHrows*rowH;
+      ctx.fillStyle = bandColors[b%bandColors.length];
+      ctx.fillRect(pad, y, COLS*colW - gap, height - gap);
+    }
+  }
+
+  // draw cells
+  for(let i=0;i<N;i++){
+    const r = Math.floor(i/COLS), c = i%COLS;
+    const x = pad + c*colW, y = pad + r*rowH;
+    const sampled = gridEl.children[i].classList.contains('sampled');
+    ctx.fillStyle = sampled ? '#0067FF' : '#E6ECF5';
+    ctx.strokeStyle = 'rgba(0,0,0,0)';
+    ctx.beginPath();
+    const rad = 6;
+    roundRect(ctx, x, y, dot, dot, rad);
+    ctx.fill();
+  }
+
+  // cluster outlines if in cluster modes or guides on
+  const showClusters = state.mode==='cluster' || state.mode==='stratifiedCluster' || state.showGuides;
+  if(showClusters){
+    const across = state.clustersAcross, down = state.clustersDown;
+    const blockH = Math.floor(ROWS / down) || 1;
+    const blockW = Math.floor(COLS / across) || 1;
+
+    // Draw grid lines
+    ctx.strokeStyle = 'rgba(51,65,85,.25)';
+    ctx.lineWidth = 2;
+    for(let r=0;r<=ROWS;r+=blockH){
+      const y = pad + r*rowH - 6;
+      ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(pad + COLS*colW - gap, y); ctx.stroke();
+    }
+    for(let c=0;c<=COLS;c+=blockW){
+      const x = pad + c*colW - 6;
+      ctx.beginPath(); ctx.moveTo(x, pad); ctx.lineTo(x, pad + ROWS*rowH - gap); ctx.stroke();
+    }
+  }
+
+  // save
+  const link = document.createElement('a');
+  link.download = `sampling-${state.mode}.png`;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+});
+
+// rounded rect helper
+function roundRect(ctx, x, y, w, h, r){
+  if (w<2*r) r=w/2; if (h<2*r) r=h/2;
+  ctx.moveTo(x+r, y);
+  ctx.arcTo(x+w, y,   x+w, y+h, r);
+  ctx.arcTo(x+w, y+h, x,   y+h, r);
+  ctx.arcTo(x,   y+h, x,   y,   r);
+  ctx.arcTo(x,   y,   x+w, y,   r);
+  ctx.closePath();
+}
+
+/* Init */
+renderControls();
+runCurrent();
+</script>
+</body>
+</html>

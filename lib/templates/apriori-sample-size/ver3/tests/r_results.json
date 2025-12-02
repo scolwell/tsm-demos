@@ -1,0 +1,90 @@
+[
+  {
+    "id": 1,
+    "testType": "single-sample",
+    "d": 0.5,
+    "power": 0.8,
+    "sig.level": 0.05,
+    "alternative": "two.sided",
+    "n_total": 34,
+    "n_per": 34,
+    "note": {}
+  },
+  {
+    "id": 2,
+    "testType": "paired",
+    "d": 0.5,
+    "power": 0.8,
+    "sig.level": 0.05,
+    "alternative": "two.sided",
+    "n_total": 34,
+    "n_per": 34,
+    "note": "n is number of *pairs*"
+  },
+  {
+    "id": 3,
+    "testType": "two-sample",
+    "d": 0.5,
+    "power": 0.8,
+    "sig.level": 0.05,
+    "alternative": "two.sided",
+    "n_total": 128,
+    "n_per": 64,
+    "note": "n is number in *each* group"
+  },
+  {
+    "id": 4,
+    "testType": "two-sample",
+    "d": 0.8,
+    "power": 0.9,
+    "sig.level": 0.05,
+    "alternative": "two.sided",
+    "n_total": 68,
+    "n_per": 34,
+    "note": "n is number in *each* group"
+  },
+  {
+    "id": 5,
+    "testType": "single-sample",
+    "d": 0.2,
+    "power": 0.8,
+    "sig.level": 0.05,
+    "alternative": "two.sided",
+    "n_total": 199,
+    "n_per": 199,
+    "note": {}
+  },
+  {
+    "id": 6,
+    "testType": "paired",
+    "d": 0.5,
+    "power": 0.8,
+    "sig.level": 0.01,
+    "alternative": "greater",
+    "n_total": 43,
+    "n_per": 43,
+    "note": "n is number of *pairs*"
+  },
+  {
+    "id": 7,
+    "testType": "two-sample",
+    "d": 0.3,
+    "power": 0.8,
+    "sig.level": 0.05,
+    "alternative": "two.sided",
+    "n_total": 352,
+    "n_per": 176,
+    "note": "n is number in *each* group"
+  },
+  {
+    "id": 8,
+    "testType": "single-sample",
+    "d": 0.7,
+    "power": 0.95,
+    "sig.level": 0.05,
+    "alternative": "two.sided",
+    "n_total": 29,
+    "n_per": 29,
+    "note": {}
+  }
+]

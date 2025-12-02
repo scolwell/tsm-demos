@@ -209,6 +209,68 @@
             gap: 2rem;
         }
         
+        /* Segmented Control */
+        .segmented {
+            display: flex;
+            gap: 0.25rem;
+            background: #e5e7eb;
+            border-radius: 0.75rem;
+            padding: 0.25rem;
+            margin-top: 0.5rem;
+        }
+        
+        .segment {
+            flex: 1;
+            background: none;
+            border: none;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #64748b;
+            cursor: pointer;
+            transition: none; /* avoid any delayed visual change */
+        }
+        
+        .segment:hover:not(.active) {
+            color: #1e293b;
+        }
+        
+        .segment.active {
+            background: #ffffff !important;
+            color: #1e293b !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+        }
+
+        /* Ensure immediate feedback on press */
+        .segmented .segment:active {
+            background: #ffffff !important;
+            color: #1e293b !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+        }
+
+        /* Also apply immediate white on focus, and remove default outline */
+        .segmented .segment:focus {
+            background: #ffffff !important;
+            color: #1e293b !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+            outline: none !important;
+        }
+
+        /* Force-disable hover effect on Drop Mode toggle */
+        .segmented .segment:hover {
+            background: none !important;
+            color: inherit !important;
+            font-weight: inherit !important;
+            box-shadow: none !important;
+        }
+        /* Ensure active hover cannot override white */
+        .segmented .segment.active:hover {
+            background: #ffffff !important;
+            color: #1e293b !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+        }
+        
         /* Section Cards */
         .section {
             background: #ffffff;
@@ -348,8 +410,8 @@
         }
         
         .btn-primary-custom:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0, 94, 233, 0.3);
+            background: linear-gradient(135deg, #0051c9, #005EE9);
+            box-shadow: 0 2px 4px rgba(0, 94, 233, 0.2);
         }
         
         .btn-primary-custom:active {
@@ -357,20 +419,25 @@
         }
         
         .btn-secondary-custom {
-            background: white;
-            color: #005EE9;
-            border: 1px solid #005EE9;
+            background: #f3f4f6;
+            color: #475569;
+            border: 1px solid #d1d5db;
             padding: 0.75rem 1.25rem;
-            border-radius: 0.75rem;
+            border-radius: 0.5rem;
             font-weight: 500;
-            font-size: 0.95rem;
+            font-size: 0.875rem;
             cursor: pointer;
             transition: all 0.2s;
             width: 100%;
         }
         
         .btn-secondary-custom:hover {
-            background: #f0f9ff;
+            background: #e5e7eb;
+            border-color: #9ca3af;
+        }
+        
+        .btn-secondary-custom:active {
+            background: #d1d5db;
         }
         
         .btn-outline-custom {
@@ -421,26 +488,74 @@
         
         .slider-label {
             display: flex;
-            justify-content: space-between;
             align-items: center;
             margin-bottom: 0.5rem;
+            gap: 0.25rem;
         }
         
         .slider-label label {
             font-weight: 500;
             color: #0F172A;
             font-size: 0.875rem;
+            line-height: 1;
+        }
+        
+        .slider-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .slider-btn {
+            width: 28px;
+            height: 28px;
+            border: 1px solid #cbd5e1;
+            background: white;
+            border-radius: 0.375rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #64748b;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        
+        .slider-btn:hover {
+            background: #f8fafc;
+            border-color: #94a3b8;
+            color: #334155;
+        }
+        
+        .slider-btn:active {
+            background: #f1f5f9;
         }
         
         .slider-value {
             font-weight: 600;
-            color: #005EE9;
+            color: white;
+            background: #005EE9;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            width: 48px;
+            height: 26px;
+            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .slider-value.orange {
+            background: #f97316;
         }
         
         input[type="range"] {
-            width: 100%;
+            flex: 1;
             height: 6px;
-            background: #e5e7eb;
+            background: #005EE9;
             border-radius: 3px;
             outline: none;
             -webkit-appearance: none;
@@ -449,16 +564,31 @@
         
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 18px;
-            height: 18px;
-            background: #005EE9;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border: 3px solid #005EE9;
             border-radius: 50%;
             cursor: pointer;
             transition: transform 0.2s;
         }
         
         input[type="range"]::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
+            transform: scale(1.1);
+        }
+        
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: white;
+            border: 3px solid #005EE9;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        input[type="range"]::-moz-range-thumb:hover {
+            transform: scale(1.1);
         }
         
         /* Chart Section - absolutely NO border, NO radius, NO background */
@@ -507,6 +637,34 @@
             align-items: center;
             gap: 0.5rem;
             margin-left: auto;
+        }
+        
+        .curve-control-label {
+            font-size: 0.75rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+        
+        .curve-control-select {
+            padding: 0.375rem 0.625rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            background: #ffffff;
+            cursor: pointer;
+            color: #475569;
+            font-weight: 500;
+            min-width: 128px;
+        }
+        
+        .curve-control-select:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+        
+        .curve-control-select:hover {
+            border-color: #cbd5e1;
         }
         
         .curve-control-label {
@@ -600,36 +758,206 @@
             background: transparent;
         }
 
-        /* Visualization Toggles */
-        .viz-toggles {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.75rem 1.25rem;
-            margin: 0.75rem 0 0.75rem 0;
-            font-size: 0.75rem;
-            line-height: 1.1;
-            color: #475569;
-        }
-        .viz-toggles label {
+        /* Tailwind Toggle Switch */
+        .toggle-container {
             display: flex;
             align-items: center;
-            gap: 0.35rem;
-            background: #f1f5f9;
-            border: 1px solid #e2e8f0;
-            padding: 4px 8px;
-            border-radius: 6px;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
+            flex-wrap: nowrap;
+        }
+
+        /* Two-column grid for visualization toggles */
+        .toggle-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            column-gap: 1rem;
+            row-gap: 0.25rem;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 36px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #d1d5db;
+            transition: 0.3s;
+            border-radius: 24px;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .toggle-slider {
+            background-color: #7C3AED;
+        }
+        
+        input:checked + .toggle-slider:before {
+            transform: translateX(16px);
+        }
+        
+        .toggle-label {
+            font-size: 0.875rem;
+            color: #0F172A;
+            font-weight: 500;
             cursor: pointer;
             user-select: none;
-            font-weight: 500;
+            white-space: nowrap;
         }
-        .viz-toggles input[type="checkbox"] {
-            accent-color: #005EE9;
-            cursor: pointer;
-        }
-        .viz-toggles label:hover { background: #e2e8f0; }
-        .viz-toggles label:active { background: #cbd5e1; }
         
-
+        /* Info Button */
+        .info-button {
+            background: none !important;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            color: #64748b !important;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 0;
+            transition: none !important;
+            line-height: 1;
+            position: relative;
+            top: -5px;
+        }
+        
+        .info-button:hover,
+        .info-button:focus,
+        .info-button:active {
+            background: none !important;
+            color: #64748b !important;
+            opacity: 1 !important;
+            transform: none !important;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1000;
+            animation: fadeIn 0.2s ease-in-out;
+        }
+        
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(2px);
+        }
+        
+        .modal-container {
+            position: relative;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow: hidden;
+            animation: slideUp 0.3s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem;
+            border-bottom: 1px solid #E2E8F0;
+            background: #F7F9FC;
+        }
+        
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1E293B;
+            margin: 0;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            padding: 0.5rem;
+            cursor: pointer;
+            color: #64748B;
+            transition: all 0.2s;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-close:hover {
+            background: #E2E8F0;
+            color: #1E293B;
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+            overflow-y: auto;
+            max-height: calc(80vh - 80px);
+        }
+        
+        .modal-body p {
+            margin: 0;
+            line-height: 1.6;
+            color: #475569;
+            font-size: 0.9375rem;
+        }
         
         /* Stats */
         .stat-row {
@@ -810,9 +1138,9 @@
             <p>Interactive demonstration of the binomial distribution and central limit theorem. Watch as random choices at each peg naturally form a bell curve pattern, illustrating fundamental concepts in probability and statistics.</p>
           </div>
           <div class="header-version">
-            <span>v1.0.0</span>
+            <span>v1.0.1</span>
             <span class="version-separator">•</span>
-            <span>Build 20251130</span>
+            <span>Build 20251202</span>
           </div>
         </div>
       </div>
@@ -841,45 +1169,148 @@
                 <section class="tsm-card">
           <!-- Simulation Controls -->
           <div style="margin-bottom: 2rem;">
-            <h3>Simulation Controls</h3>
-            <p class="section-subtitle">Drop balls and configure parameters</p>
+            <h3 style="margin-bottom: 1.25rem;">Simulation Controls</h3>
             
             <div class="form-group">
-              <button id="dropBall" class="btn-primary-custom">Drop Ball</button>
+              <label style="display: flex; align-items: center; gap: 0.25rem; line-height: 1;">
+                Drop Mode
+                <button class="info-button" data-modal-title="Drop Mode" data-modal-content="Choose between Single Drop (drop one ball at a time) or Auto Drop (continuously drop balls). Use Single Drop for detailed observation of individual paths, or Auto Drop to quickly build up the distribution and see the Central Limit Theorem in action.">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-question-mark" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                    <path d="M12 17h.01"></path>
+                  </svg>
+                </button>
+              </label>
+              <div class="segmented" id="dropModeToggle" role="group" aria-label="Drop mode selection">
+                <button type="button" class="segment" data-mode="single">Single Drop</button>
+                <button type="button" class="segment active" data-mode="auto">Auto Drop</button>
+              </div>
             </div>
             
-            <div class="form-group">
-              <button id="autoToggle" class="btn-secondary-custom">Start Auto Drop</button>
-            </div>
-            
-            <div class="form-group">
-              <button id="reset" class="btn-outline-custom">Reset All</button>
-            </div>
+                        <div class="form-group" style="display: flex; gap: 0.5rem; align-items: center;">
+                            <button id="startBtn" class="btn-primary-custom" style="flex: 1;">Start</button>
+                            <button id="pauseBtn" class="btn-secondary-custom" style="flex: 1;">Pause</button>
+                            <button id="reset" class="btn-outline-custom" style="flex: 1;">Reset All</button>
+                        </div>
           </div>
-
+          
           <!-- Parameters -->
-          <div style="margin-bottom: 2rem; padding-top: 2rem; border-top: 1px solid var(--border-color);">
-            <h3>Parameters</h3>
-            <p class="section-subtitle">Adjust simulation settings</p>
-            
+          <div class="form-group">
             <div class="slider-group">
               <div class="slider-label">
                 <label>Number of Rows</label>
+                <button class="info-button" data-modal-title="Number of Rows" data-modal-content="Controls the number of peg rows in the Galton Board. More rows create more bins and produce a smoother, more bell-shaped distribution that better demonstrates the Central Limit Theorem.">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-question-mark" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                    <path d="M12 17h.01"></path>
+                  </svg>
+                </button>
+              </div>
+              <div class="slider-controls">
+                <button class="slider-btn" onclick="adjustRows(-1)">−</button>
+                <input type="range" id="rowsSlider" min="5" max="10" value="6" step="1">
+                <button class="slider-btn" onclick="adjustRows(1)">+</button>
                 <span class="slider-value" id="rowsValue">6</span>
               </div>
-              <input type="range" id="rowsSlider" min="5" max="10" value="6" step="1">
-              <p style="font-size: 0.875rem; color: var(--gray-500); margin-top: 0.5rem; line-height: 1.4;">More rows create more bins and a smoother distribution</p>
             </div>
             
-            <div class="slider-group">
-              <div class="slider-label">
-                <label>Gravity Strength</label>
-                <span class="slider-value" id="gravityValue">0.30</span>
-              </div>
-              <input type="range" id="gravitySlider" min="0.1" max="0.5" step="0.05" value="0.3">
-              <p style="font-size: 0.875rem; color: var(--gray-500); margin-top: 0.5rem; line-height: 1.4;">Controls how fast balls fall through the pegs</p>
-            </div>
+                        <div class="slider-group">
+                            <div class="slider-label">
+                                <label>Number of Balls</label>
+                                <button class="info-button" data-modal-title="Number of Balls" data-modal-content="Sets the maximum number of balls that can be active or dropped. Use this to control the size of the sample for the histogram.">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-question-mark" aria-hidden="true">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                        <path d="M12 17h.01"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="slider-controls">
+                                <button class="slider-btn" onclick="adjustNumBalls(-10)">−</button>
+                                <input type="range" id="numBallsSlider" min="1" max="400" step="1" value="200">
+                                <button class="slider-btn" onclick="adjustNumBalls(10)">+</button>
+                                <span class="slider-value" id="numBallsValue" style="background:#7C3AED;">200</span>
+                            </div>
+                        </div>
+
+                        <div class="slider-group">
+                            <div class="slider-label">
+                                <label>Gravity Strength</label>
+                                <button class="info-button" data-modal-title="Gravity Strength" data-modal-content="Adjusts the gravitational acceleration affecting the balls. Higher values make balls fall faster through the pegs, while lower values create a slower, more observable descent.">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-question-mark" aria-hidden="true">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                        <path d="M12 17h.01"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="slider-controls">
+                                <button class="slider-btn" onclick="adjustGravity(-0.05)">−</button>
+                                <input type="range" id="gravitySlider" min="0.1" max="0.5" step="0.05" value="0.3">
+                                <button class="slider-btn" onclick="adjustGravity(0.05)">+</button>
+                                <span class="slider-value orange" id="gravityValue">0.30</span>
+                            </div>
+                        </div>
           </div>
+
+                    <!-- Visualization Area -->
+                    <div style="margin-top: 2rem;">
+                        <label style="font-weight: 500; font-size: 0.875rem; color: #0F172A; display: flex; align-items: center; margin-bottom: 0.75rem; gap: 0.25rem; line-height: 1;">
+                            Visualization
+                            <button class="info-button" data-modal-title="Visualization Toggles" data-modal-content="Control what appears on the histogram: Ball Trails show the path each ball took through the pegs. Bin Shading highlights alternating bins for easier counting. Empirical Curve displays a line connecting actual data points (solid purple). Theoretical Curve shows the expected binomial distribution (dashed blue).">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-question-mark" aria-hidden="true">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                <path d="M12 17h.01"></path>
+                              </svg>
+                            </button>
+                        </label>
+                        <div class="toggle-grid">
+                            <!-- Row 1: Ball Trails | Empirical Curve -->
+                            <div class="toggle-container">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="toggleTrails">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <label for="toggleTrails" class="toggle-label">Ball Trails</label>
+                            </div>
+                            <div class="toggle-container">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="toggleEmpirical">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <label for="toggleEmpirical" class="toggle-label">Empirical Curve</label>
+                            </div>
+
+                            <!-- Row 2: Bin Shading | Theoretical Curve -->
+                            <div class="toggle-container">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="toggleBinShading">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <label for="toggleBinShading" class="toggle-label">Bin Shading</label>
+                            </div>
+                            <div class="toggle-container">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="toggleTheoretical">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <label for="toggleTheoretical" class="toggle-label">Theoretical Curve</label>
+                            </div>
+
+                            <!-- Row 3: Descriptive Markers | (empty) -->
+                            <div class="toggle-container">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="toggleDescriptiveMarkers">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <label for="toggleDescriptiveMarkers" class="toggle-label">Descriptive Markers</label>
+                            </div>
+                            <div></div>
+                        </div>
+                    </div>
 
           <!-- Statistics -->
           <div style="padding-top: 2rem; border-top: 1px solid var(--border-color);">
@@ -958,7 +1389,7 @@
                         </div>
                         <!-- Level 2: unified rectangular inner box with square corners -->
                         <div class="chart-container unified-box">
-                            <canvas id="chartCanvas" width="800" height="700"></canvas>
+                            <canvas id="chartCanvas" width="800" height="800"></canvas>
                         </div>
                     </div>
         </div>
@@ -982,6 +1413,25 @@
       </div>
     </div>
   </footer>
+
+  <!-- Info Modal -->
+  <div id="infoModal" class="modal" aria-hidden="true">
+    <div class="modal-overlay"></div>
+    <div class="modal-container">
+      <div class="modal-header">
+        <h2 id="modalTitle" class="modal-title">Information</h2>
+        <button class="modal-close" aria-label="Close modal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p id="modalContent"></p>
+      </div>
+    </div>
+  </div>
 
     <script>
         // Firebase Configuration
@@ -1014,8 +1464,17 @@
             }
         }
 
-        // Visualization defaults (always on)
-        const TOGGLES = { showBars: true, unifiedColor: true, showBinLabels: true };
+        // Visualization defaults
+        const TOGGLES = { 
+            showBars: true, 
+            unifiedColor: true, 
+            showBinLabels: true,
+            showTrails: false,
+            showBinShading: false,
+            showTheoretical: false,
+            showEmpirical: false,
+            showDescriptiveMarkers: false
+        };
         const unifiedColor = '#7C3AED';
 
         // Theme Configuration
@@ -1110,12 +1569,13 @@
         // Configuration
         const CONFIG = {
             width: 800,
-            height: 700,
+            height: 800,
             pegRadius: 5,
             ballRadius: 6,
             gravity: 0.3,
             drag: 0.96,
             rows: 6,
+            maxBalls: 200,
             pegSpacingX: 60,
             pegSpacingY: 50,
             startX: 400,
@@ -1360,8 +1820,8 @@
             }
 
             draw() {
-                // Draw trail (faint line)
-                if (this.trail && this.trail.length > 1) {
+                // Draw trail (faint line) - only if toggle is on
+                if (TOGGLES.showTrails && this.trail && this.trail.length > 1) {
                     ctx.save();
                     ctx.strokeStyle = 'rgba(124,58,237,0.3)';
                     ctx.lineWidth = 2;
@@ -1572,8 +2032,8 @@
                 return false;
             });
 
-            // Draw all persistent trails
-            if (allTrails.length) {
+            // Draw all persistent trails - only if toggle is on
+            if (TOGGLES.showTrails && allTrails.length) {
                 ctx.save();
                 ctx.strokeStyle = 'rgba(124,58,237,0.2)';
                 ctx.lineWidth = 2;
@@ -1595,9 +2055,9 @@
             const binWidth = CONFIG.pegSpacingX;
             const BALL_D = CONFIG.ballRadius * 2;
             const maxCount = Math.max(...bins, 1);
-            // Fixed baseline at bottom of canvas
-            const binLineY = CONFIG.height - 100;
-            const binLabelY = Math.min(CONFIG.height - 10, binLineY + 20);
+            // Fixed baseline at bottom of canvas - moved up to make room for markers
+            const binLineY = CONFIG.height - 180;
+            const binLabelY = Math.min(CONFIG.height - 100, binLineY + 20);
             // Bins should align with spaces between bottom row pegs
             // Bottom row has CONFIG.rows pegs positioned at (col - (CONFIG.rows-1)/2)
             const bottomRowPegCount = CONFIG.rows;
@@ -1675,64 +2135,241 @@
                 binEdges.push(edgeX);
             }
             
-            // Shade each bin area between the edges
-            for (let i = 0; i < troubleshootBinCount; i++) {
-                const leftEdge = binEdges[i];
-                const rightEdge = binEdges[i + 1];
-                
-                // Shade the bin area
-                ctx.fillStyle = i % 2 === 0 ? 'rgba(200, 200, 255, 0.15)' : 'rgba(255, 200, 200, 0.15)';
-                ctx.fillRect(leftEdge, troubleshootBottomPegY, rightEdge - leftEdge, troubleshootBinLineY - troubleshootBottomPegY);
-                
-                // Draw blue dotted vertical lines at each bin edge
-                ctx.strokeStyle = 'rgba(0, 94, 233, 0.7)';
-                ctx.lineWidth = 2;
-                ctx.setLineDash([3, 3]);
-                
-                // Left edge line
-                ctx.beginPath();
-                ctx.moveTo(leftEdge, troubleshootBottomPegY);
-                ctx.lineTo(leftEdge, troubleshootBinLineY);
-                ctx.stroke();
-                
-                // Right edge line (only for last bin)
-                if (i === troubleshootBinCount - 1) {
+            // Shade each bin area between the edges (only if toggle is on)
+            if (TOGGLES.showBinShading) {
+                for (let i = 0; i < troubleshootBinCount; i++) {
+                    const leftEdge = binEdges[i];
+                    const rightEdge = binEdges[i + 1];
+                    
+                    // Shade the bin area with alternating subtle colors
+                    ctx.fillStyle = i % 2 === 0 ? 'rgba(124, 58, 237, 0.08)' : 'rgba(59, 130, 246, 0.08)';
+                    ctx.fillRect(leftEdge, troubleshootBottomPegY, rightEdge - leftEdge, troubleshootBinLineY - troubleshootBottomPegY);
+                    
+                    // Add subtle borders on left and right edges
+                    ctx.strokeStyle = 'rgba(100, 116, 139, 0.15)';
+                    ctx.lineWidth = 1;
                     ctx.beginPath();
+                    // Left border
+                    ctx.moveTo(leftEdge, troubleshootBottomPegY);
+                    ctx.lineTo(leftEdge, troubleshootBinLineY);
+                    // Right border
                     ctx.moveTo(rightEdge, troubleshootBottomPegY);
                     ctx.lineTo(rightEdge, troubleshootBinLineY);
                     ctx.stroke();
                 }
-                
-                ctx.setLineDash([]);
             }
             
-
-
-            // Theoretical curve overlay (removed)
-            if (false) {
-                ctx.strokeStyle = '#f59e0b';
-                ctx.lineWidth = 2;
+            // Empirical curve overlay (actual data) - only if toggle is on
+            if (TOGGLES.showEmpirical && totalBalls > 0) {
+                ctx.strokeStyle = '#7C3AED'; // Primary purple
+                ctx.lineWidth = 3;
                 ctx.beginPath();
+                let firstPoint = true;
                 for (let i = 0; i < binCount; i++) {
-                    const p = binomialProbability(CONFIG.rows, i, 0.5);
-                    const expected = p * totalBalls;
-                    const expectedHeight = expected * BALL_D;
+                    const count = bins[i];
+                    const actualHeight = count * BALL_D * scale;
                     const centerX = CONFIG.startX + (i - CONFIG.rows / 2) * binWidth;
-                    const y = binLineY - expectedHeight;
-                    if (i === 0) ctx.moveTo(centerX, y); else ctx.lineTo(centerX, y);
+                    const y = binLineY - actualHeight;
+                    if (firstPoint) {
+                        ctx.moveTo(centerX, y);
+                        firstPoint = false;
+                    } else {
+                        ctx.lineTo(centerX, y);
+                    }
                 }
                 ctx.stroke();
+                
+                // Draw dots at each data point
                 for (let i = 0; i < binCount; i++) {
-                    const p = binomialProbability(CONFIG.rows, i, 0.5);
-                    const expected = p * totalBalls;
-                    const expectedHeight = expected * BALL_D;
+                    const count = bins[i];
+                    const actualHeight = count * BALL_D * scale;
                     const centerX = CONFIG.startX + (i - CONFIG.rows / 2) * binWidth;
-                    const y = binLineY - expectedHeight;
-                    ctx.fillStyle = '#f59e0b';
+                    const y = binLineY - actualHeight;
+                    ctx.fillStyle = '#7C3AED';
                     ctx.beginPath();
-                    ctx.arc(centerX, y, 4, 0, Math.PI * 2);
+                    ctx.arc(centerX, y, 5, 0, Math.PI * 2);
+                    ctx.fill();
+                    // White center for contrast
+                    ctx.fillStyle = '#ffffff';
+                    ctx.beginPath();
+                    ctx.arc(centerX, y, 2, 0, Math.PI * 2);
                     ctx.fill();
                 }
+            }
+
+            // Theoretical curve overlay (binomial distribution) - only if toggle is on
+            if (TOGGLES.showTheoretical) {
+                // Use a fixed reference sample size for consistent display
+                const referenceBalls = 100;
+                
+                // Calculate theoretical curve with smooth interpolation
+                ctx.strokeStyle = '#005EE9'; // Primary blue
+                ctx.lineWidth = 3;
+                ctx.setLineDash([6, 4]); // Dashed line to distinguish from empirical
+                
+                // Generate smooth curve using more points
+                const smoothPoints = [];
+                for (let i = 0; i < binCount; i++) {
+                    const p = binomialProbability(CONFIG.rows, i, 0.5);
+                    const expected = p * referenceBalls;
+                    // Use 95% of available height to accommodate taller bars
+                    const maxTheoreticalHeight = availableHeight * 0.95;
+                    // Find max theoretical probability to scale properly
+                    let maxP = 0;
+                    for (let j = 0; j < binCount; j++) {
+                        const prob = binomialProbability(CONFIG.rows, j, 0.5);
+                        if (prob > maxP) maxP = prob;
+                    }
+                    const heightScale = maxTheoreticalHeight / (maxP * referenceBalls * BALL_D);
+                    const expectedHeight = expected * BALL_D * heightScale;
+                    const centerX = CONFIG.startX + (i - CONFIG.rows / 2) * binWidth;
+                    const y = binLineY - expectedHeight;
+                    smoothPoints.push({ x: centerX, y: y });
+                }
+                
+                // Draw smooth curve
+                ctx.beginPath();
+                if (smoothPoints.length > 0) {
+                    ctx.moveTo(smoothPoints[0].x, smoothPoints[0].y);
+                    
+                    // Use quadratic curves for smoothness
+                    for (let i = 0; i < smoothPoints.length - 1; i++) {
+                        const xc = (smoothPoints[i].x + smoothPoints[i + 1].x) / 2;
+                        const yc = (smoothPoints[i].y + smoothPoints[i + 1].y) / 2;
+                        ctx.quadraticCurveTo(smoothPoints[i].x, smoothPoints[i].y, xc, yc);
+                    }
+                    // Last point
+                    const last = smoothPoints[smoothPoints.length - 1];
+                    ctx.lineTo(last.x, last.y);
+                }
+                ctx.stroke();
+                ctx.setLineDash([]); // Reset dash
+            }
+            
+            // Statistical markers (mean, median, mode) below bins
+            if (TOGGLES.showDescriptiveMarkers) {
+                const markerStartY = binLabelY + 30; // Start below bin labels
+                const lineHeight = 25; // Space between each marker line
+                
+                let meanX, medianX, modeXPositions, modeBins;
+                
+                if (totalBalls > 0) {
+                    // Calculate mean
+                    let weightedSum = 0;
+                    for (let i = 0; i < bins.length; i++) {
+                        weightedSum += i * bins[i];
+                    }
+                    const meanBin = weightedSum / totalBalls;
+                    meanX = CONFIG.startX + (meanBin - CONFIG.rows / 2) * binWidth;
+                    
+                    // Calculate median
+                    const halfBalls = totalBalls / 2;
+                    let cumulative = 0;
+                    let medianBin = 0;
+                    for (let i = 0; i < bins.length; i++) {
+                        cumulative += bins[i];
+                        if (cumulative >= halfBalls) {
+                            medianBin = i;
+                            break;
+                        }
+                    }
+                    medianX = CONFIG.startX + (medianBin - CONFIG.rows / 2) * binWidth;
+                    
+                    // Calculate mode (bin with most balls) - support multimodal distributions
+                    let maxCount = 0;
+                    modeBins = [];
+                    
+                    // Find the maximum count
+                    for (let i = 0; i < bins.length; i++) {
+                        if (bins[i] > maxCount) {
+                            maxCount = bins[i];
+                        }
+                    }
+                    
+                    // Find all bins with the maximum count (multimodal)
+                    for (let i = 0; i < bins.length; i++) {
+                        if (bins[i] === maxCount && maxCount > 0) {
+                            modeBins.push(i);
+                        }
+                    }
+                    
+                    // Calculate x positions for all modes
+                    modeXPositions = modeBins.map(bin => 
+                        CONFIG.startX + (bin - CONFIG.rows / 2) * binWidth
+                    );
+                } else {
+                    // Default to middle position when no balls have been dropped
+                    const middleBin = CONFIG.rows / 2;
+                    meanX = CONFIG.startX;
+                    medianX = CONFIG.startX;
+                    modeXPositions = [CONFIG.startX];
+                    modeBins = [Math.floor(middleBin)];
+                }
+                
+                // Helper function to draw marker line
+                function drawMarkerLine(y, markerX, label, color) {
+                    // Lines span from left edge of bin 0 to right edge of last bin
+                    const lineStartX = barBinEdges[0];
+                    const lineEndX = barBinEdges[barBinEdges.length - 1];
+                    
+                    // Draw horizontal line
+                    ctx.strokeStyle = color;
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(lineStartX, y);
+                    ctx.lineTo(lineEndX, y);
+                    ctx.stroke();
+                    
+                    // Draw pointer (triangle pointing up)
+                    ctx.fillStyle = color;
+                    ctx.beginPath();
+                    ctx.moveTo(markerX, y - 8);
+                    ctx.lineTo(markerX - 5, y - 1);
+                    ctx.lineTo(markerX + 5, y - 1);
+                    ctx.closePath();
+                    ctx.fill();
+                    
+                    // Draw label
+                    ctx.fillStyle = '#0F172A';
+                    ctx.font = '12px Inter';
+                    ctx.textAlign = 'left';
+                    ctx.fillText(label, lineEndX + 10, y + 4);
+                }
+                
+                // Draw all three markers
+                drawMarkerLine(markerStartY, meanX, 'Mean', '#10b981'); // Green
+                drawMarkerLine(markerStartY + lineHeight, medianX, 'Median', '#f59e0b'); // Orange
+                
+                // Draw mode line with multiple pointers if multimodal
+                const modeY = markerStartY + lineHeight * 2;
+                const lineStartX = barBinEdges[0];
+                const lineEndX = barBinEdges[barBinEdges.length - 1];
+                
+                // Draw horizontal line for mode
+                ctx.strokeStyle = '#6366f1'; // Indigo
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(lineStartX, modeY);
+                ctx.lineTo(lineEndX, modeY);
+                ctx.stroke();
+                
+                // Draw pointer(s) for mode - one for each mode in multimodal distributions
+                ctx.fillStyle = '#6366f1';
+                for (const modeX of modeXPositions) {
+                    ctx.beginPath();
+                    ctx.moveTo(modeX, modeY - 8);
+                    ctx.lineTo(modeX - 5, modeY - 1);
+                    ctx.lineTo(modeX + 5, modeY - 1);
+                    ctx.closePath();
+                    ctx.fill();
+                }
+                
+                // Draw label with indication of multimodal if applicable
+                ctx.fillStyle = '#0F172A';
+                ctx.font = '12px Inter';
+                ctx.textAlign = 'left';
+                const modeLabel = modeBins.length > 1 ? `Mode (${modeBins.length})` : 'Mode';
+                ctx.fillText(modeLabel, lineEndX + 10, modeY + 4);
             }
 
             animationId = requestAnimationFrame(animate);
@@ -1790,7 +2427,7 @@
         // Add ball
         function addBall() {
             const activeCount = totalBalls + balls.length;
-            if (activeCount >= 200) return;
+            if (activeCount >= CONFIG.maxBalls) return;
             balls.push(new Ball());
         }
 
@@ -1907,34 +2544,92 @@
             // Clear active and settled balls, stop animation state
             balls = [];
             settledBalls = [];
+            allTrails = [];
             // Stop auto mode if running
-            if (isAutoDropping) {
-                clearInterval(autoInterval);
-                isAutoDropping = false;
-                const autoBtn = document.getElementById('autoToggle');
-                if (autoBtn) {
-                    autoBtn.textContent = 'Start Auto Drop';
-                    autoBtn.classList.remove('btn-outline-custom');
-                    autoBtn.classList.add('btn-secondary-custom');
+            if (isAutoDropping || isRunning) {
+                if (autoInterval) {
+                    clearInterval(autoInterval);
+                    autoInterval = null;
                 }
+                isAutoDropping = false;
+                isRunning = false;
+            }
+            // Reset toggles to default (all off)
+            TOGGLES.showTrails = false;
+            TOGGLES.showBinShading = false;
+            TOGGLES.showTheoretical = false;
+            TOGGLES.showEmpirical = false;
+            TOGGLES.showDescriptiveMarkers = false;
+            CONFIG.maxBalls = 200;
+            document.getElementById('toggleTrails').checked = false;
+            document.getElementById('toggleBinShading').checked = false;
+            document.getElementById('toggleTheoretical').checked = false;
+            document.getElementById('toggleEmpirical').checked = false;
+            document.getElementById('toggleDescriptiveMarkers').checked = false;
+            const nbSlider = document.getElementById('numBallsSlider');
+            const nbValue = document.getElementById('numBallsValue');
+            if (nbSlider && nbValue) {
+                nbSlider.value = 200;
+                nbValue.textContent = 200;
             }
             updateStats();
         }
 
         // Event listeners
-        document.getElementById('dropBall').addEventListener('click', addBall);
+        let dropMode = 'auto'; // 'single' or 'auto'
+        let isRunning = false;
         
-        document.getElementById('autoToggle').addEventListener('click', function() {
-            isAutoDropping = !isAutoDropping;
-            if (isAutoDropping) {
-                this.textContent = 'Stop Auto Drop';
-                this.classList.remove('btn-secondary-custom');
-                this.classList.add('btn-outline-custom');
-                autoInterval = setInterval(addBall, 150);
+        // Segmented control for drop mode
+        document.querySelectorAll('#dropModeToggle .segment').forEach(btn => {
+            // Make visual change instant on press (mouse & touch) with inline fallback
+            btn.addEventListener('pointerdown', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('#dropModeToggle .segment').forEach(b => {
+                    b.classList.remove('active');
+                    b.style.backgroundColor = '';
+                    b.style.color = '';
+                });
+                this.classList.add('active');
+                // Inline fallback to guarantee immediate visual change
+                this.style.backgroundColor = '#ffffff';
+                this.style.color = '#0f172a';
+            });
+            // Ensure active stays after press ends
+            btn.addEventListener('pointerup', function() {
+                this.classList.add('active');
+                this.style.backgroundColor = '#ffffff';
+                this.style.color = '#0f172a';
+            });
+            // Persist mode selection on click
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('#dropModeToggle .segment').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                dropMode = this.dataset.mode;
+                
+                // Stop auto-dropping if switching to single
+                if (isRunning && dropMode === 'single') {
+                    isRunning = false;
+                    clearInterval(autoInterval);
+                }
+            });
+        });
+        
+        // Start button
+        document.getElementById('startBtn').addEventListener('click', function() {
+            if (dropMode === 'single') {
+                addBall();
             } else {
-                this.textContent = 'Start Auto Drop';
-                this.classList.remove('btn-outline-custom');
-                this.classList.add('btn-secondary-custom');
+                if (!isRunning) {
+                    isRunning = true;
+                    autoInterval = setInterval(addBall, 150);
+                }
+            }
+        });
+        
+        // Pause button
+        document.getElementById('pauseBtn').addEventListener('click', function() {
+            if (isRunning) {
+                isRunning = false;
                 clearInterval(autoInterval);
             }
         });
@@ -1973,12 +2668,115 @@
 
         canvas.addEventListener('click', addBall);
         
+        // Visualization toggles
+        document.getElementById('toggleTrails').addEventListener('change', function() {
+            TOGGLES.showTrails = this.checked;
+        });
+        
+        document.getElementById('toggleBinShading').addEventListener('change', function() {
+            TOGGLES.showBinShading = this.checked;
+        });
+        
+        document.getElementById('toggleTheoretical').addEventListener('change', function() {
+            TOGGLES.showTheoretical = this.checked;
+        });
+        
+        document.getElementById('toggleEmpirical').addEventListener('change', function() {
+            TOGGLES.showEmpirical = this.checked;
+        });
+        
+        document.getElementById('toggleDescriptiveMarkers').addEventListener('change', function() {
+            TOGGLES.showDescriptiveMarkers = this.checked;
+        });
+        
+        // Slider adjustment functions
+        function adjustRows(delta) {
+            const slider = document.getElementById('rowsSlider');
+            const newValue = Math.max(5, Math.min(10, parseInt(slider.value) + delta));
+            slider.value = newValue;
+            CONFIG.rows = newValue;
+            document.getElementById('rowsValue').textContent = newValue;
+            document.getElementById('displayRows').textContent = newValue;
+            // Reset bins when rows change
+            const newBinCount = CONFIG.rows + 1;
+            bins = Array(newBinCount).fill(0);
+            totalBalls = 0;
+            balls = [];
+            updateStats();
+        }
+        
+        function adjustGravity(delta) {
+            const slider = document.getElementById('gravitySlider');
+            const newValue = Math.max(0.1, Math.min(0.5, parseFloat(slider.value) + delta));
+            slider.value = newValue.toFixed(2);
+            CONFIG.gravity = newValue;
+            const gravityValue = newValue.toFixed(2);
+            document.getElementById('gravityValue').textContent = gravityValue;
+            document.getElementById('displayGravity').textContent = gravityValue;
+        }
+
+        function adjustNumBalls(delta) {
+            const slider = document.getElementById('numBallsSlider');
+            const newValue = Math.max(1, Math.min(400, parseInt(slider.value) + delta));
+            slider.value = newValue;
+            CONFIG.maxBalls = newValue;
+            document.getElementById('numBallsValue').textContent = newValue;
+        }
+
+        document.getElementById('numBallsSlider').addEventListener('input', function() {
+            const newValue = parseInt(this.value);
+            CONFIG.maxBalls = newValue;
+            document.getElementById('numBallsValue').textContent = newValue;
+        });
+        
         // Theme selector
         document.getElementById('canvasTheme').addEventListener('change', function(e) {
             const themeName = e.target.value;
             currentTheme = THEMES[themeName];
             // Keep canvas background unified (white); theme applies to peg colors only
         });
+
+            // Info Modal
+            function initInfoModal() {
+                const modal = document.getElementById('infoModal');
+                const modalTitle = document.getElementById('modalTitle');
+                const modalContent = document.getElementById('modalContent');
+                const modalClose = modal.querySelector('.modal-close');
+                const modalOverlay = modal.querySelector('.modal-overlay');
+                
+                function openModal(title, content) {
+                    modalTitle.textContent = title;
+                    modalContent.textContent = content;
+                    modal.classList.add('active');
+                    modal.setAttribute('aria-hidden', 'false');
+                    document.body.style.overflow = 'hidden';
+                }
+                
+                function closeModal() {
+                    modal.classList.remove('active');
+                    modal.setAttribute('aria-hidden', 'true');
+                    document.body.style.overflow = '';
+                }
+                
+                document.querySelectorAll('.info-button').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const title = button.getAttribute('data-modal-title') || 'Information';
+                        const content = button.getAttribute('data-modal-content') || 'No information available.';
+                        openModal(title, content);
+                    });
+                });
+                
+                if (modalClose) modalClose.addEventListener('click', closeModal);
+                if (modalOverlay) modalOverlay.addEventListener('click', closeModal);
+                
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && modal.classList.contains('active')) {
+                        closeModal();
+                    }
+                });
+            }
 
             // Initialize
             (async () => {
@@ -1990,12 +2788,14 @@
                 // Initialize pegs
                 initPegs();
                 animate();
-                updateStats();            if (useFirebase) {
-                console.log('✓ Firebase connected - stats synced globally');
-            } else {
-                console.log('✓ Local mode - stats reset on refresh');
-            }
-        })();
+                updateStats();
+                initInfoModal();
+                if (useFirebase) {
+                    console.log('✓ Firebase connected - stats synced globally');
+                } else {
+                    console.log('✓ Local mode - stats reset on refresh');
+                }
+            })();
     </script>
 </body>
 </html>
