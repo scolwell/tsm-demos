@@ -979,6 +979,8 @@
         .stat-label {
             font-weight: 500;
             color: #0F172A;
+            font-size: 0.875rem;
+            line-height: 1;
         }
         
         .stat-value {
@@ -988,12 +990,19 @@
         }
         
         .badge {
-            padding: 0.25rem 0.75rem;
+            padding: 0;
             background: #005EE9;
             color: white;
-            border-radius: 12px;
-            font-size: 0.875rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
             font-weight: 600;
+            width: 72px;
+            height: 26px;
+            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
         }
         
         .percentage {
@@ -1315,7 +1324,6 @@
           <!-- Statistics -->
           <div style="padding-top: 2rem; border-top: 1px solid var(--border-color);">
             <h3>Statistics</h3>
-            <p class="section-subtitle">Current distribution data</p>
             
             <div class="stat-row">
               <span class="stat-label">Total Balls Dropped</span>
@@ -1323,11 +1331,53 @@
             </div>
             
             <div class="stat-row">
-              <span class="stat-label">Binomial Fit</span>
-              <span class="badge" id="fitBadge" style="background: #94a3b8;">-</span>
+              <span class="stat-label">Distribution Type</span>
+              <span class="badge" id="fitBadge" style="background: #94a3b8;">---</span>
             </div>
             
             <div id="binStats"></div>
+            <!-- Simple Frequency Chart -->
+            <div id="freqChart" style="margin-top: 0.75rem;">
+                <div class="stat-label" style="margin-bottom: 0.5rem; display:flex; align-items:center; justify-content:space-between;">
+                    <span>Frequency Chart</span>
+                </div>
+                <table id="freqTable" style="width:95%; margin:0 auto; border-collapse: collapse; font-size: 0.8125rem; border: none !important; padding:0; table-layout: fixed;">
+                    <colgroup>
+                        <!-- Narrower Bin column -->
+                        <col style="width: 12%;">
+                        <!-- Evenly spaced remaining columns -->
+                        <col style="width: calc((100% - 12%) / 5);">
+                        <col style="width: calc((100% - 12%) / 5);">
+                        <col style="width: calc((100% - 12%) / 5);">
+                        <col style="width: calc((100% - 12%) / 5);">
+                        <col style="width: calc((100% - 12%) / 5);">
+                    </colgroup>
+                    <thead>
+                        <tr id="freqHeaderRow" style="border-bottom:1px solid #e2e8f0;">
+                            <th style="text-align:left; font-weight:600; color:#0F172A; padding:6px 0;">Bin</th>
+                            <th style="text-align:right; font-weight:600; color:#0F172A; padding:6px 0;"><em>f</em></th>
+                            <th style="text-align:right; font-weight:600; color:#0F172A; padding:6px 0;"><em>f</em>/n</th>
+                            <th style="text-align:right; font-weight:600; color:#0F172A; padding:6px 0;">%<em>f</em></th>
+                            <th style="text-align:right; font-weight:600; color:#0F172A; padding:6px 0;">c.%<em>f</em></th>
+                            <th style="text-align:right; font-weight:600; color:#0F172A; padding:6px 0;">E[<em>f</em>]</th>
+                        </tr>
+                    </thead>
+                    <tbody id="freqBody"></tbody>
+                    <tfoot>
+                        <tr id="freqFooterRow" style="border-top:1px solid #e2e8f0;">
+                            <td style="padding:6px 0; color:#0F172A; font-weight:600;">Total</td>
+                            <td id="freqTotal" style="text-align:right; padding:6px 0; color:#0F172A; font-weight:600;"></td>
+                            <td id="relTotal" style="text-align:right; padding:6px 0; color:#475569;"></td>
+                            <td id="pctTotal" style="text-align:right; padding:6px 0; color:#475569;"></td>
+                            <td id="cumPctTotal" style="text-align:right; padding:6px 0; color:#475569;"></td>
+                            <td id="expTotal" style="text-align:right; padding:6px 0; color:#475569;"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+                <div style="margin-top:6px; color:#64748b; font-size:0.75rem;">
+                    Note: f = frequency; f/n = relative frequency; %f = percent frequency; c.%f = cumulative percent frequency; E[f] = expected count
+                </div>
+            </div>
           </div>
         </section>
       </div>
@@ -1404,9 +1454,9 @@
       <div class="footer-left">
         <span class="footer-brand">TSM Galton Board Simulator</span>
         <span class="footer-separator">•</span>
-        <span class="footer-version">v1.0.0</span>
+        <span class="footer-version">v1.0.1</span>
         <span class="footer-separator">•</span>
-        <span class="footer-build">Build 20251130</span>
+        <span class="footer-build">Build 20251202</span>
       </div>
       <div class="footer-right">
         <a href="index.html" class="footer-link">Back to Demonstrations</a>
@@ -2486,32 +2536,69 @@
             // Test binomial fit
             const fitResult = testBinomialFit();
             const fitBadge = document.getElementById('fitBadge');
-            if (fitResult === null) {
-                fitBadge.textContent = '-';
+            // Update Distribution Type status
+            if (totalBalls === 0) {
+                fitBadge.textContent = '---';
                 fitBadge.style.background = '#94a3b8';
-            } else if (fitResult) {
-                fitBadge.textContent = 'Yes';
-                fitBadge.style.background = '#10b981';
+            } else if (typeof isRunning !== 'undefined' && isRunning) {
+                if (fitResult === true) {
+                    fitBadge.textContent = 'Binomial';
+                    fitBadge.style.background = '#10b981';
+                } else {
+                    fitBadge.textContent = 'calculating';
+                    fitBadge.style.background = '#94a3b8';
+                }
             } else {
-                fitBadge.textContent = 'No';
-                fitBadge.style.background = '#ef4444';
+                if (fitResult === true) {
+                    fitBadge.textContent = 'Binomial';
+                    fitBadge.style.background = '#10b981';
+                } else if (fitResult === false) {
+                    fitBadge.textContent = 'Fail';
+                    fitBadge.style.background = '#ef4444';
+                } else {
+                    fitBadge.textContent = '---';
+                    fitBadge.style.background = '#94a3b8';
+                }
             }
 
-            // Update stats panel
+            // Update stats panel - remove individual bin rows
             const binStats = document.getElementById('binStats');
-            binStats.innerHTML = bins.map((count, i) => {
-                const actualPercent = totalBalls > 0 ? ((count / totalBalls) * 100).toFixed(1) : 0;
-                const expectedPercent = expectedPercents[i] || 0;
-                return `
-                    <div class="stat-row">
-                        <span class="stat-label">Bin ${i}</span>
-                        <div class="stat-value">
-                            <span class="badge">${count}</span>
-                            <span class="percentage">${actualPercent}% <span style="color: #94a3b8;">(${expectedPercent}%)</span></span>
-                        </div>
-                    </div>
-                `;
-            }).join('');
+            binStats.innerHTML = '';
+
+            // Render frequency chart
+            const freqBody = document.getElementById('freqBody');
+            const freqTotalCell = document.getElementById('freqTotal');
+            const relTotalCell = document.getElementById('relTotal');
+            const pctTotalCell = document.getElementById('pctTotal');
+            const cumPctTotalCell = document.getElementById('cumPctTotal');
+            const expTotalCell = document.getElementById('expTotal');
+            if (freqBody) {
+                let cumulative = 0;
+                let html = '';
+                for (let i = 0; i < bins.length; i++) {
+                    const f = bins[i];
+                    const rel = totalBalls > 0 ? (f / totalBalls) : null;
+                    const pct = rel != null ? (rel * 100) : null;
+                    const expCount = totalBalls > 0 ? ((expectedPercents[i] / 100) * totalBalls) : null;
+                    cumulative += f;
+                    const cumPct = totalBalls > 0 ? (cumulative / totalBalls * 100) : null;
+                    html += `<tr>` +
+                            `<td style="padding:2px 0; color:#475569;">${i}</td>` +
+                            `<td style="padding:2px 0; text-align:right; color:#0F172A; font-weight:600;">${f || ''}</td>` +
+                            `<td style="padding:2px 0; text-align:right; color:#475569;">${rel != null ? rel.toFixed(2) : ''}</td>` +
+                            `<td style="padding:2px 0; text-align:right; color:#475569;">${pct != null ? pct.toFixed(2) : ''}</td>` +
+                            `<td style="padding:2px 0; text-align:right; color:#475569;">${cumPct != null ? cumPct.toFixed(2) : ''}</td>` +
+                            `<td style="padding:2px 0; text-align:right; color:#475569;">${expCount != null ? expCount.toFixed(2) : ''}</td>` +
+                            `</tr>`;
+                }
+                freqBody.innerHTML = html;
+                // Totals row
+                if (freqTotalCell) freqTotalCell.textContent = totalBalls || '';
+                if (relTotalCell) relTotalCell.textContent = totalBalls > 0 ? '1.00' : '';
+                if (pctTotalCell) pctTotalCell.textContent = totalBalls > 0 ? '100.00' : '';
+                if (expTotalCell) expTotalCell.textContent = totalBalls > 0 ? totalBalls.toFixed(2) : '';
+                if (cumPctTotalCell) cumPctTotalCell.textContent = totalBalls > 0 ? '100.00' : '';
+            }
             
             // Update histogram
             drawHistogram();
