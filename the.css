@@ -39,10 +39,9 @@ table#fig121 td#resultTd,
 #universe,
 .card,
 fieldset,
-canvas,
 table {
     border: 1px solid #dee2e6 !important;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+    box-shadow: none !important;
     outline: none !important;
 }
 
@@ -75,7 +74,7 @@ span.customSelect, button {
 
 span.customSelect:hover, button:hover {
     transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: none;
 }
 
 /* Card-like styling for demonstration content */
@@ -83,7 +82,7 @@ span.customSelect:hover, button:hover {
     background: white;
     border-radius: 8px;
     padding: 20px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: none;
     border: 1px solid #dee2e6;
 }
 
@@ -233,9 +232,9 @@ input[type="text"]:focus, input[type="number"]:focus {
 
 /* Canvas containers */
 canvas {
-    border: 1px solid #dee2e6;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
     background: white;
 }
 

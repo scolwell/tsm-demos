@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Galton Board Simulator</title>
     <link rel="stylesheet" href="the.css">
+    <link rel="stylesheet" href="lib/tsm.css">
+    
+    <!-- TSM Design System Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
     
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -13,12 +17,25 @@
     
     <style>
         :root {
-            --primary-color: #005EE9;
-            --secondary-color: #0051D5;
-            --text-primary: #1e293b;
-            --text-secondary: #64748b;
+            /* TSM Design System Colors */
+            --tsm-blue: #005EE9;
+            --tsm-blue-hover: #0067FF;
+            --tsm-blue-dark: #0051c9;
+            --background: #F7F9FC;
+            --foreground: #0F172A;
+            --gray-50: #f8fafc;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #cbd5e1;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
             --border-color: #e2e8f0;
-            --background: #f8fafc;
+            --white: #ffffff;
+            --info-bg: #F3F7FE;
+            --info-border: #bae6fd;
         }
         
         * {
@@ -28,168 +45,273 @@
         }
         
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: var(--background);
-            color: var(--text-primary);
-            line-height: 1.6;
+            color: var(--foreground);
+            font-size: 16px;
+            line-height: 1.5;
+            margin: 0;
+            padding: 0;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
         
         .app-container {
-            max-width: 1400px;
-            margin: 0 auto;
+            background: var(--background);
+            min-height: 100vh;
         }
         
         /* Header */
         .header {
-            background: white;
-            border-bottom: 1px solid var(--border-color);
+            background: #0051c9;
+            color: white;
             padding: 1.5rem 2rem;
         }
         
         .header-content {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
         }
         
         .back-button {
+            background: transparent;
+            border: none;
+            color: #ffffff;
+            padding: 8px 12px;
+            border-radius: 0.375rem;
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: transparent;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            color: var(--text-secondary);
-            font-size: 0.875rem;
+            gap: 8px;
             cursor: pointer;
-            transition: all 0.2s;
+            font-size: 14px;
+            margin-bottom: 1.5rem;
+            transition: background-color 0.2s;
             text-decoration: none;
-            margin-bottom: 1rem;
         }
         
         .back-button:hover {
-            background: #f8fafc;
-            color: var(--primary-color);
+            background: rgba(255, 255, 255, 0.15);
         }
         
         .header-info {
             display: flex;
             align-items: flex-start;
             gap: 1rem;
+            position: relative;
         }
         
         .header-icon {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.75rem;
+            border-radius: 0.75rem;
             flex-shrink: 0;
-            width: 48px;
-            height: 48px;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            border-radius: 12px;
-            color: white;
         }
         
         .header-text h1 {
             font-family: 'Poppins', sans-serif;
-            font-size: 1.75rem;
+            font-size: 1.875rem;
             font-weight: 700;
-            margin: 0 0 0.25rem 0;
-            color: var(--text-primary);
+            margin: 0 0 0.5rem 0;
+            color: white;
         }
         
         .header-text p {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
+            color: white;
+            opacity: 0.9;
+            font-size: 1rem;
+            line-height: 1.6;
             margin: 0;
-            max-width: 800px;
         }
         
         .header-version {
-            margin-left: auto;
+            position: absolute;
+            top: 0;
+            right: 0;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.7);
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            color: var(--text-secondary);
-            font-size: 0.875rem;
+            gap: 0.375rem;
+        }
+        
+        .version-separator {
+            color: rgba(255, 255, 255, 0.5);
         }
         
         /* Info Banner */
         .info-banner {
-            background: linear-gradient(to right, #eff6ff, #f0f9ff);
-            border: 1px solid #bfdbfe;
-            border-radius: 8px;
-            padding: 1rem 1.25rem;
-            margin: 2rem;
+            background: #F3F7FE;
+            border: 1px solid #bae6fd;
+            border-radius: 0.75rem;
+            padding: 12px 16px;
             display: flex;
+            gap: 0.75rem;
+            width: 1216px;
+            min-height: 90px;
+            margin: 32px auto;
             align-items: flex-start;
-            gap: 1rem;
+            max-width: calc(100% - 64px);
         }
         
         .info-icon {
+            color: #005EE9;
             flex-shrink: 0;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #3b82f6;
+            margin-top: 0.125rem;
         }
         
         .info-content {
-            flex: 1;
+            color: #64748b;
+            font-size: 0.875rem;
         }
         
         .info-content strong {
-            color: var(--text-primary);
+            display: block;
+            margin-bottom: 0.25rem;
+            color: #64748b;
             font-weight: 600;
         }
         
         .info-content p {
-            margin: 0.25rem 0 0 0;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
+            margin: 0;
+            color: #64748b;
+            font-size: 0.875rem;
         }
         
         /* Content Layout */
+        .main-content {
+            padding: 48px 32px;
+        }
+        
         .content-wrapper {
-            display: flex;
+            display: grid;
+            grid-template-columns: minmax(0, 35%) minmax(0, 1fr);
             gap: 2rem;
-            padding: 2rem;
-            max-width: 1400px;
+            width: 1216px;
+            max-width: 100%;
             margin: 0 auto;
+            padding: 0 0 2rem 0;
         }
         
         .left-panel {
-            width: 380px;
-            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
         }
         
         .right-panel {
-            flex: 1;
-            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
         }
         
         /* Section Cards */
         .section {
-            background: white;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
+            background: #ffffff;
+            border: 2px solid #3b82f6;
+            border-radius: 0.75rem;
             padding: 1.5rem;
+        }
+        
+        /* Results Card - exact from template */
+        .results-card {
+            background: white;
+            border-width: 2px;
+            border-style: solid;
+            border-color: rgb(59, 130, 246) !important;
+            border-image: initial;
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+        
+        .results-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #eff6ff;
+            padding: 1.5rem 1.5rem 0 1.5rem;
+            margin: -1.5rem -1.5rem 0 -1.5rem;
+        }
+        
+        .results-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2563eb;
+            margin: 0;
+            background: transparent;
+            padding: 0;
+        }
+        
+        .results-subtitle {
+            color: #64748b;
+            font-size: 0.875rem;
+            margin-top: 0;
+            margin-bottom: 2rem;
+            background: #eff6ff;
+            padding: 0 1.5rem 0.5rem 1.5rem;
+            margin-left: -1.5rem;
+            margin-right: -1.5rem;
+        }
+        
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
             margin-bottom: 1.5rem;
+        }
+        
+        .result-item {
+            text-align: center;
+            background: #F7F9FC;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid #E2E8F0;
+        }
+        
+        .result-value {
+            font-size: 2.25rem;
+            font-weight: 500;
+            color: #005EE9;
+            margin-bottom: 0.5rem;
+            line-height: 1;
+        }
+        
+        .result-value.purple {
+            color: #7c3aed;
+        }
+        
+        .result-value.effect {
+            color: #f97316;
+        }
+        
+        .result-label {
+            font-size: 0.875rem;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.25rem;
         }
         
         .section h3 {
             font-family: 'Poppins', sans-serif;
             font-size: 1.125rem;
             font-weight: 600;
-            margin: 0 0 0.25rem 0;
+            margin-bottom: 0.25rem;
+            color: #0F172A;
         }
         
         .section-subtitle {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-            margin: 0 0 1.25rem 0;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 1rem;
+            line-height: 1.5rem;
+            color: #64748b;
+            margin-bottom: 1.5rem;
         }
         
         /* Form Elements */
@@ -202,25 +324,27 @@
         }
         
         .form-group label {
-            display: block;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
             font-weight: 500;
             margin-bottom: 0.5rem;
-            color: var(--text-primary);
-            font-size: 0.9rem;
+            font-size: 0.875rem;
+            color: #0F172A;
         }
         
         /* Buttons */
         .btn-primary-custom {
-            width: 100%;
-            padding: 0.875rem;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(135deg, #005EE9, #0067FF);
             color: white;
             border: none;
-            border-radius: 8px;
+            padding: 0.875rem 1.5rem;
+            border-radius: 0.75rem;
             font-weight: 600;
             font-size: 1rem;
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
         }
         
         .btn-primary-custom:hover {
@@ -228,17 +352,21 @@
             box-shadow: 0 4px 12px rgba(0, 94, 233, 0.3);
         }
         
+        .btn-primary-custom:active {
+            transform: translateY(0);
+        }
+        
         .btn-secondary-custom {
-            width: 100%;
-            padding: 0.75rem;
             background: white;
-            color: var(--primary-color);
-            border: 1px solid var(--primary-color);
-            border-radius: 8px;
+            color: #005EE9;
+            border: 1px solid #005EE9;
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.75rem;
             font-weight: 500;
             font-size: 0.95rem;
             cursor: pointer;
             transition: all 0.2s;
+            width: 100%;
         }
         
         .btn-secondary-custom:hover {
@@ -246,26 +374,49 @@
         }
         
         .btn-outline-custom {
-            width: 100%;
-            padding: 0.75rem;
-            background: white;
-            color: var(--text-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
+            background: transparent;
+            color: #64748b;
+            border: 1px solid #e2e8f0;
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.5rem;
             font-weight: 500;
-            font-size: 0.95rem;
+            font-size: 0.875rem;
             cursor: pointer;
             transition: all 0.2s;
+            width: 100%;
         }
         
         .btn-outline-custom:hover {
             background: #f8fafc;
-            border-color: var(--text-secondary);
+            border-color: #cbd5e1;
+            color: #334155;
+        }
+        
+        .clear-button {
+            background: transparent;
+            border: 1px solid #e2e8f0;
+            color: #64748b;
+            padding: 0.5rem 0.875rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .clear-button:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+            color: #334155;
         }
         
         /* Slider */
         .slider-group {
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .slider-group:last-child {
+            margin-bottom: 0;
         }
         
         .slider-label {
@@ -275,15 +426,21 @@
             margin-bottom: 0.5rem;
         }
         
+        .slider-label label {
+            font-weight: 500;
+            color: #0F172A;
+            font-size: 0.875rem;
+        }
+        
         .slider-value {
             font-weight: 600;
-            color: var(--primary-color);
+            color: #005EE9;
         }
         
         input[type="range"] {
             width: 100%;
             height: 6px;
-            background: #e2e8f0;
+            background: #e5e7eb;
             border-radius: 3px;
             outline: none;
             -webkit-appearance: none;
@@ -294,7 +451,7 @@
             -webkit-appearance: none;
             width: 18px;
             height: 18px;
-            background: var(--primary-color);
+            background: #005EE9;
             border-radius: 50%;
             cursor: pointer;
             transition: transform 0.2s;
@@ -304,37 +461,116 @@
             transform: scale(1.2);
         }
         
-        /* Canvas */
-        #plinkoCanvas {
-            background: #f8fafc;
-            border-radius: 12px;
+        /* Chart Section - absolutely NO border, NO radius, NO background */
+        .chart-section,
+        .results-card .chart-section,
+        div.chart-section {
+            background: none !important;
+            border: 0 !important;
+            border-radius: 0 !important;
+            padding: 0 !important;
+            margin-top: 1.5rem !important;
+            box-shadow: none !important;
+            outline: none !important;
+        }
+        
+        .chart-section h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0;
+        }
+        
+        .chart-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .chart-legend {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 0;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .curve-style-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-left: auto;
+        }
+        
+        .curve-control-label {
+            font-size: 0.75rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+        
+        .curve-control-select {
+            padding: 0.375rem 0.625rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            background: #ffffff;
+            cursor: pointer;
+            color: #475569;
+            font-weight: 500;
+            min-width: 128px;
+        }
+        
+        .curve-control-select:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+        
+        .curve-control-select:hover {
+            border-color: #cbd5e1;
+        }
+        
+        /* Canvas - exact from template */
+        .chart-container {
+            background: white;
+            border: 2px solid #cbd5e1;
+            border-radius: 0;
+            padding: 0;
+            margin-bottom: 1rem;
             width: 100%;
+            overflow: visible;
+            position: relative;
+            z-index: 3;
+        }
+        
+        .chart-container canvas {
+            width: 100%;
+            max-width: 800px;
             height: auto;
             display: block;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: none;
+            background: #ffffff;
+            margin: 0 auto;
+        }
+        
+        /* Unified canvas: no external border; seamless look */
+        .unified-box canvas {
+            border: none;
         }
         
         /* Histogram */
-        .histogram-container {
-            background: white;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-top: 1.5rem;
-        }
-        
         .histogram-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1rem;
-        }
-        
-        .histogram-header h4 {
-            font-family: 'Poppins', sans-serif;
-            font-size: 1rem;
-            font-weight: 600;
-            margin: 0;
         }
         
         .histogram-legend {
@@ -363,12 +599,37 @@
             border: 2px solid #f59e0b;
             background: transparent;
         }
-        
-        #histogramCanvas {
-            width: 100%;
-            height: auto;
-            display: block;
+
+        /* Visualization Toggles */
+        .viz-toggles {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem 1.25rem;
+            margin: 0.75rem 0 0.75rem 0;
+            font-size: 0.75rem;
+            line-height: 1.1;
+            color: #475569;
         }
+        .viz-toggles label {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            padding: 4px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            user-select: none;
+            font-weight: 500;
+        }
+        .viz-toggles input[type="checkbox"] {
+            accent-color: #005EE9;
+            cursor: pointer;
+        }
+        .viz-toggles label:hover { background: #e2e8f0; }
+        .viz-toggles label:active { background: #cbd5e1; }
+        
+
         
         /* Stats */
         .stat-row {
@@ -376,16 +637,20 @@
             justify-content: space-between;
             align-items: center;
             padding: 0.75rem 0;
-            border-bottom: 1px solid #f1f5f9;
+            border-bottom: 1px solid #f3f4f6;
         }
         
         .stat-row:last-child {
             border-bottom: none;
         }
         
+        .stat-row:first-child {
+            padding-top: 0;
+        }
+        
         .stat-label {
             font-weight: 500;
-            color: var(--text-primary);
+            color: #0F172A;
         }
         
         .stat-value {
@@ -396,7 +661,7 @@
         
         .badge {
             padding: 0.25rem 0.75rem;
-            background: var(--primary-color);
+            background: #005EE9;
             color: white;
             border-radius: 12px;
             font-size: 0.875rem;
@@ -404,63 +669,16 @@
         }
         
         .percentage {
-            color: var(--text-secondary);
+            color: #64748b;
             font-size: 0.875rem;
         }
         
-        /* Bin Chart */
-        .bin-chart-container {
-            background: #f8fafc;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-top: 1.5rem;
-        }
-        
-        .bin-chart {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            height: 120px;
-            gap: 0.5rem;
-        }
-        
-        .bin-column {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-end;
-        }
-        
-        .bin-bar {
-            width: 100%;
-            background: linear-gradient(to top, #3b82f6, #60a5fa);
-            border-radius: 4px 4px 0 0;
-            transition: height 0.3s ease;
-            min-height: 2px;
-        }
-        
-        .bin-bar.center {
-            background: linear-gradient(to top, #8b5cf6, #a78bfa);
-        }
-        
-        .bin-label {
-            margin-top: 0.5rem;
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-        
-        .bin-count {
-            font-size: 0.7rem;
-            color: var(--text-secondary);
-        }
+
         
         /* Footer */
         .app-footer {
             background: white;
-            border-top: 1px solid var(--border-color);
+            border-top: 1px solid #e2e8f0;
             padding: 1.5rem 2rem;
             margin-top: 3rem;
         }
@@ -472,7 +690,9 @@
             justify-content: space-between;
             align-items: center;
             font-size: 0.875rem;
-            color: var(--text-secondary);
+            color: #64748b;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
         
         .footer-left, .footer-right {
@@ -483,21 +703,22 @@
         
         .footer-brand {
             font-weight: 600;
-            color: var(--text-primary);
+            color: #0F172A;
         }
         
         .footer-separator {
-            color: var(--border-color);
+            color: #cbd5e1;
         }
         
         .footer-link {
-            color: var(--primary-color);
+            color: #005EE9;
             text-decoration: none;
             transition: color 0.2s;
         }
         
         .footer-link:hover {
-            color: var(--secondary-color);
+            color: #0067FF;
+            text-decoration: underline;
         }
         
         /* Theme Selector */
@@ -513,38 +734,54 @@
         
         .theme-label {
             font-size: 0.875rem;
-            color: var(--text-secondary);
+            color: #64748b;
             font-weight: 500;
         }
         
         .theme-select {
-            padding: 0.5rem 0.75rem;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
+            padding: 0.375rem 0.75rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
             background: white;
-            color: var(--text-primary);
+            color: #0F172A;
             font-size: 0.875rem;
             cursor: pointer;
             transition: all 0.2s;
         }
         
         .theme-select:hover {
-            border-color: var(--primary-color);
+            border-color: #005EE9;
         }
         
         .theme-select:focus {
             outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(0, 94, 233, 0.1);
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
         }
         
-        @media (max-width: 968px) {
+        @media (max-width: 1280px) {
             .content-wrapper {
-                flex-direction: column;
+                width: 100%;
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem 1.5rem;
             }
             
-            .left-panel {
-                width: 100%;
+            .header-text h1 {
+                font-size: 1.5rem;
+            }
+            
+            .header-version {
+                position: static;
+                margin-top: 0.5rem;
+            }
+            
+            .main-content {
+                padding: 24px 16px;
             }
         }
     </style>
@@ -596,110 +833,136 @@
       </div>
     </div>
 
-    <!-- Content -->
-    <div class="content-wrapper">
+        <!-- Content -->
+        <div class="tsm-main">
+            <div class="tsm-wrap">
       <!-- Left Panel -->
-      <div class="left-panel">
-        <!-- Simulation Controls -->
-        <section class="section">
-          <h3>Simulation Controls</h3>
-          <p class="section-subtitle">Drop balls and configure parameters</p>
-          
-          <div class="form-group">
-            <button id="dropBall" class="btn-primary-custom">Drop Ball</button>
-          </div>
-          
-          <div class="form-group">
-            <button id="autoToggle" class="btn-secondary-custom">Start Auto Drop</button>
-          </div>
-          
-          <div class="form-group">
-            <button id="reset" class="btn-outline-custom">Reset All</button>
-          </div>
-        </section>
-
-        <!-- Parameters -->
-        <section class="section">
-          <h3>Parameters</h3>
-          <p class="section-subtitle">Adjust simulation settings</p>
-          
-          <div class="slider-group">
-            <div class="slider-label">
-              <label>Number of Rows</label>
-              <span class="slider-value" id="rowsValue">6</span>
+            <div class="left-panel">
+                <section class="tsm-card">
+          <!-- Simulation Controls -->
+          <div style="margin-bottom: 2rem;">
+            <h3>Simulation Controls</h3>
+            <p class="section-subtitle">Drop balls and configure parameters</p>
+            
+            <div class="form-group">
+              <button id="dropBall" class="btn-primary-custom">Drop Ball</button>
             </div>
-            <input type="range" id="rowsSlider" min="5" max="10" value="6" step="1">
-            <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.25rem;">More rows create more bins and a smoother distribution</p>
-          </div>
-          
-          <div class="slider-group">
-            <div class="slider-label">
-              <label>Gravity Strength</label>
-              <span class="slider-value" id="gravityValue">0.30</span>
+            
+            <div class="form-group">
+              <button id="autoToggle" class="btn-secondary-custom">Start Auto Drop</button>
             </div>
-            <input type="range" id="gravitySlider" min="0.1" max="0.5" step="0.05" value="0.3">
-            <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.25rem;">Controls how fast balls fall through the pegs</p>
+            
+            <div class="form-group">
+              <button id="reset" class="btn-outline-custom">Reset All</button>
+            </div>
           </div>
-        </section>
 
-        <!-- Statistics -->
-        <section class="section">
-          <h3>Statistics</h3>
-          <p class="section-subtitle">Current distribution data</p>
-          
-          <div class="stat-row">
-            <span class="stat-label">Total Balls Dropped</span>
-            <span class="badge" id="totalBalls">0</span>
+          <!-- Parameters -->
+          <div style="margin-bottom: 2rem; padding-top: 2rem; border-top: 1px solid var(--border-color);">
+            <h3>Parameters</h3>
+            <p class="section-subtitle">Adjust simulation settings</p>
+            
+            <div class="slider-group">
+              <div class="slider-label">
+                <label>Number of Rows</label>
+                <span class="slider-value" id="rowsValue">6</span>
+              </div>
+              <input type="range" id="rowsSlider" min="5" max="10" value="6" step="1">
+              <p style="font-size: 0.875rem; color: var(--gray-500); margin-top: 0.5rem; line-height: 1.4;">More rows create more bins and a smoother distribution</p>
+            </div>
+            
+            <div class="slider-group">
+              <div class="slider-label">
+                <label>Gravity Strength</label>
+                <span class="slider-value" id="gravityValue">0.30</span>
+              </div>
+              <input type="range" id="gravitySlider" min="0.1" max="0.5" step="0.05" value="0.3">
+              <p style="font-size: 0.875rem; color: var(--gray-500); margin-top: 0.5rem; line-height: 1.4;">Controls how fast balls fall through the pegs</p>
+            </div>
           </div>
-          
-          <div id="binStats"></div>
+
+          <!-- Statistics -->
+          <div style="padding-top: 2rem; border-top: 1px solid var(--border-color);">
+            <h3>Statistics</h3>
+            <p class="section-subtitle">Current distribution data</p>
+            
+            <div class="stat-row">
+              <span class="stat-label">Total Balls Dropped</span>
+              <span class="badge" id="totalBalls">0</span>
+            </div>
+            
+            <div class="stat-row">
+              <span class="stat-label">Binomial Fit</span>
+              <span class="badge" id="fitBadge" style="background: #94a3b8;">-</span>
+            </div>
+            
+            <div id="binStats"></div>
+          </div>
         </section>
       </div>
 
       <!-- Right Panel -->
       <div class="right-panel">
-        <section class="section" style="position: relative;">
-          <div class="theme-controls">
-            <label class="theme-label">Theme</label>
-            <select id="canvasTheme" class="theme-select">
-              <option value="light" selected>Light</option>
-              <option value="dark">Dark</option>
-              <option value="midnight">Midnight</option>
-              <option value="ocean">Ocean</option>
-              <option value="forest">Forest</option>
-              <option value="sunset">Sunset</option>
-              <option value="lavender">Lavender</option>
-              <option value="christmas">🎄 Christmas</option>
-              <option value="halloween">🎃 Halloween</option>
-              <option value="summer">☀️ Summer</option>
-            </select>
+        <div class="results-card">
+          <div class="results-header-row">
+            <h3>Distribution Results</h3>
+            <button id="clearAllBtn" class="clear-button" type="button" title="Reset all inputs" style="display: none;">Clear all</button>
           </div>
-          <canvas id="plinkoCanvas" width="600" height="420"></canvas>
+          <p class="results-subtitle">Based on your simulation parameters</p>
           
-          <!-- Bin Visualization -->
-          <div class="bin-chart-container">
-            <h4 style="font-family: 'Poppins', sans-serif; font-size: 1rem; font-weight: 600; margin-bottom: 1rem;">Distribution Chart</h4>
-            <div class="bin-chart" id="binChart"></div>
-          </div>
-        </section>
-        
-        <!-- Histogram -->
-        <section class="histogram-container">
-          <div class="histogram-header">
-            <h4>Binomial Distribution Histogram</h4>
-            <div class="histogram-legend">
-              <div class="legend-item">
-                <div class="legend-dot actual"></div>
-                <span>Actual</span>
-              </div>
-              <div class="legend-item">
-                <div class="legend-dot theoretical"></div>
-                <span>Theoretical</span>
-              </div>
+          <!-- Value Display Grid -->
+          <div class="results-grid">
+            <div class="result-item">
+              <div class="result-value" id="displayRows">6</div>
+              <div class="result-label">Number of Rows</div>
+            </div>
+            <div class="result-item">
+              <div class="result-value purple" id="displayBalls">0</div>
+              <div class="result-label">Total Balls</div>
+            </div>
+            <div class="result-item">
+              <div class="result-value effect" id="displayGravity">0.30</div>
+              <div class="result-label">Gravity</div>
             </div>
           </div>
-          <canvas id="histogramCanvas" width="800" height="300"></canvas>
-        </section>
+
+                    <!-- Chart Section (Level 1 container) -->
+                    <div class="chart-section">
+                        <div class="chart-header">
+                            <h4>Distribution</h4>
+                            <div class="chart-legend">
+                                <div class="legend-item">
+                                    <div class="legend-dot actual"></div>
+                                    <span>Actual</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-dot theoretical"></div>
+                                    <span>Target</span>
+                                </div>
+                            </div>
+                            <div class="curve-style-controls">
+                                <span class="curve-control-label">Theme</span>
+                                <select id="canvasTheme" class="curve-control-select">
+                                    <option value="light" selected>Light</option>
+                                    <option value="dark">Dark</option>
+                                    <option value="midnight">Midnight</option>
+                                    <option value="ocean">Ocean</option>
+                                    <option value="forest">Forest</option>
+                                    <option value="sunset">Sunset</option>
+                                    <option value="lavender">Lavender</option>
+                                    <option value="christmas">🎄 Christmas</option>
+                                    <option value="halloween">🎃 Halloween</option>
+                                    <option value="summer">☀️ Summer</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- Level 2: unified rectangular inner box with square corners -->
+                        <div class="chart-container unified-box">
+                            <canvas id="chartCanvas" width="800" height="700"></canvas>
+                        </div>
+                    </div>
+        </div>
+      </div>
       </div>
     </div>
   </div>
@@ -750,6 +1013,10 @@
                 return false;
             }
         }
+
+        // Visualization defaults (always on)
+        const TOGGLES = { showBars: true, unifiedColor: true, showBinLabels: true };
+        const unifiedColor = '#7C3AED';
 
         // Theme Configuration
         const THEMES = {
@@ -842,8 +1109,8 @@
         
         // Configuration
         const CONFIG = {
-            width: 600,
-            height: 420,
+            width: 800,
+            height: 700,
             pegRadius: 5,
             ballRadius: 6,
             gravity: 0.3,
@@ -851,7 +1118,7 @@
             rows: 6,
             pegSpacingX: 60,
             pegSpacingY: 50,
-            startX: 300,
+            startX: 400,
             startY: 50
         };
 
@@ -861,25 +1128,27 @@
         let isAutoDropping = false;
         let autoInterval = null;
         let balls = [];
+        let allTrails = [];
+        let settledBalls = [];
         let pegs = [];
         let animationId = null;
         let useFirebase = false;
 
-        // Canvas setup
-        const canvas = document.getElementById('plinkoCanvas');
+        // Canvas setup (single unified canvas)
+        const canvas = document.getElementById('chartCanvas');
         const ctx = canvas.getContext('2d');
-        const histogramCanvas = document.getElementById('histogramCanvas');
-        const histogramCtx = histogramCanvas.getContext('2d');
 
         // Initialize pegs
         function initPegs() {
             pegs = [];
             const rows = CONFIG.rows;
+            // Start first peg row well below funnel exit (funnel ends at y=70)
+            const firstPegY = 110;
             for (let row = 0; row < rows; row++) {
                 for (let col = 0; col <= row; col++) {
                     const xOffset = (col - row / 2) * CONFIG.pegSpacingX;
                     const x = CONFIG.startX + xOffset;
-                    const y = CONFIG.startY + row * CONFIG.pegSpacingY + 60;
+                    const y = firstPegY + row * CONFIG.pegSpacingY;
                     pegs.push({ x, y });
                 }
             }
@@ -888,50 +1157,181 @@
         // Ball class
         class Ball {
             constructor() {
-                this.x = CONFIG.startX + (Math.random() - 0.5) * 2;
-                this.y = 30;
+                // Start ball inside funnel at random position in top opening
+                this.x = CONFIG.startX + (Math.random() - 0.5) * 50; // Random position across funnel opening
+                this.y = 35; // Start near top of funnel
                 this.vx = 0;
-                this.vy = 0;
-                this.radius = CONFIG.ballRadius;
-                const colors = ['#f87171', '#fbbf24', '#34d399', '#60a5fa', '#a78bfa', '#f472b6'];
-                this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.vy = 0.5; // Small initial downward velocity
+                this.radius = Math.max(CONFIG.ballRadius, CONFIG.pegRadius * 1.5); // Increase ball size for reliable peg contact
+                // Use TSM purple
+                this.color = '#7C3AED';
                 this.active = true;
+                this.inFunnel = true;
+                this.currentRow = -1; // Track which peg row we've processed
+                this.trail = [{x: this.x, y: this.y}]; // Store previous positions for trail
             }
 
             update() {
+                // Funnel collision detection
+                if (this.inFunnel && this.y < 75) {
+                    const funnelTopY = 30;
+                    const funnelBottomY = 70;
+                    const funnelTopWidth = 60;
+                    const funnelBottomWidth = 8;
+                    
+                    // Calculate funnel width at current Y position
+                    const funnelProgress = (this.y - funnelTopY) / (funnelBottomY - funnelTopY);
+                    const currentWidth = funnelTopWidth - (funnelTopWidth - funnelBottomWidth) * funnelProgress;
+                    const leftBound = CONFIG.startX - currentWidth / 2;
+                    const rightBound = CONFIG.startX + currentWidth / 2;
+                    
+                    // Constrain ball to funnel walls
+                    if (this.x - this.radius < leftBound) {
+                        this.x = leftBound + this.radius;
+                        this.vx = Math.abs(this.vx) * 0.3; // Bounce off left wall gently
+                    }
+                    if (this.x + this.radius > rightBound) {
+                        this.x = rightBound - this.radius;
+                        this.vx = -Math.abs(this.vx) * 0.3; // Bounce off right wall gently
+                    }
+                    
+                    // Add slight funnel friction
+                    this.vx *= 0.95;
+                } else {
+                    this.inFunnel = false;
+                }
+                
                 // Apply physics
                 this.vx *= CONFIG.drag;
                 this.vy += CONFIG.gravity;
                 this.x += this.vx;
                 this.y += this.vy;
+                // Store position for trail (limit to last 100 points)
+                if (!this.trail) this.trail = [];
+                this.trail.push({x: this.x, y: this.y});
+                if (this.trail.length > 100) this.trail.shift();
 
-                // Peg collisions
-                pegs.forEach(peg => {
+                // Peg collisions - ensure we hit exactly one peg per row
+                const firstPegY = 110;
+                const currentRowIndex = Math.floor((this.y - firstPegY) / CONFIG.pegSpacingY);
+
+                // Process ALL rows we've entered since last update (in case ball skips rows)
+                if (currentRowIndex >= 0 && currentRowIndex < CONFIG.rows && currentRowIndex > this.currentRow) {
+                    for (let rowToProcess = this.currentRow + 1; rowToProcess <= currentRowIndex && rowToProcess < CONFIG.rows; rowToProcess++) {
+                        // Find the peg for this row (pegs are spaced horizontally)
+                        const pegRowY = firstPegY + rowToProcess * CONFIG.pegSpacingY;
+                        // Pegs in this row: index from 0 to rowToProcess
+                        const pegCols = rowToProcess + 1;
+                        // Find which peg the ball should hit based on its x position
+                        let closestPeg = null;
+                        let minDist = Infinity;
+                        for (let peg of pegs) {
+                            if (Math.abs(peg.y - pegRowY) < 1) {
+                                const dist = Math.abs(this.x - peg.x);
+                                if (dist < minDist) {
+                                    minDist = dist;
+                                    closestPeg = peg;
+                                }
+                            }
+                        }
+                        // Force the ball to interact with the top of the peg
+                        if (closestPeg) {
+                            // Force ball to hit the peg: align x to peg center before deflection
+                            this.x = closestPeg.x;
+                            this.y = closestPeg.y - this.radius - CONFIG.pegRadius;
+                            // Determine L/R by which side of peg center the ball is (randomize for visual variety)
+                            let goLeft = Math.random() < 0.5;
+                            if (!this.path) this.path = '';
+                            this.path += goLeft ? 'L' : 'R';
+                            // Deflect ball
+                            if (rowToProcess === currentRowIndex) {
+                                this.vx = goLeft ? -2.5 : 2.5;
+                                this.vy = 1.5;
+                            }
+                        } else {
+                            // Fallback to random if no peg found
+                            let goLeft = Math.random() < 0.5;
+                            if (!this.path) this.path = '';
+                            this.path += goLeft ? 'L' : 'R';
+                            if (rowToProcess === currentRowIndex) {
+                                this.vx = goLeft ? -2.5 : 2.5;
+                                this.vy = 1.5;
+                            }
+                        }
+                    }
+                    this.currentRow = currentRowIndex;
+                }
+                
+                // Still handle physical peg collisions for realistic bouncing off TOP
+                for (let i = 0; i < pegs.length; i++) {
+                    const peg = pegs[i];
                     const dx = this.x - peg.x;
                     const dy = this.y - peg.y;
                     const distance = Math.sqrt(dx * dx + dy * dy);
                     const minDistance = this.radius + CONFIG.pegRadius;
 
-                    if (distance < minDistance) {
+                    if (distance < minDistance && dy > 0) {
+                        // Only bounce if hitting from above (dy > 0)
                         const angle = Math.atan2(dy, dx);
-                        const overlap = minDistance - distance;
-                        this.x += Math.cos(angle) * overlap;
-                        this.y += Math.sin(angle) * overlap;
+                        const pushDistance = minDistance - distance + 1;
+                        this.x += Math.cos(angle) * pushDistance;
+                        this.y += Math.sin(angle) * pushDistance;
+                        break;
+                    }
+                }
 
-                        if (this.vy > 0) {
-                            this.vy = -1.5;
-                            const randomDir = Math.random() < 0.5 ? -1 : 1;
-                            this.vx = randomDir * 2.0;
+                // Bin detection - trigger shortly after passing last peg row
+                const lastPegRow = CONFIG.rows - 1;
+                const lastPegY = firstPegY + lastPegRow * CONFIG.pegSpacingY;
+                const binDetectionY = lastPegY + CONFIG.pegSpacingY * 0.5; // Half a row below last peg
+                
+                if (this.y > binDetectionY) {
+                    // CRITICAL: Ensure we've processed all rows before determining bin
+                    // Force processing of any remaining rows
+                    if (this.y > lastPegY && this.currentRow < lastPegRow) {
+                        // We passed the last peg row but didn't process it
+                        for (let rowToProcess = this.currentRow + 1; rowToProcess < CONFIG.rows; rowToProcess++) {
+                            const goLeft = Math.random() < 0.5;
+                            if (!this.path) this.path = '';
+                            this.path += goLeft ? 'L' : 'R';
+                        }
+                        this.currentRow = lastPegRow;
+                    }
+                    
+                    // Bin is determined by the path, not final position
+                    // Track position: start at 0, L means -1, R means +1
+                    let binIndex;
+                    if (this.path && this.path.length === CONFIG.rows) {
+                        // Calculate position by walking through path
+                        let position = 0;
+                        for (let i = 0; i < this.path.length; i++) {
+                            position += this.path[i] === 'R' ? 1 : -1;
+                        }
+                        // Position ranges from -CONFIG.rows to +CONFIG.rows
+                        // LLLLLL: pos=-6, bin=0; RRRRRR: pos=+6, bin=6
+                        // Formula: binIndex = (position + CONFIG.rows) / 2
+                        binIndex = Math.floor((position + CONFIG.rows) / 2);
+                    } else {
+                        // Fallback to position-based if path is incomplete
+                        const binCount = CONFIG.rows + 1;
+                        const binWidth = CONFIG.pegSpacingX;
+                        const centers = [];
+                        for (let i = 0; i < binCount; i++) {
+                            centers.push(CONFIG.startX + (i - CONFIG.rows / 2) * binWidth);
+                        }
+                        binIndex = 0;
+                        let bestDist = Infinity;
+                        for (let i = 0; i < binCount; i++) {
+                            const d = Math.abs(this.x - centers[i]);
+                            if (d < bestDist) { bestDist = d; binIndex = i; }
                         }
                     }
-                });
-
-                // Bin detection
-                if (this.y > CONFIG.height - 30) {
-                    const halfWidth = ((CONFIG.rows / 2) + 0.5) * CONFIG.pegSpacingX;
-                    let binIndex = Math.floor((this.x - (CONFIG.startX - halfWidth)) / CONFIG.pegSpacingX);
-                    binIndex = Math.max(0, Math.min(CONFIG.rows, binIndex));
                     
+                    // Freeze the ball immediately to prevent drift
+                    this.vx = 0;
+                    this.vy = 0;
+                    
+                    // Update counts
                     if (useFirebase && db) {
                         incrementBinFirebase(binIndex);
                     } else {
@@ -939,8 +1339,14 @@
                         totalBalls++;
                         updateStats();
                     }
-                    
+
+                    // Ball disappears - just mark as inactive, don't add to settledBalls
+                    // Save trail for permanent display
+                    if (this.trail && this.trail.length > 1) {
+                        allTrails.push([...this.trail]);
+                    }
                     this.active = false;
+                    return;
                 }
 
                 // Wall collisions
@@ -954,11 +1360,24 @@
             }
 
             draw() {
-                ctx.fillStyle = this.color;
+                // Draw trail (faint line)
+                if (this.trail && this.trail.length > 1) {
+                    ctx.save();
+                    ctx.strokeStyle = 'rgba(124,58,237,0.3)';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(this.trail[0].x, this.trail[0].y);
+                    for (let i = 1; i < this.trail.length; i++) {
+                        ctx.lineTo(this.trail[i].x, this.trail[i].y);
+                    }
+                    ctx.stroke();
+                    ctx.restore();
+                }
+                ctx.fillStyle = TOGGLES.unifiedColor ? unifiedColor : this.color;
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
                 ctx.fill();
-                
+
                 // Shine
                 ctx.fillStyle = 'rgba(255,255,255,0.4)';
                 ctx.beginPath();
@@ -969,7 +1388,61 @@
 
         // Animation loop
         function animate() {
+            // Slow motion mode - skip frames to slow down
+            if (slowMotion) {
+                frameSkip++;
+                if (frameSkip < 5) {
+                    animationId = requestAnimationFrame(animate);
+                    return;
+                }
+                frameSkip = 0;
+            }
+            
             ctx.clearRect(0, 0, CONFIG.width, CONFIG.height);
+
+            // Draw funnel
+            const funnelX = CONFIG.startX;
+            const funnelTopY = 30;
+            const funnelBottomY = 70;
+            const funnelTopWidth = 60;
+            const funnelBottomWidth = 8;
+            
+            // Funnel gradient
+            const gradient = ctx.createLinearGradient(funnelX, funnelTopY, funnelX, funnelBottomY);
+            gradient.addColorStop(0, '#cbd5e1');
+            gradient.addColorStop(1, '#94a3b8');
+            
+            // Draw funnel shape
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.moveTo(funnelX - funnelTopWidth / 2, funnelTopY);
+            ctx.lineTo(funnelX + funnelTopWidth / 2, funnelTopY);
+            ctx.lineTo(funnelX + funnelBottomWidth / 2, funnelBottomY);
+            ctx.lineTo(funnelX - funnelBottomWidth / 2, funnelBottomY);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Funnel outline
+            ctx.strokeStyle = '#64748b';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // Funnel opening (bottom tube)
+            ctx.fillStyle = '#94a3b8';
+            ctx.fillRect(funnelX - funnelBottomWidth / 2, funnelBottomY, funnelBottomWidth, 5);
+            ctx.strokeStyle = '#64748b';
+            ctx.lineWidth = 1.5;
+            ctx.strokeRect(funnelX - funnelBottomWidth / 2, funnelBottomY, funnelBottomWidth, 5);
+            
+            // Funnel highlight
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.beginPath();
+            ctx.moveTo(funnelX - funnelTopWidth / 2 + 5, funnelTopY + 2);
+            ctx.lineTo(funnelX - funnelTopWidth / 2 + 15, funnelTopY + 2);
+            ctx.lineTo(funnelX - funnelBottomWidth / 2 + 3, funnelBottomY - 2);
+            ctx.lineTo(funnelX - funnelBottomWidth / 2 + 1, funnelBottomY - 2);
+            ctx.closePath();
+            ctx.fill();
 
             // Draw pegs (themed)
             pegs.forEach(peg => {
@@ -1099,6 +1572,169 @@
                 return false;
             });
 
+            // Draw all persistent trails
+            if (allTrails.length) {
+                ctx.save();
+                ctx.strokeStyle = 'rgba(124,58,237,0.2)';
+                ctx.lineWidth = 2;
+                for (const trail of allTrails) {
+                    if (trail.length > 1) {
+                        ctx.beginPath();
+                        ctx.moveTo(trail[0].x, trail[0].y);
+                        for (let i = 1; i < trail.length; i++) {
+                            ctx.lineTo(trail[i].x, trail[i].y);
+                        }
+                        ctx.stroke();
+                    }
+                }
+                ctx.restore();
+            }
+
+            // Draw bin lines and labels
+            const binCount = CONFIG.rows + 1;
+            const binWidth = CONFIG.pegSpacingX;
+            const BALL_D = CONFIG.ballRadius * 2;
+            const maxCount = Math.max(...bins, 1);
+            // Fixed baseline at bottom of canvas
+            const binLineY = CONFIG.height - 100;
+            const binLabelY = Math.min(CONFIG.height - 10, binLineY + 20);
+            // Bins should align with spaces between bottom row pegs
+            // Bottom row has CONFIG.rows pegs positioned at (col - (CONFIG.rows-1)/2)
+            const bottomRowPegCount = CONFIG.rows;
+            const leftEdge = CONFIG.startX - (bottomRowPegCount / 2) * binWidth;
+            const rightEdge = CONFIG.startX + (bottomRowPegCount / 2) * binWidth;
+            
+            // Calculate available space and scaling
+            const bottomPegY = pegs.length ? Math.max(...pegs.map(p => p.y)) : 340;
+            const availableHeight = binLineY - bottomPegY - 40; // 40pt safety margin
+            const maxBarHeight = maxCount * BALL_D;
+            const scale = maxBarHeight > availableHeight ? availableHeight / maxBarHeight : 1;
+            
+            ctx.strokeStyle = '#005EE9'; // Primary blue for lines
+            ctx.lineWidth = 2;
+            ctx.font = '14px Inter';
+            ctx.textAlign = 'center';
+            
+            // Draw only horizontal bin lines and labels (no vertical lines)
+            for (let i = 0; i < binCount; i++) {
+                const binX = CONFIG.startX + (i - CONFIG.rows / 2) * binWidth;
+                const gap = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(binX - binWidth / 2 + gap, binLineY);
+                ctx.lineTo(binX + binWidth / 2 - gap, binLineY);
+                ctx.stroke();
+                if (TOGGLES.showBinLabels) {
+                    ctx.fillStyle = '#64748b';
+                    ctx.fillText((i + 1).toString(), binX, binLabelY);
+                }
+            }
+
+            // Calculate correct bin boundaries for bars
+            const barBinEdges = [];
+            for (let i = 0; i <= binCount; i++) {
+                const edgeX = CONFIG.startX + (i - 0.5 - CONFIG.rows / 2) * binWidth;
+                barBinEdges.push(edgeX);
+            }
+            
+            // Draw bars (always visible now)
+            for (let i = 0; i < binCount; i++) {
+                const count = bins[i];
+                if (!count) continue;
+                const leftEdge = barBinEdges[i];
+                const rightEdge = barBinEdges[i + 1];
+                const barWidth = rightEdge - leftEdge;
+                const barHeight = count * BALL_D * scale;
+                const topY = binLineY - barHeight;
+                const gap = 6;
+                ctx.fillStyle = 'rgba(124,58,237,0.4)';
+                ctx.beginPath();
+                ctx.rect(leftEdge + gap, topY, barWidth - gap * 2, barHeight);
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(124,58,237,0.8)';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(leftEdge + gap, topY, barWidth - gap * 2, barHeight);
+            }
+            
+            // TROUBLESHOOTING: Draw lines from each bin to corresponding bottom peg
+            const troubleshootBinCount = CONFIG.rows + 1;
+            const troubleshootBinWidth = CONFIG.pegSpacingX;
+            const troubleshootBinLineY = CONFIG.height - 100;
+            const bottomPegRow = CONFIG.rows - 1; // Last row of pegs (row 5 for 6 rows)
+            const troubleshootFirstPegY = 110;
+            const troubleshootBottomPegY = troubleshootFirstPegY + bottomPegRow * CONFIG.pegSpacingY;
+            
+            // Store left and right edges of each bin area
+            // Bins are centered at regular intervals, edges are halfway between centers
+            const binEdges = [];
+            
+            for (let i = 0; i <= troubleshootBinCount; i++) {
+                // Edge i is halfway between bin i-1 and bin i
+                // Bin centers are at: CONFIG.startX + (binIndex - CONFIG.rows/2) * binWidth
+                // Edge is at: CONFIG.startX + (i - 0.5 - CONFIG.rows/2) * binWidth
+                const edgeX = CONFIG.startX + (i - 0.5 - CONFIG.rows / 2) * troubleshootBinWidth;
+                binEdges.push(edgeX);
+            }
+            
+            // Shade each bin area between the edges
+            for (let i = 0; i < troubleshootBinCount; i++) {
+                const leftEdge = binEdges[i];
+                const rightEdge = binEdges[i + 1];
+                
+                // Shade the bin area
+                ctx.fillStyle = i % 2 === 0 ? 'rgba(200, 200, 255, 0.15)' : 'rgba(255, 200, 200, 0.15)';
+                ctx.fillRect(leftEdge, troubleshootBottomPegY, rightEdge - leftEdge, troubleshootBinLineY - troubleshootBottomPegY);
+                
+                // Draw blue dotted vertical lines at each bin edge
+                ctx.strokeStyle = 'rgba(0, 94, 233, 0.7)';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([3, 3]);
+                
+                // Left edge line
+                ctx.beginPath();
+                ctx.moveTo(leftEdge, troubleshootBottomPegY);
+                ctx.lineTo(leftEdge, troubleshootBinLineY);
+                ctx.stroke();
+                
+                // Right edge line (only for last bin)
+                if (i === troubleshootBinCount - 1) {
+                    ctx.beginPath();
+                    ctx.moveTo(rightEdge, troubleshootBottomPegY);
+                    ctx.lineTo(rightEdge, troubleshootBinLineY);
+                    ctx.stroke();
+                }
+                
+                ctx.setLineDash([]);
+            }
+            
+
+
+            // Theoretical curve overlay (removed)
+            if (false) {
+                ctx.strokeStyle = '#f59e0b';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                for (let i = 0; i < binCount; i++) {
+                    const p = binomialProbability(CONFIG.rows, i, 0.5);
+                    const expected = p * totalBalls;
+                    const expectedHeight = expected * BALL_D;
+                    const centerX = CONFIG.startX + (i - CONFIG.rows / 2) * binWidth;
+                    const y = binLineY - expectedHeight;
+                    if (i === 0) ctx.moveTo(centerX, y); else ctx.lineTo(centerX, y);
+                }
+                ctx.stroke();
+                for (let i = 0; i < binCount; i++) {
+                    const p = binomialProbability(CONFIG.rows, i, 0.5);
+                    const expected = p * totalBalls;
+                    const expectedHeight = expected * BALL_D;
+                    const centerX = CONFIG.startX + (i - CONFIG.rows / 2) * binWidth;
+                    const y = binLineY - expectedHeight;
+                    ctx.fillStyle = '#f59e0b';
+                    ctx.beginPath();
+                    ctx.arc(centerX, y, 4, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
             animationId = requestAnimationFrame(animate);
         }
 
@@ -1153,6 +1789,8 @@
 
         // Add ball
         function addBall() {
+            const activeCount = totalBalls + balls.length;
+            if (activeCount >= 200) return;
             balls.push(new Ball());
         }
 
@@ -1174,151 +1812,65 @@
             return combinations(n, k) * Math.pow(p, k) * Math.pow(1 - p, n - k);
         }
         
-        // Draw histogram
+        // No separate histogram chart - balls form the distribution at the bottom
         function drawHistogram() {
-            const width = histogramCanvas.width;
-            const height = histogramCanvas.height;
-            const padding = 60;
-            const chartWidth = width - 2 * padding;
-            const chartHeight = height - 2 * padding;
-            
-            histogramCtx.clearRect(0, 0, width, height);
-            
-            // Background
-            histogramCtx.fillStyle = '#f8fafc';
-            histogramCtx.fillRect(0, 0, width, height);
-            
-            const n = CONFIG.rows;
-            const numBins = bins.length;
-            const barWidth = chartWidth / numBins;
-            
-            // Calculate max for scaling
-            const maxCount = Math.max(...bins, 1);
-            const maxPercent = totalBalls > 0 ? maxCount / totalBalls : 0;
-            const theoreticalMax = Math.max(...bins.map((_, i) => binomialProbability(n, i, 0.5)));
-            const yScale = chartHeight / Math.max(maxPercent, theoreticalMax * 1.1);
-            
-            // Draw grid lines
-            histogramCtx.strokeStyle = '#e2e8f0';
-            histogramCtx.lineWidth = 1;
-            for (let i = 0; i <= 5; i++) {
-                const y = padding + (chartHeight * i / 5);
-                histogramCtx.beginPath();
-                histogramCtx.moveTo(padding, y);
-                histogramCtx.lineTo(width - padding, y);
-                histogramCtx.stroke();
-                
-                // Y-axis labels
-                const percent = ((1 - i / 5) * Math.max(maxPercent, theoreticalMax * 1.1) * 100).toFixed(1);
-                histogramCtx.fillStyle = '#64748b';
-                histogramCtx.font = '12px Inter';
-                histogramCtx.textAlign = 'right';
-                histogramCtx.fillText(percent + '%', padding - 10, y + 4);
-            }
-            
-            // Draw bars (actual data)
-            bins.forEach((count, i) => {
-                const x = padding + i * barWidth;
-                const barHeight = totalBalls > 0 ? (count / totalBalls) * yScale : 0;
-                const y = padding + chartHeight - barHeight;
-                
-                // Gradient fill
-                const gradient = histogramCtx.createLinearGradient(x, y, x, y + barHeight);
-                gradient.addColorStop(0, '#60a5fa');
-                gradient.addColorStop(1, '#3b82f6');
-                
-                histogramCtx.fillStyle = gradient;
-                histogramCtx.fillRect(x + 2, y, barWidth - 4, barHeight);
-            });
-            
-            // Draw theoretical curve
-            histogramCtx.strokeStyle = '#f59e0b';
-            histogramCtx.lineWidth = 2;
-            histogramCtx.beginPath();
-            
-            for (let i = 0; i < numBins; i++) {
-                const prob = binomialProbability(n, i, 0.5);
-                const x = padding + i * barWidth + barWidth / 2;
-                const y = padding + chartHeight - (prob * yScale);
-                
-                if (i === 0) {
-                    histogramCtx.moveTo(x, y);
-                } else {
-                    histogramCtx.lineTo(x, y);
-                }
-                
-                // Draw points
-                histogramCtx.fillStyle = '#f59e0b';
-                histogramCtx.beginPath();
-                histogramCtx.arc(x, y, 4, 0, Math.PI * 2);
-                histogramCtx.fill();
-                histogramCtx.beginPath();
-                if (i < numBins - 1) {
-                    histogramCtx.moveTo(x, y);
-                }
-            }
-            histogramCtx.stroke();
-            
-            // X-axis labels
-            histogramCtx.fillStyle = '#64748b';
-            histogramCtx.font = '12px Inter';
-            histogramCtx.textAlign = 'center';
-            bins.forEach((_, i) => {
-                const x = padding + i * barWidth + barWidth / 2;
-                histogramCtx.fillText(i.toString(), x, height - padding + 20);
-            });
-            
-            // Axis labels
-            histogramCtx.fillStyle = '#1e293b';
-            histogramCtx.font = 'bold 13px Inter';
-            histogramCtx.textAlign = 'center';
-            histogramCtx.fillText('Bin Number', width / 2, height - 10);
-            
-            histogramCtx.save();
-            histogramCtx.translate(15, height / 2);
-            histogramCtx.rotate(-Math.PI / 2);
-            histogramCtx.fillText('Probability', 0, 0);
-            histogramCtx.restore();
-            
-            // Draw axes
-            histogramCtx.strokeStyle = '#1e293b';
-            histogramCtx.lineWidth = 2;
-            histogramCtx.beginPath();
-            histogramCtx.moveTo(padding, padding);
-            histogramCtx.lineTo(padding, height - padding);
-            histogramCtx.lineTo(width - padding, height - padding);
-            histogramCtx.stroke();
+            // Stats update only
         }
         
+        // Chi-squared goodness of fit test
+        function testBinomialFit() {
+            if (totalBalls < 30) return null; // Need sufficient sample size
+            
+            const expectedPercents = [1.56, 9.38, 23.44, 31.25, 23.44, 9.38, 1.56];
+            let chiSquared = 0;
+            
+            for (let i = 0; i < bins.length; i++) {
+                const observed = bins[i];
+                const expected = (expectedPercents[i] / 100) * totalBalls;
+                if (expected > 0) {
+                    chiSquared += Math.pow(observed - expected, 2) / expected;
+                }
+            }
+            
+            // Critical value for 6 degrees of freedom at 0.05 significance level
+            const criticalValue = 12.592; // χ²(0.05, 6)
+            
+            return chiSquared <= criticalValue;
+        }
+
         // Update statistics
         function updateStats() {
             document.getElementById('totalBalls').textContent = totalBalls;
-            
-            // Update bin chart
-            const maxBin = Math.max(...bins, 1);
-            const binChart = document.getElementById('binChart');
-            binChart.innerHTML = bins.map((count, i) => {
-                const heightPercent = (count / maxBin) * 100;
-                const isCenter = i === 3;
-                return `
-                    <div class="bin-column">
-                        <div class="bin-bar ${isCenter ? 'center' : ''}" style="height: ${heightPercent}%;"></div>
-                        <div class="bin-label">${i}</div>
-                        <div class="bin-count">${count}</div>
-                    </div>
-                `;
-            }).join('');
+            document.getElementById('displayBalls').textContent = totalBalls;
+
+            // Expected percentages for 6 rows (binomial distribution with p=0.5)
+            const expectedPercents = [1.56, 9.38, 23.44, 31.25, 23.44, 9.38, 1.56];
+
+            // Test binomial fit
+            const fitResult = testBinomialFit();
+            const fitBadge = document.getElementById('fitBadge');
+            if (fitResult === null) {
+                fitBadge.textContent = '-';
+                fitBadge.style.background = '#94a3b8';
+            } else if (fitResult) {
+                fitBadge.textContent = 'Yes';
+                fitBadge.style.background = '#10b981';
+            } else {
+                fitBadge.textContent = 'No';
+                fitBadge.style.background = '#ef4444';
+            }
 
             // Update stats panel
             const binStats = document.getElementById('binStats');
             binStats.innerHTML = bins.map((count, i) => {
-                const percent = totalBalls > 0 ? ((count / totalBalls) * 100).toFixed(1) : 0;
+                const actualPercent = totalBalls > 0 ? ((count / totalBalls) * 100).toFixed(1) : 0;
+                const expectedPercent = expectedPercents[i] || 0;
                 return `
                     <div class="stat-row">
                         <span class="stat-label">Bin ${i}</span>
                         <div class="stat-value">
                             <span class="badge">${count}</span>
-                            <span class="percentage">${percent}%</span>
+                            <span class="percentage">${actualPercent}% <span style="color: #94a3b8;">(${expectedPercent}%)</span></span>
                         </div>
                     </div>
                 `;
@@ -1331,11 +1883,10 @@
         // Reset
         async function reset() {
             if (useFirebase && db && typeof __app_id !== 'undefined') {
-                // Reset Firebase
+                // Reset Firebase counts
                 const docRef = db.collection('artifacts').doc(__app_id)
                     .collection('public').doc('data')
                     .collection('plinko_stats').doc('global_tally');
-                
                 try {
                     const resetData = {};
                     for (let i = 0; i <= CONFIG.rows; i++) {
@@ -1345,13 +1896,29 @@
                 } catch (error) {
                     console.error('Firebase reset error:', error);
                 }
-            } else {
-                // Local reset
+                // Local mirrors
                 bins = Array(CONFIG.rows + 1).fill(0);
                 totalBalls = 0;
-                balls = [];
-                updateStats();
+            } else {
+                // Local-only reset
+                bins = Array(CONFIG.rows + 1).fill(0);
+                totalBalls = 0;
             }
+            // Clear active and settled balls, stop animation state
+            balls = [];
+            settledBalls = [];
+            // Stop auto mode if running
+            if (isAutoDropping) {
+                clearInterval(autoInterval);
+                isAutoDropping = false;
+                const autoBtn = document.getElementById('autoToggle');
+                if (autoBtn) {
+                    autoBtn.textContent = 'Start Auto Drop';
+                    autoBtn.classList.remove('btn-outline-custom');
+                    autoBtn.classList.add('btn-secondary-custom');
+                }
+            }
+            updateStats();
         }
 
         // Event listeners
@@ -1377,6 +1944,7 @@
         document.getElementById('rowsSlider').addEventListener('input', function() {
             CONFIG.rows = parseInt(this.value);
             document.getElementById('rowsValue').textContent = this.value;
+            document.getElementById('displayRows').textContent = this.value;
             initPegs();
             // Reset bins when rows change
             const newBinCount = CONFIG.rows + 1;
@@ -1388,7 +1956,19 @@
 
         document.getElementById('gravitySlider').addEventListener('input', function() {
             CONFIG.gravity = parseFloat(this.value);
-            document.getElementById('gravityValue').textContent = parseFloat(this.value).toFixed(2);
+            const gravityValue = parseFloat(this.value).toFixed(2);
+            document.getElementById('gravityValue').textContent = gravityValue;
+            document.getElementById('displayGravity').textContent = gravityValue;
+        });
+        
+        // Slow down animation for debugging
+        let slowMotion = false;
+        let frameSkip = 0;
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 's' || e.key === 'S') {
+                slowMotion = !slowMotion;
+                console.log('Slow motion:', slowMotion ? 'ON' : 'OFF');
+            }
         });
 
         canvas.addEventListener('click', addBall);
@@ -1397,17 +1977,20 @@
         document.getElementById('canvasTheme').addEventListener('change', function(e) {
             const themeName = e.target.value;
             currentTheme = THEMES[themeName];
-            canvas.style.background = currentTheme.background;
+            // Keep canvas background unified (white); theme applies to peg colors only
         });
 
-        // Initialize
-        (async () => {
-            useFirebase = await initFirebase();
-            initPegs();
-            animate();
-            updateStats();
-            
-            if (useFirebase) {
+            // Initialize
+            (async () => {
+                useFirebase = await initFirebase();
+                // Ensure canvas size matches unified layout
+                canvas.width = CONFIG.width;
+                canvas.height = CONFIG.height;
+                // startX already set correctly in CONFIG
+                // Initialize pegs
+                initPegs();
+                animate();
+                updateStats();            if (useFirebase) {
                 console.log('✓ Firebase connected - stats synced globally');
             } else {
                 console.log('✓ Local mode - stats reset on refresh');
