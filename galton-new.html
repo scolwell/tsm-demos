@@ -1494,9 +1494,9 @@
       <div class="footer-left">
         <span class="footer-brand">TSM Galton Board Simulator</span>
         <span class="footer-separator">•</span>
-        <span class="footer-version">v1.0.2</span>
+        <span class="footer-version">v1.0.3</span>
         <span class="footer-separator">•</span>
-        <span class="footer-build">Build 20251202-2</span>
+        <span class="footer-build">Build 20251202-3</span>
       </div>
       <div class="footer-right">
         <a href="index.html" class="footer-link">Back to Demonstrations</a>
@@ -2622,8 +2622,8 @@
                     const expCount = totalBalls > 0 ? ((expectedPercents[i] / 100) * totalBalls) : null;
                     cumulative += f;
                     const cumPct = totalBalls > 0 ? (cumulative / totalBalls * 100) : null;
-                    html += `<tr>` +
-                            `<td style="padding:2px 0; color:#475569;">${i}</td>` +
+                        html += `<tr>` +
+                            `<td style="padding:2px 0; color:#475569;">${i + 1}</td>` +
                             `<td style="padding:2px 0; text-align:right; color:#0F172A; font-weight:600;">${f || ''}</td>` +
                             `<td style="padding:2px 0; text-align:right; color:#475569;">${rel != null ? rel.toFixed(2) : ''}</td>` +
                             `<td style="padding:2px 0; text-align:right; color:#475569;">${pct != null ? pct.toFixed(2) : ''}</td>` +
@@ -2823,15 +2823,30 @@
         // PDF download
         document.getElementById('downloadPDF').addEventListener('click', function() {
             const { jsPDF } = window.jspdf;
+            // APA style: portrait, Times font, title, subtitle, centered image, margins
             const pdf = new jsPDF({
-                orientation: canvas.width > canvas.height ? 'landscape' : 'portrait',
-                unit: 'px',
-                format: [canvas.width, canvas.height]
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'letter'
             });
-            
+            pdf.setFont('Times', '');
+            // Title
+            pdf.setFontSize(14);
+            pdf.text('Figure 1', pdf.internal.pageSize.getWidth() / 2, 22, { align: 'center' });
+            // Subtitle
+            pdf.setFontSize(12);
+            pdf.text('Histogram of Galton Board Results', pdf.internal.pageSize.getWidth() / 2, 32, { align: 'center' });
+            // Image
             const imgData = canvas.toDataURL('image/png');
-            pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
-            pdf.save('galton-board.pdf');
+            const imgWidth = 170;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            const x = (pdf.internal.pageSize.getWidth() - imgWidth) / 2;
+            const y = 40;
+            pdf.addImage(imgData, 'PNG', x, y, imgWidth, imgHeight);
+            // Note
+            pdf.setFontSize(10);
+            pdf.text('Note. Histogram displays the observed bin frequencies from the Galton Board simulation.', 20, y + imgHeight + 12);
+            pdf.save('galton-board-apa.pdf');
             downloadMenu.style.display = 'none';
         });
         
@@ -2865,38 +2880,35 @@
         // Generate APA-formatted table
         function generateAPATable(format) {
             const { jsPDF } = window.jspdf;
-            
             // Create APA-formatted table in a temporary container
             const container = document.createElement('div');
             container.style.cssText = 'position:absolute; left:-9999px; background:#fff; padding:40px; font-family:"Times New Roman",Times,serif;';
-            
+            // Title
             const title = document.createElement('div');
             title.style.cssText = 'font-size:12pt; font-weight:bold; text-align:center; margin-bottom:20px;';
             title.textContent = 'Table 1';
             container.appendChild(title);
-            
+            // Subtitle
             const tableTitle = document.createElement('div');
             tableTitle.style.cssText = 'font-size:12pt; font-style:italic; text-align:center; margin-bottom:20px;';
             tableTitle.textContent = 'Frequency Distribution of Galton Board Simulation';
             container.appendChild(tableTitle);
-            
+            // Table
             const table = document.createElement('table');
-            table.style.cssText = 'width:100%; border-collapse:collapse; font-size:12pt;';
-            
+            table.style.cssText = 'width:100%; border-collapse:collapse; font-size:12pt; border-top:2px solid #000; border-bottom:2px solid #000;';
             // Header
             const thead = document.createElement('thead');
             const headerRow = document.createElement('tr');
-            headerRow.style.borderTop = '2px solid #000';
             headerRow.style.borderBottom = '1px solid #000';
             ['Bin', 'f', 'f/n', '%f', 'c.%f', 'E[f]'].forEach(h => {
                 const th = document.createElement('th');
-                th.style.cssText = 'padding:8px; text-align:' + (h === 'Bin' ? 'left' : 'right') + '; font-weight:normal;';
+                th.style.cssText = 'padding:8px; text-align:' + (h === 'Bin' ? 'left' : 'right') + '; font-weight:normal; border-right:1px solid #000;';
                 th.innerHTML = h.includes('f') ? h.replace(/f/g, '<i>f</i>') : h.replace(/E\[(.+)\]/, 'E[<i>$1</i>]');
                 headerRow.appendChild(th);
             });
+            headerRow.lastChild.style.borderRight = 'none';
             thead.appendChild(headerRow);
             table.appendChild(thead);
-            
             // Body
             const tbody = document.createElement('tbody');
             const freqBody = document.getElementById('freqBody');
@@ -2906,19 +2918,18 @@
                 const cells = row.querySelectorAll('td');
                 cells.forEach((cell, i) => {
                     const td = document.createElement('td');
-                    td.style.cssText = 'padding:8px; text-align:' + (i === 0 ? 'left' : 'right') + ';';
+                    td.style.cssText = 'padding:8px; text-align:' + (i === 0 ? 'left' : 'right') + '; border-right:1px solid #000;';
                     td.textContent = cell.textContent;
                     newRow.appendChild(td);
                 });
+                newRow.lastChild.style.borderRight = 'none';
                 tbody.appendChild(newRow);
             });
             table.appendChild(tbody);
-            
             // Footer
             const tfoot = document.createElement('tfoot');
             const footerRow = document.createElement('tr');
             footerRow.style.borderTop = '1px solid #000';
-            footerRow.style.borderBottom = '2px solid #000';
             ['Total', 
              document.getElementById('freqTotal').textContent,
              document.getElementById('relTotal').textContent,
@@ -2927,24 +2938,21 @@
              document.getElementById('expTotal').textContent
             ].forEach((text, i) => {
                 const td = document.createElement('td');
-                td.style.cssText = 'padding:8px; text-align:' + (i === 0 ? 'left' : 'right') + '; font-weight:' + (i <= 1 ? 'bold' : 'normal') + ';';
+                td.style.cssText = 'padding:8px; text-align:' + (i === 0 ? 'left' : 'right') + '; font-weight:' + (i <= 1 ? 'bold' : 'normal') + '; border-right:1px solid #000;';
                 td.textContent = text;
                 footerRow.appendChild(td);
             });
+            footerRow.lastChild.style.borderRight = 'none';
             tfoot.appendChild(footerRow);
             table.appendChild(tfoot);
-            
             container.appendChild(table);
-            
+            // Note
             const note = document.createElement('div');
             note.style.cssText = 'font-size:10pt; margin-top:15px; text-indent:-20px; padding-left:20px;';
             note.innerHTML = '<i>Note.</i> f = frequency; f/n = relative frequency; %f = percent frequency; c.%f = cumulative percent frequency; E[f] = expected count based on binomial distribution with n = ' + totalBalls + ' and p = 0.5.';
             container.appendChild(note);
-            
             document.body.appendChild(container);
-            
             if (format === 'png') {
-                // Use html2canvas for PNG
                 html2canvas(container, { 
                     scale: 2,
                     backgroundColor: '#ffffff'
@@ -2956,7 +2964,6 @@
                     document.body.removeChild(container);
                 });
             } else {
-                // Use jsPDF for PDF
                 html2canvas(container, { 
                     scale: 2,
                     backgroundColor: '#ffffff'
@@ -2967,12 +2974,11 @@
                         unit: 'mm',
                         format: 'letter'
                     });
-                    
+                    pdf.setFont('Times', '');
                     const imgWidth = 170;
                     const imgHeight = (canvas.height * imgWidth) / canvas.width;
                     const x = (pdf.internal.pageSize.getWidth() - imgWidth) / 2;
                     const y = 20;
-                    
                     pdf.addImage(imgData, 'PNG', x, y, imgWidth, imgHeight);
                     pdf.save('frequency-table-apa.pdf');
                     document.body.removeChild(container);
